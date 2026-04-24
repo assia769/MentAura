@@ -1,0 +1,180 @@
+// ═══════════════════════════════════════
+// MENTAURA — Neon Theme Variables
+// ═══════════════════════════════════════
+
+:root {
+  // Core neon palette
+  --neon-cyan:    #00f5ff;
+  --neon-purple:  #b44fff;
+  --neon-pink:    #ff2d78;
+  --neon-blue:    #4040ff;
+  --neon-green:   #00ff88;
+
+  // Background layers
+  --bg-void:      #04040f;
+  --bg-dark:      #080818;
+  --bg-card:      rgba(10, 10, 30, 0.85);
+  --bg-card-hover: rgba(15, 15, 45, 0.95);
+
+  // Glass card
+  --glass-bg:     rgba(255, 255, 255, 0.04);
+  --glass-border: rgba(0, 245, 255, 0.15);
+  --glass-border-hover: rgba(0, 245, 255, 0.45);
+
+  // Text
+  --text-primary:   #e8e8ff;
+  --text-secondary: #8888bb;
+  --text-muted:     #4444aa;
+
+  // Gradients
+  --grad-cyan-purple: linear-gradient(135deg, #00f5ff, #b44fff);
+  --grad-blue-pink:   linear-gradient(135deg, #4040ff, #ff2d78);
+  --grad-neon:        linear-gradient(135deg, #00f5ff 0%, #4040ff 50%, #b44fff 100%);
+
+  // Glow effects
+  --glow-cyan:   0 0 20px rgba(0, 245, 255, 0.4), 0 0 60px rgba(0, 245, 255, 0.15);
+  --glow-purple: 0 0 20px rgba(180, 79, 255, 0.4), 0 0 60px rgba(180, 79, 255, 0.15);
+  --glow-pink:   0 0 20px rgba(255, 45, 120, 0.4), 0 0 60px rgba(255, 45, 120, 0.15);
+  --glow-blue:   0 0 20px rgba(64, 64, 255, 0.4),  0 0 60px rgba(64, 64, 255, 0.15);
+
+  // Spacing
+  --radius-sm:  8px;
+  --radius-md:  12px;
+  --radius-lg:  20px;
+  --radius-xl:  28px;
+}
+
+// ── Base Reset ──────────────────────────
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  background: var(--bg-void);
+  color: var(--text-primary);
+  font-family: 'Rajdhani', 'Exo 2', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+// ── Glass Card ──────────────────────────
+.glass-card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: border-color 0.3s, box-shadow 0.3s;
+
+  &:hover {
+    border-color: var(--glass-border-hover);
+    box-shadow: var(--glow-cyan);
+  }
+}
+
+// ── Neon Input ──────────────────────────
+.neon-input {
+  width: 100%;
+  background: rgba(0, 245, 255, 0.04);
+  border: 1px solid rgba(0, 245, 255, 0.2);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 14px;
+  padding: 12px 16px;
+  outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
+
+  &::placeholder { color: var(--text-muted); }
+
+  &:focus {
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 0 2px rgba(0, 245, 255, 0.15), var(--glow-cyan);
+  }
+
+  &.ng-invalid.ng-touched {
+    border-color: var(--neon-pink);
+    box-shadow: 0 0 0 2px rgba(255, 45, 120, 0.15);
+  }
+}
+
+// ── Neon Button ─────────────────────────
+.btn-neon {
+  position: relative;
+  width: 100%;
+  padding: 13px 24px;
+  background: transparent;
+  border: 1px solid var(--neon-cyan);
+  border-radius: var(--radius-sm);
+  color: var(--neon-cyan);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  overflow: hidden;
+  transition: color 0.3s, box-shadow 0.3s;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--grad-cyan-purple);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  span { position: relative; z-index: 1; }
+
+  &:hover {
+    color: #fff;
+    box-shadow: var(--glow-cyan);
+    &::before { opacity: 1; }
+  }
+
+  &:active { transform: scale(0.98); }
+  &:disabled { opacity: 0.4; cursor: not-allowed; }
+}
+
+.btn-neon-purple {
+  @extend .btn-neon;
+  border-color: var(--neon-purple);
+  color: var(--neon-purple);
+  &:hover { box-shadow: var(--glow-purple); }
+}
+
+// ── Neon Text Gradient ──────────────────
+.text-neon {
+  background: var(--grad-cyan-purple);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+// ── Scrollbar ───────────────────────────
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-dark); }
+::-webkit-scrollbar-thumb {
+  background: var(--neon-blue);
+  border-radius: 3px;
+  &:hover { background: var(--neon-cyan); }
+}
+
+// ── Page sans bg image (toutes sauf landing) ──
+.page-neon {
+  min-height: 100vh;
+  background: var(--bg-dark);
+
+  &::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background:
+      radial-gradient(ellipse 600px 400px at 20% 20%, rgba(64,64,255,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 500px 500px at 80% 80%, rgba(180,79,255,0.08) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  > * { position: relative; z-index: 1; }
+}

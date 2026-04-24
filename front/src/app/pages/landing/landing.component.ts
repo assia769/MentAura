@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { FloatingOrbComponent } from './floating-orb/floating-orb.component';
 import { AuthPanelComponent } from './auth-panel/auth-panel.component';
 import { CursorComponent } from './cursor/cursor.component';
+
 @Component({
   selector: 'app-landing',
   standalone: true,
@@ -21,6 +22,44 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
 
   currentTab: 'login' | 'register' = 'login';
   private animationFrameId: number | null = null;
+
+  // ── Steps data ────────────────────────────────────────────────
+  steps = [
+    {
+      number: '01',
+      title: 'Connect Your Mind',
+      desc: 'Import your notes, documents, and workflows. Mentaura maps your knowledge graph instantly.'
+    },
+    {
+      number: '02',
+      title: 'AI Learns You',
+      desc: 'Over time, the engine adapts to your thinking style, priorities, and patterns.'
+    },
+    {
+      number: '03',
+      title: 'Think at Scale',
+      desc: 'Execute complex tasks, research and create — with AI that truly understands context.'
+    }
+  ];
+
+  // ── Testimonials data ─────────────────────────────────────────
+  testimonials = [
+    {
+      quote: 'Mentaura changed how I approach research entirely. It thinks the way I do — and faster.',
+      name: 'Sophia M.',
+      role: 'Lead Researcher, Nexis AI'
+    },
+    {
+      quote: 'The memory engine is unlike anything I\'ve used. My workflow is now truly frictionless.',
+      name: 'James T.',
+      role: 'Senior Engineer, Orbit Labs'
+    },
+    {
+      quote: 'Finally an AI tool built for depth, not just speed. My productivity tripled in a month.',
+      name: 'Layla K.',
+      role: 'Strategy Director, Verne Capital'
+    }
+  ];
 
   ngAfterViewInit(): void {
     setTimeout(() => {
@@ -53,7 +92,7 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
     window.addEventListener('scroll', handleScroll);
   }
 
-  // ── Tab passthrough (received from AuthPanelComponent) ────────
+  // ── Tab passthrough ───────────────────────────────────────────
   switchTab(tab: 'login' | 'register'): void {
     this.currentTab = tab;
   }

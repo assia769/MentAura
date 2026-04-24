@@ -1,12 +1,14 @@
 <div class="landing-wrapper">
-
   <!-- Custom Cursor -->
   <app-cursor></app-cursor>
 
   <!-- Navigation -->
   <nav id="mainNav" class="nav">
     <div class="nav-inner">
-      <div class="nav-brand">MENTAURA</div>
+      <div class="nav-brand">
+        <img src="assets/logo.png" alt="Mentaura" class="nav-logo" />
+        <span class="nav-brand-text">MENTAURA</span>
+      </div>
       <div class="nav-right">
         <button class="nav-cta" (click)="switchTab('register')">GET ACCESS</button>
       </div>
@@ -15,12 +17,12 @@
 
   <!-- Hero Section -->
   <section class="hero">
-
     <!-- Left: Headline + Floating Orb -->
     <div class="col-headline">
-
-      <!-- Background grid pattern -->
-      <div class="eyebrow">AI PRODUCTIVITY SUITE · 2025</div>
+      <div class="eyebrow">
+        <span class="eyebrow-dot"></span>
+        PRODUCTIVITY App · 2026
+      </div>
 
       <h1 class="headline">
         <span class="hl-word">Master</span>
@@ -34,7 +36,13 @@
 
       <div class="cta-row">
         <button class="btn-primary" (click)="switchTab('register')">BEGIN FREE</button>
-        <button class="btn-ghost">WATCH DEMO</button>
+        <button class="btn-ghost">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1"/>
+            <path d="M5.5 4.5L9.5 7L5.5 9.5V4.5Z" fill="currentColor"/>
+          </svg>
+          WATCH DEMO
+        </button>
       </div>
 
       <!-- Stats -->
@@ -55,44 +63,145 @@
         </div>
       </div>
 
-      <!-- ✦ NEW: Floating orb component fills the remaining vertical space -->
+      <!-- Orb zone -->
       <div class="orb-zone">
         <app-floating-orb></app-floating-orb>
-      </div>
 
+        <!-- Floating ambient cards around the orb -->
+        <div class="ambient-card ambient-card--1 reveal">
+          <div class="ambient-card__icon">⚡</div>
+          <div class="ambient-card__text">
+            <span class="ambient-card__val">12×</span>
+            <span class="ambient-card__lbl">Faster Research</span>
+          </div>
+        </div>
+
+        <div class="ambient-card ambient-card--2 reveal">
+          <div class="ambient-card__icon">🧠</div>
+          <div class="ambient-card__text">
+            <span class="ambient-card__val">AI Memory</span>
+            <span class="ambient-card__lbl">Always On</span>
+          </div>
+        </div>
+
+        <div class="ambient-card ambient-card--3 reveal">
+          <div class="ambient-card__pulse"></div>
+          <div class="ambient-card__text">
+            <span class="ambient-card__val">Live</span>
+            <span class="ambient-card__lbl">Now Processing</span>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- Right: Auth Panel (now its own component) -->
+    <!-- Right: Auth Panel -->
     <div class="col-auth">
       <app-auth-panel
         [currentTab]="currentTab"
         (tabChange)="switchTab($event)">
       </app-auth-panel>
     </div>
+  </section>
 
+  <!-- How it works -->
+  <section class="how-it-works">
+    <div class="how-inner">
+      <div class="section-label">HOW IT WORKS</div>
+      <h2 class="section-title">Three steps to <em>mastery</em></h2>
+      <div class="steps-track">
+        <ng-container *ngFor="let step of steps; let i = index">
+          <div class="step-card reveal">
+            <div class="step-number">{{ step.number }}</div>
+            <div class="step-body">
+              <h3 class="step-title">{{ step.title }}</h3>
+              <p class="step-desc">{{ step.desc }}</p>
+            </div>
+          </div>
+          <div class="step-connector" *ngIf="i < steps.length - 1"></div>
+        </ng-container>
+      </div>
+    </div>
   </section>
 
   <!-- Features Section -->
   <section class="features">
+    <div class="section-label">CAPABILITIES</div>
     <h2 class="section-title">What You Get</h2>
     <div class="features-grid">
       <div class="feat-card reveal">
+        <div class="feat-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+        </div>
         <h3 class="feat-title">Deep Intelligence</h3>
         <p class="feat-desc">Research that goes beyond surface level. Synthesize, analyze, and extract meaning in real-time.</p>
       </div>
       <div class="feat-card reveal">
+        <div class="feat-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+            <path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/><circle cx="18" cy="6" r="3"/>
+          </svg>
+        </div>
         <h3 class="feat-title">Memory That Persists</h3>
         <p class="feat-desc">Never lose context. Your memory engine learns from every interaction and adapts to your workflow.</p>
       </div>
       <div class="feat-card reveal">
+        <div class="feat-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+            <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
+          </svg>
+        </div>
         <h3 class="feat-title">Code That Ships</h3>
         <p class="feat-desc">Agentic code mode. Write, review, test, and deploy — all autonomously. Your IDE meets AI.</p>
       </div>
     </div>
   </section>
 
+  <!-- Testimonials -->
+  <section class="testimonials">
+    <div class="testi-inner">
+      <div class="section-label">TESTIMONIALS</div>
+      <h2 class="section-title">Trusted by <em>thinkers</em></h2>
+      <div class="testi-grid">
+        <div class="testi-card reveal" *ngFor="let t of testimonials">
+          <div class="testi-quote-mark">"</div>
+          <p class="testi-quote">{{ t.quote }}</p>
+          <div class="testi-author">
+            <div class="testi-avatar">{{ t.name.charAt(0) }}</div>
+            <div>
+              <div class="testi-name">{{ t.name }}</div>
+              <div class="testi-role">{{ t.role }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Banner -->
+  <section class="cta-banner">
+    <div class="cta-banner__glow"></div>
+    <div class="cta-banner__inner">
+      <h2 class="cta-banner__title">Ready to <em>think differently?</em></h2>
+      <p class="cta-banner__sub">Join 48,000+ professionals using Mentaura to unlock their full potential.</p>
+      <button class="btn-primary" (click)="switchTab('register')">START FOR FREE →</button>
+    </div>
+  </section>
+
   <!-- Footer -->
   <footer class="footer">
-    <p>© 2025 MENTAURA · ALL RIGHTS RESERVED</p>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <img src="assets/logo.png" alt="Mentaura" class="footer-logo" />
+        <span>MENTAURA</span>
+      </div>
+      <p>© 2025 MENTAURA · ALL RIGHTS RESERVED</p>
+      <div class="footer-links">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">Contact</a>
+      </div>
+    </div>
   </footer>
 </div>

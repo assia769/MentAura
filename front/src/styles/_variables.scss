@@ -1,0 +1,473 @@
+// ════════════════════════════════════════════════════════════════════
+// 📦 VARIABLES & MIXINS SCSS
+// À placer dans: src/styles/_variables.scss
+// ════════════════════════════════════════════════════════════════════
+
+// ═══════════════════════════════════════════════════════════════════
+// 🎨 COLOR PALETTE
+// ═══════════════════════════════════════════════════════════════════
+
+// Gold Palette (Premium)
+$gold:          #C9A84C;
+$gold-light:    #E8D08A;
+$gold-lighter:  #F5E6A3;
+$gold-dark:     #8B6914;
+$gold-darker:   #6B5810;
+
+// Backgrounds
+$bg-primary:    #09090F;
+$bg-secondary:  #0F0F1A;
+$bg-tertiary:   #1a1a2e;
+$bg-card:       #111120;
+$bg-card-light: #1a1a2e;
+
+// Text Colors
+$text-primary:   #F5F0E8;
+$text-secondary: rgba(245, 240, 232, 0.60);
+$text-tertiary:  rgba(245, 240, 232, 0.25);
+$text-error:     #FF4444;
+$text-success:   #44DD44;
+$text-warning:   #FFA500;
+$text-info:      #00D9FF;
+
+// Borders
+$border-light:   rgba(201, 168, 76, 0.15);
+$border-normal:  rgba(201, 168, 76, 0.35);
+$border-glow:    rgba(201, 168, 76, 0.50);
+
+// Neon
+$neon-gold:      #FFE066;
+$neon-pink:      #FF4081;
+$neon-cyan:      #00D9FF;
+$neon-green:     #00FF88;
+$neon-purple:    #DD00FF;
+
+// ═══════════════════════════════════════════════════════════════════
+// 📐 SPACING & SIZING
+// ═══════════════════════════════════════════════════════════════════
+
+// Base unit
+$spacing-unit: 8px;
+
+// Spacing
+$spacing-xs:   $spacing-unit;      // 8px
+$spacing-sm:   $spacing-unit * 2;  // 16px
+$spacing-md:   $spacing-unit * 3;  // 24px
+$spacing-lg:   $spacing-unit * 4;  // 32px
+$spacing-xl:   $spacing-unit * 6;  // 48px
+$spacing-2xl:  $spacing-unit * 8;  // 64px
+
+// Border Radius
+$radius-xs:    4px;
+$radius-sm:    8px;
+$radius-md:    12px;
+$radius-lg:    16px;
+$radius-full:  9999px;
+
+// Font Sizes
+$font-xs:      11px;
+$font-sm:      12px;
+$font-base:    13px;
+$font-md:      14px;
+$font-lg:      16px;
+$font-xl:      18px;
+$font-2xl:     24px;
+$font-3xl:     32px;
+$font-4xl:     48px;
+$font-5xl:     64px;
+$font-6xl:     72px;
+
+// Font Weights
+$weight-light:   300;
+$weight-normal:  400;
+$weight-medium:  500;
+$weight-semibold: 600;
+$weight-bold:    700;
+
+// ═══════════════════════════════════════════════════════════════════
+// ⏱️ TRANSITIONS & ANIMATIONS
+// ═══════════════════════════════════════════════════════════════════
+
+$duration-fast:     0.2s;
+$duration-normal:   0.3s;
+$duration-slow:     0.5s;
+$duration-slower:   0.8s;
+
+$ease-linear:       linear;
+$ease-in:           cubic-bezier(0.42, 0, 1, 1);
+$ease-out:          cubic-bezier(0, 0, 0.58, 1);
+$ease-in-out:       cubic-bezier(0.42, 0, 0.58, 1);
+$ease-smooth:       cubic-bezier(0.34, 1.56, 0.64, 1);
+$ease-bounce:       cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+// ═══════════════════════════════════════════════════════════════════
+// 📱 BREAKPOINTS
+// ═══════════════════════════════════════════════════════════════════
+
+$mobile:    480px;
+$tablet:    768px;
+$desktop:   1024px;
+$wide:      1400px;
+$ultrawide: 1920px;
+
+// ═══════════════════════════════════════════════════════════════════
+// 🎯 MIXINS - RESPONSIVE
+// ═══════════════════════════════════════════════════════════════════
+
+@mixin mobile {
+  @media (max-width: $mobile) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (max-width: $tablet) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (max-width: $desktop) {
+    @content;
+  }
+}
+
+@mixin wide {
+  @media (min-width: $desktop) {
+    @content;
+  }
+}
+
+@mixin large {
+  @media (min-width: $wide) {
+    @content;
+  }
+}
+
+@mixin ultrawide {
+  @media (min-width: $ultrawide) {
+    @content;
+  }
+}
+
+@mixin landscape {
+  @media (orientation: landscape) {
+    @content;
+  }
+}
+
+@mixin portrait {
+  @media (orientation: portrait) {
+    @content;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// 🎯 MIXINS - TYPOGRAPHY
+// ═══════════════════════════════════════════════════════════════════
+
+@mixin font-heading-1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: $font-6xl;
+  font-weight: $weight-light;
+  line-height: 1.1;
+  letter-spacing: -1px;
+}
+
+@mixin font-heading-2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: $font-4xl;
+  font-weight: $weight-light;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+}
+
+@mixin font-heading-3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: $font-2xl;
+  font-weight: $weight-light;
+  letter-spacing: 2px;
+}
+
+@mixin font-body {
+  font-family: 'DM Sans', sans-serif;
+  font-size: $font-md;
+  font-weight: $weight-normal;
+  line-height: 1.6;
+}
+
+@mixin font-caption {
+  font-family: 'DM Sans', sans-serif;
+  font-size: $font-xs;
+  font-weight: $weight-medium;
+  letter-spacing: 2px;
+}
+
+@mixin font-mono {
+  font-family: 'Space Mono', monospace;
+  font-size: $font-sm;
+  letter-spacing: 1px;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// 🎯 MIXINS - EFFECTS
+// ═══════════════════════════════════════════════════════════════════
+
+@mixin glow($color: $gold, $intensity: 0.3) {
+  filter: drop-shadow(0 0 10px rgba($color, $intensity));
+}
+
+@mixin glow-strong($color: $gold, $intensity: 0.8) {
+  filter: drop-shadow(0 0 25px rgba($color, $intensity));
+}
+
+@mixin blur-glass($opacity: 0.5) {
+  background: rgba($bg-secondary, $opacity);
+  backdrop-filter: blur(20px);
+}
+
+@mixin border-glow {
+  border: 2px solid $border-glow;
+  box-shadow: 
+    0 0 20px rgba($gold, 0.3),
+    0 0 40px rgba($gold, 0.1),
+    inset 0 0 20px rgba($gold, 0.05);
+}
+
+@mixin gradient-gold {
+  background: linear-gradient(135deg, $gold-light, $gold, $gold-dark);
+}
+
+@mixin gradient-gold-text {
+  background: linear-gradient(135deg, $gold-light, $gold);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+@mixin smooth-transition($property: all) {
+  transition: $property $duration-normal $ease-smooth;
+}
+
+@mixin smooth-transition-slow($property: all) {
+  transition: $property $duration-slow $ease-smooth;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// 🎯 MIXINS - POSITIONING
+// ═══════════════════════════════════════════════════════════════════
+
+@mixin absolute-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@mixin absolute-cover {
+  position: absolute;
+  inset: 0;
+}
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+@mixin grid-center {
+  display: grid;
+  place-items: center;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// 🎯 MIXINS - BUTTONS
+// ═══════════════════════════════════════════════════════════════════
+
+@mixin btn-primary {
+  @include gradient-gold;
+  border: none;
+  padding: $spacing-sm $spacing-lg;
+  font-family: 'DM Sans', sans-serif;
+  font-size: $font-xs;
+  font-weight: $weight-semibold;
+  letter-spacing: 2px;
+  color: #0a0807;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+  box-shadow: 0 8px 25px rgba($gold, 0.3);
+  @include smooth-transition;
+
+  &:hover {
+    filter: brightness(1.2);
+    box-shadow: 0 12px 40px rgba($gold, 0.6);
+    transform: translateY(-2px);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+@mixin btn-secondary {
+  background: transparent;
+  border: 2px solid $border-normal;
+  padding: $spacing-sm $spacing-md;
+  font-family: 'DM Sans', sans-serif;
+  font-size: $font-xs;
+  letter-spacing: 2px;
+  color: $gold;
+  cursor: pointer;
+  @include smooth-transition;
+
+  &:hover {
+    border-color: $gold;
+    background: rgba($gold, 0.1);
+    box-shadow: 0 0 20px rgba($gold, 0.4);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// 🎯 MIXINS - INPUTS
+// ═══════════════════════════════════════════════════════════════════
+
+@mixin input-neon {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.02);
+  border: none;
+  border-bottom: 2px solid $border-light;
+  padding: $spacing-sm $spacing-xl $spacing-sm $spacing-xs;
+  color: $text-primary;
+  font-family: 'DM Sans', sans-serif;
+  font-size: $font-md;
+  outline: none;
+  letter-spacing: 0.5px;
+  @include smooth-transition;
+
+  &::placeholder {
+    color: $text-tertiary;
+    font-size: $font-xs;
+    letter-spacing: 1px;
+  }
+
+  &:focus {
+    border-bottom-color: $gold;
+    background: rgba($gold, 0.03);
+    box-shadow: 
+      0 0 20px rgba($gold, 0.2),
+      inset 0 0 10px rgba($gold, 0.05);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// 🎯 MIXINS - ACCESSIBILITY
+// ═══════════════════════════════════════════════════════════════════
+
+@mixin focus-ring($color: $gold) {
+  outline: 2px solid $color;
+  outline-offset: 2px;
+}
+
+@mixin screen-reader-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@mixin no-motion {
+  @media (prefers-reduced-motion: reduce) {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// 🎯 MIXINS - UTILITIES
+// ═══════════════════════════════════════════════════════════════════
+
+@mixin truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@mixin line-clamp($lines: 2) {
+  display: -webkit-box;
+  -webkit-line-clamp: $lines;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@mixin clearfix {
+  &::after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+}
+
+@mixin scrollbar-gold {
+  scrollbar-color: $gold-dark $bg-primary;
+  scrollbar-width: thin;
+
+  &::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: $bg-primary;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, $gold-dark, $gold);
+    border-radius: 5px;
+
+    &:hover {
+      background: linear-gradient(180deg, $gold, $gold-light);
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// 🎯 MIXINS - ANIMATIONS
+// ═══════════════════════════════════════════════════════════════════
+
+@mixin animation-fade-in($duration: $duration-normal) {
+  animation: fadeIn $duration $ease-smooth forwards;
+}
+
+@mixin animation-fade-in-up($duration: $duration-normal, $delay: 0s) {
+  animation: fadeInUp $duration $ease-smooth $delay forwards;
+}
+
+@mixin animation-slide-in-right($duration: $duration-normal) {
+  animation: slideInRight $duration $ease-smooth forwards;
+}
+
+@mixin animation-glow-pulse {
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// END OF VARIABLES & MIXINS
+// ═══════════════════════════════════════════════════════════════════

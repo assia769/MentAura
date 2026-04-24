@@ -1,0 +1,46 @@
+// Importer les styles globaux en premier
+@import 'global.scss';
+
+// Ensuite votre config actuelle
+@use 'styles/neon-theme' as *;
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Exo+2:ital,wght@0,300;0,400;0,600&display=swap');
+
+* { box-sizing: border-box; }
+
+// Utility classes
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.full-height { height: 100vh; }
+
+.error-msg {
+  color: var(--neon-pink);
+  font-size: 12px;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.success-msg {
+  color: var(--neon-green);
+  font-size: 13px;
+  text-align: center;
+  padding: 8px;
+  border: 1px solid rgba(0,255,136,0.3);
+  border-radius: var(--radius-sm);
+  background: rgba(0,255,136,0.05);
+}
+
+// Router outlet fade
+router-outlet + * {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
