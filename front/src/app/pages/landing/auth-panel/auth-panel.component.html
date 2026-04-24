@@ -1,0 +1,81 @@
+<div class="auth-card">
+  <!-- Header -->
+  <div class="card-strip">
+    <div class="card-num">I</div>
+    <div class="card-label">WELCOME</div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="card-tabs">
+    <button
+      class="card-tab"
+      [class.active]="currentTab === 'login'"
+      (click)="switchTab('login')">
+      LOG IN
+    </button>
+    <button
+      class="card-tab"
+      [class.active]="currentTab === 'register'"
+      (click)="switchTab('register')">
+      REGISTER
+    </button>
+    <div class="tab-slider" [style.left.%]="currentTab === 'register' ? 50 : 3"></div>
+  </div>
+
+  <!-- LOGIN FORM -->
+  <form class="auth-form" [class.active]="currentTab === 'login'">
+    <div class="field-group">
+      <label class="field-label">EMAIL</label>
+      <input class="field-input" type="email" placeholder="you@example.com" />
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">PASSWORD</label>
+      <input class="field-input" type="password" placeholder="••••••••" #pwInput />
+      <button class="field-toggle" type="button" (click)="togglePw(pwInput)">
+        {{ pwInput.type === 'password' ? '○' : '●' }}
+      </button>
+    </div>
+
+    <button type="submit" class="btn-submit">LOG IN</button>
+    <p class="switch-note">No account? <a (click)="switchTab('register')">Register here</a></p>
+  </form>
+
+  <!-- REGISTER FORM -->
+  <form class="auth-form" [class.active]="currentTab === 'register'">
+    <div class="field-group">
+      <label class="field-label">FIRST NAME</label>
+      <input class="field-input" type="text" placeholder="Jane" />
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">EMAIL</label>
+      <input class="field-input" type="email" placeholder="you@example.com" />
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">PASSWORD</label>
+      <input
+        class="field-input"
+        type="password"
+        placeholder="Min. 8 characters"
+        (input)="checkStrength($any($event.target).value)"
+        #regPw />
+      <button class="field-toggle" type="button" (click)="togglePw(regPw)">
+        {{ regPw.type === 'password' ? '○' : '●' }}
+      </button>
+      <div class="strength-meter">
+        <div class="strength-blocks">
+          <div class="s-block" [style.background]="getStrengthColor(1)"></div>
+          <div class="s-block" [style.background]="getStrengthColor(2)"></div>
+          <div class="s-block" [style.background]="getStrengthColor(3)"></div>
+          <div class="s-block" [style.background]="getStrengthColor(4)"></div>
+        </div>
+        <span class="strength-text">{{ getStrengthLabel() }}</span>
+      </div>
+    </div>
+
+    <button type="submit" class="btn-submit">CREATE ACCOUNT</button>
+    <p class="switch-note">Have an account? <a (click)="switchTab('login')">Log in</a></p>
+  </form>
+</div>

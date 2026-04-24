@@ -1,0 +1,42 @@
+<div class="orb-wrapper">
+  <!-- Canvas background -->
+  <canvas #orbCanvas class="orb-canvas"></canvas>
+
+  <!-- Floating content overlay -->
+  <div class="orb-content">
+
+    <!-- Vertical label -->
+    <div class="vertical-tag">INTELLIGENCE · AI · 2025</div>
+
+    <!-- Large morphing word -->
+    <div class="morph-word">
+      <span
+        *ngFor="let word of words; let i = index"
+        class="morph-text"
+        [class.active]="i === currentWord">
+        {{ word }}
+      </span>
+    </div>
+
+    <!-- Manifesto lines -->
+    <div class="manifesto">
+      <div class="manifesto-line">
+        <span class="ml-num">01</span>
+        <span class="ml-text">Think without limits</span>
+      </div>
+      <div class="manifesto-line">
+        <span class="ml-num">02</span>
+        <span class="ml-text">Work at the speed of thought</span>
+      </div>
+      <div class="manifesto-line">
+        <span class="ml-num">03</span>
+        <span class="ml-text">Intelligence, amplified</span>
+      </div>
+    </div>
+
+    <!-- Bottom corner accent -->
+    <div class="corner-cross">
+      <span></span><span></span>
+    </div>
+  </div>
+</div>

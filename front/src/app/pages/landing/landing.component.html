@@ -1,0 +1,98 @@
+<div class="landing-wrapper">
+
+  <!-- Custom Cursor -->
+  <app-cursor></app-cursor>
+
+  <!-- Navigation -->
+  <nav id="mainNav" class="nav">
+    <div class="nav-inner">
+      <div class="nav-brand">MENTAURA</div>
+      <div class="nav-right">
+        <button class="nav-cta" (click)="switchTab('register')">GET ACCESS</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+
+    <!-- Left: Headline + Floating Orb -->
+    <div class="col-headline">
+
+      <!-- Background grid pattern -->
+      <div class="eyebrow">AI PRODUCTIVITY SUITE · 2025</div>
+
+      <h1 class="headline">
+        <span class="hl-word">Master</span>
+        <span class="hl-word">your mind's</span>
+        <span class="hl-word italic">potential.</span>
+      </h1>
+
+      <p class="sub-copy">
+        Mentaura is where intelligence meets intention. Think deeper, work sharper — AI woven seamlessly into your flow.
+      </p>
+
+      <div class="cta-row">
+        <button class="btn-primary" (click)="switchTab('register')">BEGIN FREE</button>
+        <button class="btn-ghost">WATCH DEMO</button>
+      </div>
+
+      <!-- Stats -->
+      <div class="stat-bar">
+        <div class="stat-item">
+          <div class="stat-n">48K</div>
+          <div class="stat-l">ACTIVE USERS</div>
+        </div>
+        <div class="stat-sep"></div>
+        <div class="stat-item">
+          <div class="stat-n">3.2<span class="stat-x">×</span></div>
+          <div class="stat-l">PRODUCTIVITY</div>
+        </div>
+        <div class="stat-sep"></div>
+        <div class="stat-item">
+          <div class="stat-n">99<span class="stat-x">%</span></div>
+          <div class="stat-l">SATISFACTION</div>
+        </div>
+      </div>
+
+      <!-- ✦ NEW: Floating orb component fills the remaining vertical space -->
+      <div class="orb-zone">
+        <app-floating-orb></app-floating-orb>
+      </div>
+
+    </div>
+
+    <!-- Right: Auth Panel (now its own component) -->
+    <div class="col-auth">
+      <app-auth-panel
+        [currentTab]="currentTab"
+        (tabChange)="switchTab($event)">
+      </app-auth-panel>
+    </div>
+
+  </section>
+
+  <!-- Features Section -->
+  <section class="features">
+    <h2 class="section-title">What You Get</h2>
+    <div class="features-grid">
+      <div class="feat-card reveal">
+        <h3 class="feat-title">Deep Intelligence</h3>
+        <p class="feat-desc">Research that goes beyond surface level. Synthesize, analyze, and extract meaning in real-time.</p>
+      </div>
+      <div class="feat-card reveal">
+        <h3 class="feat-title">Memory That Persists</h3>
+        <p class="feat-desc">Never lose context. Your memory engine learns from every interaction and adapts to your workflow.</p>
+      </div>
+      <div class="feat-card reveal">
+        <h3 class="feat-title">Code That Ships</h3>
+        <p class="feat-desc">Agentic code mode. Write, review, test, and deploy — all autonomously. Your IDE meets AI.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>© 2025 MENTAURA · ALL RIGHTS RESERVED</p>
+  </footer>
+</div>
