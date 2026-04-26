@@ -1,40 +1,35 @@
 import { Routes } from '@angular/router'
 import { authGuard } from './core/guards/auth.guard'
 
+// app.routes.ts
 export const routes: Routes = [
-  // ── Public ─────────────────────────────────────────────────────────────
+  { path: '', loadComponent: () => import('./pages/landing/landing.component').then(m => m.LandingComponent) },
+
+  // ✅ Pages email
   {
-    path: '',
-    loadComponent: () =>
-      import('./pages/landing/landing.component').then(m => m.LandingComponent)
+    path: 'verify-email',
+    loadComponent: () => import('./pages/verify-email/verify-email.component').then(m => m.VerifyEmailComponent)
+  },
+  {
+    path: 'check-email',
+    loadComponent: () => import('./pages/check-email/check-email.component').then(m => m.CheckEmailComponent)
   },
 
-  // ── Admin (protected) ──────────────────────────────────────────────────
+  // Admin & User protégés
   {
     path: 'admin',
     canActivate: [authGuard],
     data: { role: 'admin' },
     children: [
-      {
-        path: 'dashboard',
-        loadComponent: () =>
-          import('./pages/admin/dashboard/admin-dashboard.component')
-            .then(m => m.AdminDashboardComponent)
-      },
+      { path: 'dashboard', loadComponent: () => import('./pages/admin/dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent) },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },
-
-  // ── User (protected) ───────────────────────────────────────────────────
   {
     path: 'user',
     canActivate: [authGuard],
-    loadComponent: () =>
-      import('./pages/user/shell/user-shell.component')
-        .then(m => m.UserShellComponent),
-    // Pas de children pour l'instant — la page shell IS la destination
+    loadComponent: () => import('./pages/user/shell/user-shell.component').then(m => m.UserShellComponent)
   },
 
-  // ── Fallback ────────────────────────────────────────────────────────────
   { path: '**', redirectTo: '' }
 ]

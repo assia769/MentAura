@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import { getDb } from '@/lib/mongodb'
-import { signAccessToken, signRefreshToken } from '@/lib/jwt'
 import { verifyCaptcha } from '@/lib/captcha'
 import { auditLog } from '@/lib/audit'
+import { sendVerificationEmail } from '@/lib/mailer'
+import crypto from 'crypto'
 
-// À ajouter en haut de route.ts (login ET register)
 export async function OPTIONS() {
   return new NextResponse(null, {
     status: 204,
@@ -17,6 +17,7 @@ export async function OPTIONS() {
     },
   })
 }
+
 export async function POST(req: NextRequest) {
   const ip        = req.headers.get('x-forwarded-for') ?? 'unknown'
   const userAgent = req.headers.get('user-agent') ?? ''
@@ -25,7 +26,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json()
     const { nom, prenom, email, password, captchaToken } = body
 
-    // ── 1. Validate inputs ──────────────────────────────────────────────
+    // ── 1. Validation ───────────────────────────────────────────────────
     if (!nom || !prenom || !email || !password || !captchaToken) {
       return NextResponse.json({ error: 'Champs manquants' }, { status: 400 })
     }
@@ -33,27 +34,55 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Mot de passe trop court (min 8)' }, { status: 400 })
     }
 
-    // ── 2. Verify reCAPTCHA ─────────────────────────────────────────────
+    // ── 2. reCAPTCHA ────────────────────────────────────────────────────
     const captchaOk = await verifyCaptcha(captchaToken)
     if (!captchaOk) {
       await auditLog({ action: 'CAPTCHA_FAILED', ipAddress: ip, userAgent })
       return NextResponse.json({ error: 'Captcha invalide' }, { status: 400 })
     }
 
-    const db = await getDb()
+    const db    = await getDb()
     const users = db.collection('users')
 
-    // ── 3. Check email uniqueness ───────────────────────────────────────
+    // ── 3. Email unicité ────────────────────────────────────────────────
     const existing = await users.findOne({ email: email.toLowerCase() })
+
     if (existing) {
+      // Compte non vérifié → renvoyer le mail de vérification
+      if (!existing.isEmailVerified) {
+        const verifToken   = crypto.randomBytes(32).toString('hex')
+        const verifExpires = new Date(Date.now() + 24 * 60 * 60 * 1000)
+
+        await users.updateOne(
+          { _id: existing._id },
+          { $set: { emailVerificationToken: verifToken, emailVerificationExpires: verifExpires } }
+        )
+
+        try {
+          await sendVerificationEmail(existing.email, existing.prenom, verifToken)
+        } catch (mailErr) {
+          console.error('[Register] Mail error:', mailErr)
+          return NextResponse.json({ error: 'Erreur envoi email' }, { status: 500 })
+        }
+
+        return NextResponse.json(
+          { message: 'Email de vérification renvoyé.' },
+          { status: 200 }
+        )
+      }
+
+      // Compte déjà vérifié → vrai conflit
       return NextResponse.json({ error: 'Email déjà utilisé' }, { status: 409 })
     }
 
     // ── 4. Hash password ────────────────────────────────────────────────
     const passwordHash = await bcrypt.hash(password, 12)
 
-    // ── 5. Create user ──────────────────────────────────────────────────
-    const now = new Date()
+    // ── 5. Créer l'utilisateur avec token de vérification ───────────────
+    const verifToken   = crypto.randomBytes(32).toString('hex')
+    const verifExpires = new Date(Date.now() + 24 * 60 * 60 * 1000)
+    const now          = new Date()
+
     const result = await users.insertOne({
       nom,
       prenom,
@@ -61,7 +90,8 @@ export async function POST(req: NextRequest) {
       passwordHash,
       role: 'student',
       isEmailVerified: false,
-      emailVerificationToken: null,
+      emailVerificationToken: verifToken,
+      emailVerificationExpires: verifExpires,
       isActive: true,
       failedLoginAttempts: 0,
       lockedUntil: null,
@@ -69,27 +99,32 @@ export async function POST(req: NextRequest) {
       updatedAt: now
     })
 
-    const userId = result.insertedId.toString()
+    // ── 6. Envoyer l'email — rollback si échec ──────────────────────────
+    try {
+      await sendVerificationEmail(email.toLowerCase(), prenom, verifToken)
+    } catch (mailErr) {
+      await users.deleteOne({ _id: result.insertedId })
+      console.error('[Register] Mail error:', mailErr)
+      return NextResponse.json(
+        { error: 'Erreur envoi email. Vérifiez la config Gmail.' },
+        { status: 500 }
+      )
+    }
 
-    // ── 6. Issue tokens ─────────────────────────────────────────────────
-    const payload = { userId, email: email.toLowerCase(), role: 'student' as const }
-    const accessToken  = signAccessToken(payload)
-    const refreshToken = signRefreshToken(payload)
-
-    // Store refresh token
-    await db.collection('refreshtokens').insertOne({
-      userId: result.insertedId,
-      token: refreshToken,
-      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-      createdAt: now
+    // ── 7. Audit + réponse ──────────────────────────────────────────────
+    await auditLog({
+      userId: result.insertedId.toString(),
+      action: 'REGISTER',
+      ipAddress: ip,
+      userAgent
     })
 
-    await auditLog({ userId, action: 'REGISTER', ipAddress: ip, userAgent })
-
+    // Pas de tokens JWT — l'utilisateur doit d'abord vérifier son email
     return NextResponse.json(
-      { accessToken, refreshToken, role: 'student', userId },
+      { message: 'Compte créé. Vérifiez votre email.' },
       { status: 201 }
     )
+
   } catch (err) {
     console.error('[Register]', err)
     return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 })

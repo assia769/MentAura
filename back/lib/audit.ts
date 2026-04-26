@@ -12,6 +12,8 @@ export type AuditAction =
   | 'MFA_REQUIRED'
   | 'MFA_FAILED'
   | 'MFA_SUCCESS'
+  | 'EMAIL_VERIFIED'       
+  | 'RESEND_VERIFICATION' 
 
 export async function auditLog(params: {
   userId?: string

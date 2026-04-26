@@ -1,7 +1,6 @@
-import { Component } from '@angular/core'
+import { Component, inject } from '@angular/core'
 import { CommonModule } from '@angular/common'
-import { Router } from '@angular/router'
-import { HttpClient } from '@angular/common/http'
+import { AuthService } from '../../../core/services/auth.service'
 
 @Component({
   selector: 'app-user-shell',
@@ -11,20 +10,9 @@ import { HttpClient } from '@angular/common/http'
   styleUrls: ['./user-shell.component.scss']
 })
 export class UserShellComponent {
-
-  constructor(private http: HttpClient, private router: Router) {}
+  private auth = inject(AuthService)
 
   logout(): void {
-    const refreshToken = localStorage.getItem('refreshToken')
-    this.http.post('/api/auth/logout', { refreshToken }).subscribe({
-      next: () => this.clearAndRedirect(),
-      error: () => this.clearAndRedirect()
-    })
-  }
-
-  private clearAndRedirect(): void {
-    localStorage.removeItem('accessToken')
-    localStorage.removeItem('refreshToken')
-    this.router.navigate(['/login'])
+    this.auth.logout()
   }
 }

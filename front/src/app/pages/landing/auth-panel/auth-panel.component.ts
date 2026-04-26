@@ -160,8 +160,7 @@ export class AuthPanelComponent {
     })
   }
 
-  // ── Register ──────────────────────────────────────────────────────────
- onRegister(): void {
+  onRegister(): void {
   this.errorMsg   = ''
   this.successMsg = ''
 
@@ -180,18 +179,20 @@ export class AuthPanelComponent {
     return
   }
 
+  // ✅ Sauvegarder l'email AVANT de vider les champs
+  const emailSaisi = this.regEmail
+
   this.loading = true
   this.auth.register(
-    this.regNom, this.regPrenom, this.regEmail, this.regPassword, captchaToken
+    this.regNom, this.regPrenom, emailSaisi, this.regPassword, captchaToken
   ).subscribe({
     next: () => {
-      this.loading    = false
-      this.successMsg = '✉️ Compte créé ! Vérifiez votre email avant de vous connecter.'
+      this.loading = false
       this.resetCaptcha(this.registerCaptchaWidgetId)
       this.regNom = this.regPrenom = this.regEmail = this.regPassword = ''
       this.strength = 0
-      // ✅ Juste switcher vers login, AUCUNE navigation router
-      setTimeout(() => this.switchTab('login'), 2500)
+      // ✅ email passé depuis la variable sauvegardée
+      this.router.navigate(['/check-email'], { state: { email: emailSaisi } })
     },
     error: err => {
       this.loading  = false

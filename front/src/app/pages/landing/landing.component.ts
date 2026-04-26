@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { FloatingOrbComponent } from './floating-orb/floating-orb.component';
 import { AuthPanelComponent } from './auth-panel/auth-panel.component';
 import { CursorComponent } from './cursor/cursor.component';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-landing',
@@ -11,6 +12,7 @@ import { CursorComponent } from './cursor/cursor.component';
   imports: [
     CommonModule,
     FormsModule,
+    RouterModule, 
     FloatingOrbComponent,
     AuthPanelComponent,
     CursorComponent
@@ -74,6 +76,12 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
       cancelAnimationFrame(this.animationFrameId);
     }
   }
+  ngOnInit(): void {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('tab') === 'register') {
+    this.currentTab = 'register';
+  }
+}
 
   // ── Nav ───────────────────────────────────────────────────────
   private initNav(): void {
@@ -107,7 +115,9 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
     }, { threshold: 0.15 });
     items.forEach(el => observer.observe(el));
   }
-
+   goToRegisterTop(): void {
+  window.location.href = window.location.origin + '/?tab=register';
+}
   // ── Counters ──────────────────────────────────────────────────
   private initCounters(): void {
     document.querySelectorAll('.stat-n').forEach((el: any) => {

@@ -21,31 +21,53 @@ export class AuthService {
   private _user$ = new BehaviorSubject<AuthUser | null>(this.loadFromStorage())
   user$: Observable<AuthUser | null> = this._user$.asObservable()
 
-  login(email: string, password: string, captchaToken: string): Observable<AuthUser> {
+  login(email: string, password: string, captchaToken: string): Observable<any> {
     return this.http
-      .post<AuthUser>(`${this.api}/api/auth/login`, { email, password, captchaToken })
+      .post<any>(`${this.api}/api/auth/login`, { email, password, captchaToken })
       .pipe(
-        tap(user => {
-          this.persist(user)
-          // ── Redirect based on role ──────────────────────────────────
-          if (user.role === 'admin') {
-            this.router.navigate(['/admin/dashboard'])
-          } else {
-            this.router.navigate(['/user'])
-          }
+        tap(res => {
+          // Si MFA requis, on ne persiste rien — le composant gère
+          if (res.mfaRequired) return
+
+          this.persist(res)
+          this.router.navigate(res.role === 'admin' ? ['/admin/dashboard'] : ['/user'])
         })
       )
   }
 
-  register(nom: string, prenom: string, email: string, password: string, captchaToken: string): Observable<AuthUser> {
+  // ✅ register ne persist PAS et ne redirige PAS
+  register(
+    nom: string, prenom: string,
+    email: string, password: string,
+    captchaToken: string
+  ): Observable<any> {
+    return this.http.post<any>(
+      `${this.api}/api/auth/register`,
+      { nom, prenom, email, password, captchaToken }
+    )
+    // Pas de tap ici — le composant affiche le message et switche vers login
+  }
+
+  // ✅ URL corrigée + après vérification MFA on persiste et redirige
+  verifyMfa(userId: string, code: string): Observable<any> {
     return this.http
-      .post<AuthUser>(`${this.api}/api/auth/register`, { nom, prenom, email, password, captchaToken })
+      .post<any>(`${this.api}/api/auth/mfa/verify`, { userId, code })
       .pipe(
-        tap(user => {
-          this.persist(user)
-          this.router.navigate(['/user'])
+        tap(res => {
+          this.persist(res)
+          this.router.navigate(res.role === 'admin' ? ['/admin/dashboard'] : ['/user'])
         })
       )
+  }
+
+  // ✅ Vérification du token email (lien cliqué dans le mail)
+  verifyEmail(token: string): Observable<any> {
+    return this.http.post<any>(`${this.api}/api/auth/verify-email`, { token })
+  }
+
+  // ✅ Renvoyer l'email de vérification
+  resendVerification(email: string): Observable<any> {
+    return this.http.post<any>(`${this.api}/api/auth/resend-verification`, { email })
   }
 
   logout(): void {
@@ -81,11 +103,4 @@ export class AuthService {
       return raw ? JSON.parse(raw) : null
     } catch { return null }
   }
-  // Dans votre AuthService, ajoutez cette méthode :
-
-verifyMfa(userId: string, code: string) {
-  return this.http.post<any>(`${this.api}/auth/mfa/verify`, { userId, code }, {
-    withCredentials: true
-  })
-}
 }
