@@ -81,4 +81,11 @@ export class AuthService {
       return raw ? JSON.parse(raw) : null
     } catch { return null }
   }
+  // Dans votre AuthService, ajoutez cette méthode :
+
+verifyMfa(userId: string, code: string) {
+  return this.http.post<any>(`${this.api}/auth/mfa/verify`, { userId, code }, {
+    withCredentials: true
+  })
+}
 }

@@ -1,16 +1,18 @@
-import { Component, Input, Output, EventEmitter, inject, NgZone } from '@angular/core'
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  inject,
+  NgZone,
+  AfterViewInit
+} from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { FormsModule } from '@angular/forms'
 import { Router } from '@angular/router'
 import { AuthService } from '../../core/services/auth.service'
-import { environment } from '../../../environments/environment'
 
-declare const grecaptcha: {
-  render: (el: string | HTMLElement, opts: object) => number
-  getResponse: (id?: number) => string
-  reset: (id?: number) => void
-  execute: (id?: number) => void
-}
+declare const grecaptcha: any
 
 @Component({
   selector: 'app-auth-panel',
@@ -19,119 +21,243 @@ declare const grecaptcha: {
   templateUrl: './auth-panel.component.html',
   styleUrls: ['./auth-panel.component.scss']
 })
-export class AuthPanelComponent {
+export class AuthPanelComponent implements AfterViewInit {
   @Input() currentTab: 'login' | 'register' = 'login'
   @Output() tabChange = new EventEmitter<'login' | 'register'>()
 
-  private auth   = inject(AuthService)
+  private auth = inject(AuthService)
   private router = inject(Router)
-  private zone   = inject(NgZone)
+  private zone = inject(NgZone)
 
-  siteKey = environment.recaptchaSiteKey
+  private readonly SITE_KEY =
+    '6LcPZ8ssAAAAAAbua23uESL8vcRVcQFN6zfV4LxT'
 
-  // Form fields
-  loginEmail    = ''
+  // forms
+  loginEmail = ''
   loginPassword = ''
-  regNom        = ''
-  regPrenom     = ''
-  regEmail      = ''
-  regPassword   = ''
+  regNom = ''
+  regPrenom = ''
+  regEmail = ''
+  regPassword = ''
 
-  // State
-  strength    = 0
-  loading     = false
-  errorMsg    = ''
-  captchaId: number | undefined
+  // MFA
+  showMfa = false
+  mfaCode = ''
+  pendingUserId = ''
 
+  // state
+  strength = 0
+  loading = false
+  errorMsg = ''
+  successMsg = ''
 
-  // ── Tab switch ────────────────────────────────────────────────────────
-  switchTab(tab: 'login' | 'register'): void {
-    this.currentTab = tab
-    this.errorMsg   = ''
-    this.tabChange.emit(tab)
-    setTimeout(() => this.renderCaptcha(), 100)
-  }
+  // captcha
+  private loginCaptchaWidgetId: number | null = null
+  private registerCaptchaWidgetId: number | null = null
 
-  // ── reCAPTCHA ─────────────────────────────────────────────────────────
+  // ─────────────────────────────────────────────
   ngAfterViewInit(): void {
     this.loadRecaptchaScript()
   }
 
+  // ─────────────────────────────────────────────
+  switchTab(tab: 'login' | 'register'): void {
+    this.currentTab = tab
+    this.errorMsg = ''
+    this.successMsg = ''
+    this.showMfa = false
+    this.tabChange.emit(tab)
+
+    setTimeout(() => this.renderCaptcha(), 200)
+  }
+
+  // ─────────────────────────────────────────────
   private loadRecaptchaScript(): void {
     if (document.getElementById('recaptcha-script')) {
-      this.renderCaptcha(); return
+      setTimeout(() => this.renderCaptcha(), 200)
+      return
     }
+
     const script = document.createElement('script')
-    script.id  = 'recaptcha-script'
-    script.src = 'https://www.google.com/recaptcha/api.js?render=explicit'
+    script.id = 'recaptcha-script'
+
+    // ✔️ FIX IMPORTANT (v2)
+    script.src = 'https://www.google.com/recaptcha/api.js'
+
+    script.async = true
+    script.defer = true
     script.onload = () => this.zone.run(() => this.renderCaptcha())
+
     document.head.appendChild(script)
   }
 
+  // ─────────────────────────────────────────────
   private renderCaptcha(): void {
-    const el = document.getElementById('recaptcha-container')
-    if (!el || typeof grecaptcha === 'undefined') return
-    el.innerHTML = ''
-    this.captchaId = grecaptcha.render(el, {
-      sitekey: this.siteKey,
-      theme: 'light'
-    })
-  }
+    if (typeof grecaptcha === 'undefined') return
 
-  private getCaptchaToken(): string {
-  if (typeof grecaptcha === 'undefined') return 'dev-bypass'  // ✅
-  return grecaptcha.getResponse(this.captchaId) || 'dev-bypass'
-}
+    // LOGIN
+    const loginEl = document.getElementById('login-captcha')
+    if (loginEl && !this.loginCaptchaWidgetId) {
+      this.loginCaptchaWidgetId = grecaptcha.render('login-captcha', {
+        sitekey: this.SITE_KEY,
+        theme: 'light'
+      })
+    }
 
-  private resetCaptcha(): void {
-    if (typeof grecaptcha !== 'undefined') {
-      grecaptcha.reset(this.captchaId)
+    // REGISTER
+    const regEl = document.getElementById('register-captcha')
+    if (regEl && !this.registerCaptchaWidgetId) {
+      this.registerCaptchaWidgetId = grecaptcha.render('register-captcha', {
+        sitekey: this.SITE_KEY,
+        theme: 'light'
+      })
     }
   }
 
-  // ── Login ─────────────────────────────────────────────────────────────
+  // ─────────────────────────────────────────────
+  private getCaptchaToken(widgetId: number | null): string {
+    if (!widgetId || typeof grecaptcha === 'undefined') return ''
+    return grecaptcha.getResponse(widgetId)
+  }
+
+  private resetCaptcha(widgetId: number | null): void {
+    if (widgetId !== null && typeof grecaptcha !== 'undefined') {
+      grecaptcha.reset(widgetId)
+    }
+  }
+
+  // ─────────────────────────────────────────────
   onLogin(): void {
     this.errorMsg = ''
-    const captchaToken = this.getCaptchaToken()
-    if (!captchaToken) { this.errorMsg = 'Veuillez valider le captcha'; return }
+
+    if (!this.loginEmail || !this.loginPassword) {
+      this.errorMsg = 'Email et mot de passe requis'
+      return
+    }
+
+    const captchaToken = this.getCaptchaToken(this.loginCaptchaWidgetId)
+    if (!captchaToken) {
+      this.errorMsg = 'Veuillez valider le captcha'
+      return
+    }
 
     this.loading = true
-    this.auth.login(this.loginEmail, this.loginPassword, captchaToken).subscribe({
-      next: user => {
+
+    this.auth.login(
+      this.loginEmail,
+      this.loginPassword,
+      captchaToken
+    ).subscribe({
+      next: (res: any) => {
         this.loading = false
-        this.router.navigate(user.role === 'admin' ? ['/admin/dashboard'] : ['/user'])
+
+        if (res.mfaRequired) {
+          this.pendingUserId = res.userId
+          this.showMfa = true
+          return
+        }
+
+        this.router.navigate(
+          res.role === 'admin' ? ['/admin/dashboard'] : ['/user']
+        )
       },
       error: err => {
         this.loading = false
         this.errorMsg = err.error?.error ?? 'Erreur de connexion'
-        this.resetCaptcha()
+        this.resetCaptcha(this.loginCaptchaWidgetId)
       }
     })
   }
 
-  // ── Register ──────────────────────────────────────────────────────────
-  onRegister(): void {
+  // ─────────────────────────────────────────────
+  onVerifyMfa(): void {
     this.errorMsg = ''
-    const captchaToken = this.getCaptchaToken()
-    if (!captchaToken) { this.errorMsg = 'Veuillez valider le captcha'; return }
+
+    if (!this.mfaCode || this.mfaCode.length !== 6) {
+      this.errorMsg = 'Code à 6 chiffres requis'
+      return
+    }
 
     this.loading = true
-    this.auth.register(this.regNom, this.regPrenom, this.regEmail, this.regPassword, captchaToken).subscribe({
-      next: () => {
+
+    this.auth.verifyMfa(this.pendingUserId, this.mfaCode).subscribe({
+      next: (res: any) => {
         this.loading = false
-        this.router.navigate(['/user'])
+        this.router.navigate(
+          res.role === 'admin' ? ['/admin/dashboard'] : ['/user']
+        )
       },
       error: err => {
         this.loading = false
-        this.errorMsg = err.error?.error ?? 'Erreur lors de l\'inscription'
-        this.resetCaptcha()
+        this.errorMsg = err.error?.error ?? 'Code MFA incorrect'
+        this.mfaCode = ''
       }
     })
   }
 
-  // ── UI helpers ────────────────────────────────────────────────────────
+  onBackFromMfa(): void {
+    this.showMfa = false
+    this.mfaCode = ''
+    this.pendingUserId = ''
+    this.errorMsg = ''
+
+    setTimeout(() => this.renderCaptcha(), 200)
+  }
+
+  // ─────────────────────────────────────────────
+  onRegister(): void {
+    this.errorMsg = ''
+    this.successMsg = ''
+
+    if (!this.regNom || !this.regPrenom || !this.regEmail || !this.regPassword) {
+      this.errorMsg = 'Tous les champs sont requis'
+      return
+    }
+
+    if (this.regPassword.length < 8) {
+      this.errorMsg = 'Mot de passe trop court'
+      return
+    }
+
+    const captchaToken = this.getCaptchaToken(this.registerCaptchaWidgetId)
+    if (!captchaToken) {
+      this.errorMsg = 'Veuillez valider le captcha'
+      return
+    }
+
+    this.loading = true
+
+    this.auth.register(
+      this.regNom,
+      this.regPrenom,
+      this.regEmail,
+      this.regPassword,
+      captchaToken
+    ).subscribe({
+      next: () => {
+        this.loading = false
+        this.successMsg = 'Compte créé avec succès'
+
+        this.resetCaptcha(this.registerCaptchaWidgetId)
+
+        this.regNom = ''
+        this.regPrenom = ''
+        this.regEmail = ''
+        this.regPassword = ''
+        this.strength = 0
+
+        setTimeout(() => this.switchTab('login'), 2000)
+      },
+      error: err => {
+        this.loading = false
+        this.errorMsg = err.error?.error ?? 'Erreur inscription'
+        this.resetCaptcha(this.registerCaptchaWidgetId)
+      }
+    })
+  }
+
+  // ─────────────────────────────────────────────
   togglePw(input: HTMLInputElement): void {
-    if (!input) return
     input.type = input.type === 'password' ? 'text' : 'password'
   }
 
@@ -145,11 +271,11 @@ export class AuthPanelComponent {
   }
 
   getStrengthLabel(): string {
-    return ['Faible', 'Passable', 'Bien', 'Fort', 'Très fort'][this.strength] ?? 'Faible'
+    return ['Faible', 'Passable', 'Bien', 'Fort', 'Très fort'][this.strength]
   }
 
-  getStrengthColor(index: number): string {
-    if (this.strength < index) return ''
+  getStrengthColor(i: number): string {
+    if (this.strength < i) return ''
     if (this.strength <= 1) return '#c0392b'
     if (this.strength === 2) return '#e67e22'
     if (this.strength === 3) return '#2d9e3e'

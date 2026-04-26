@@ -251,3 +251,26 @@ $muted: rgba(255, 255, 255, 0.6);
     }
   }
 }
+.success-banner {
+  background: #1a4a2e;
+  border: 1px solid #2d9e3e;
+  color: #4ade80;
+  padding: 10px 16px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  font-size: 13px;
+}
+
+.mfa-hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: rgba(201, 168, 76, 0.1);
+  border: 1px solid rgba(201, 168, 76, 0.3);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 20px;
+
+  span { font-size: 24px; }
+  p    { margin: 0; font-size: 13px; color: #ccc; line-height: 1.4; }
+}

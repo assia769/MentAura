@@ -1,4 +1,5 @@
 <div class="auth-card">
+
   <!-- Header -->
   <div class="card-strip">
     <div class="card-num">Mentaura</div>
@@ -7,6 +8,11 @@
   <!-- Error Banner -->
   <div class="error-banner" *ngIf="errorMsg">
     <span>⚠ {{ errorMsg }}</span>
+  </div>
+
+  <!-- Success Banner -->
+  <div class="success-banner" *ngIf="successMsg">
+    <span>{{ successMsg }}</span>
   </div>
 
   <!-- Tabs -->
@@ -20,8 +26,11 @@
     <div class="tab-slider" [style.left.%]="currentTab === 'register' ? 50 : 3"></div>
   </div>
 
-  <!-- LOGIN FORM -->
-  <form class="auth-form" [class.active]="currentTab === 'login'" (ngSubmit)="onLogin()" #loginForm="ngForm">
+  <!-- ─── LOGIN FORM ─────────────────────────────────────────────────── -->
+  <form class="auth-form"
+        [class.active]="currentTab === 'login' && !showMfa"
+        (ngSubmit)="onLogin()">
+
     <div class="field-group">
       <label class="field-label">EMAIL</label>
       <input class="field-input" type="email" placeholder="vous@exemple.com"
@@ -30,24 +39,61 @@
 
     <div class="field-group">
       <label class="field-label">MOT DE PASSE</label>
-      <input class="field-input" type="password" placeholder="••••••••"
-             [(ngModel)]="loginPassword" name="loginPassword" required #pwInput />
-      <button class="field-toggle" type="button" (click)="togglePw(pwInput)">
-        {{ pwInput.type === 'password' ? '○' : '●' }}
-      </button>
+      <div class="pw-wrap">
+        <input class="field-input" type="password" placeholder="••••••••"
+               [(ngModel)]="loginPassword" name="loginPassword" required #pwLogin />
+        <button class="field-toggle" type="button" (click)="togglePw(pwLogin)">
+          {{ pwLogin.type === 'password' ? '○' : '●' }}
+        </button>
+      </div>
     </div>
 
-    <div id="recaptcha-container" class="captcha-wrap"></div>
+    <!-- CAPTCHA LOGIN — ID unique -->
+    <div id="login-captcha" class="captcha-wrap"></div>
 
     <button type="submit" class="btn-submit" [disabled]="loading">
       <span *ngIf="!loading">CONNEXION</span>
       <span *ngIf="loading" class="spinner"></span>
     </button>
+
     <p class="switch-note">Pas de compte ? <a (click)="switchTab('register')">S'inscrire</a></p>
   </form>
 
-  <!-- REGISTER FORM -->
-  <form class="auth-form" [class.active]="currentTab === 'register'" (ngSubmit)="onRegister()">
+  <!-- ─── MFA STEP ───────────────────────────────────────────────────── -->
+  <div class="auth-form" [class.active]="showMfa">
+
+    <div class="mfa-hint">
+      <span>🔐</span>
+      <p>Entrez le code à 6 chiffres de votre application d'authentification.</p>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">CODE MFA</label>
+      <input class="field-input"
+             type="text"
+             placeholder="123456"
+             [(ngModel)]="mfaCode"
+             name="mfaCode"
+             maxlength="6"
+             inputmode="numeric"
+             autocomplete="one-time-code" />
+    </div>
+
+    <button type="button" class="btn-submit" (click)="onVerifyMfa()" [disabled]="loading">
+      <span *ngIf="!loading">VÉRIFIER</span>
+      <span *ngIf="loading" class="spinner"></span>
+    </button>
+
+    <p class="switch-note">
+      <a (click)="onBackFromMfa()">← Retour</a>
+    </p>
+  </div>
+
+  <!-- ─── REGISTER FORM ──────────────────────────────────────────────── -->
+  <form class="auth-form"
+        [class.active]="currentTab === 'register'"
+        (ngSubmit)="onRegister()">
+
     <div class="fields-row">
       <div class="field-group">
         <label class="field-label">NOM</label>
@@ -69,13 +115,15 @@
 
     <div class="field-group">
       <label class="field-label">MOT DE PASSE</label>
-      <input class="field-input" type="password" placeholder="Min. 8 caractères"
-             [(ngModel)]="regPassword" name="regPassword" required
-             (input)="checkStrength($any($event.target).value)"
-             #regPw />
-      <button class="field-toggle" type="button" (click)="togglePw(regPw)">
-        {{ regPw.type === 'password' ? '○' : '●' }}
-      </button>
+      <div class="pw-wrap">
+        <input class="field-input" type="password" placeholder="Min. 8 caractères"
+               [(ngModel)]="regPassword" name="regPassword" required
+               (input)="checkStrength($any($event.target).value)"
+               #regPw />
+        <button class="field-toggle" type="button" (click)="togglePw(regPw)">
+          {{ regPw.type === 'password' ? '○' : '●' }}
+        </button>
+      </div>
       <div class="strength-meter">
         <div class="strength-blocks">
           <div class="s-block" [style.background]="getStrengthColor(1)"></div>
@@ -87,12 +135,15 @@
       </div>
     </div>
 
-    <div id="recaptcha-container" class="captcha-wrap"></div>
+    <!-- CAPTCHA REGISTER — ID unique différent du login -->
+    <div id="register-captcha" class="captcha-wrap"></div>
 
     <button type="submit" class="btn-submit" [disabled]="loading">
       <span *ngIf="!loading">CRÉER UN COMPTE</span>
       <span *ngIf="loading" class="spinner"></span>
     </button>
+
     <p class="switch-note">Déjà inscrit ? <a (click)="switchTab('login')">Se connecter</a></p>
   </form>
+
 </div>

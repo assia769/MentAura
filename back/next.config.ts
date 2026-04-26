@@ -1,14 +1,14 @@
-import type { NextConfig } from 'next'
-
-const nextConfig: NextConfig = {
+// back/next.config.js (ou next.config.ts)
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   async headers() {
     return [
       {
         source: '/api/:path*',
         headers: [
-          { key: 'Access-Control-Allow-Origin',      value: 'http://localhost:4200' },
-          { key: 'Access-Control-Allow-Methods',     value: 'GET,POST,PUT,DELETE,OPTIONS' },
-          { key: 'Access-Control-Allow-Headers',     value: 'Content-Type, Authorization' },
+          { key: 'Access-Control-Allow-Origin', value: 'http://localhost:4200' },
+          { key: 'Access-Control-Allow-Methods', value: 'GET, POST, PUT, DELETE, OPTIONS' },
+          { key: 'Access-Control-Allow-Headers', value: 'Content-Type, Authorization' },
           { key: 'Access-Control-Allow-Credentials', value: 'true' },
         ],
       },
@@ -16,4 +16,4 @@ const nextConfig: NextConfig = {
   },
 }
 
-export default nextConfig
+module.exports = nextConfig

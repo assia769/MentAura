@@ -9,6 +9,9 @@ export type AuditAction =
   | 'TOKEN_REFRESH'
   | 'ACCOUNT_LOCKED'
   | 'CAPTCHA_FAILED'
+  | 'MFA_REQUIRED'
+  | 'MFA_FAILED'
+  | 'MFA_SUCCESS'
 
 export async function auditLog(params: {
   userId?: string
