@@ -1,124 +1,173 @@
 <div class="auth-card">
 
+  <!-- Particules déco -->
+  <div class="deco-orb orb-1"></div>
+  <div class="deco-orb orb-2"></div>
+  <div class="deco-line line-1"></div>
+  <div class="deco-line line-2"></div>
+
   <!-- Header -->
   <div class="card-strip">
-    <div class="card-num">Welcome !</div>
+    <div class="card-num">
+      <span class="num-glow">{{ currentTab === 'login' ? 'I' : 'II' }}</span>
+    </div>
+    <div class="card-label">
+      {{ currentTab === 'login' ? 'Authentification' : 'Nouveau compte' }}
+    </div>
   </div>
 
   <!-- Tabs -->
   <div class="card-tabs">
     <button class="card-tab" [class.active]="currentTab === 'login'" (click)="switchTab('login')">
-      LOG IN
+      <span class="tab-icon">⟶</span> LOG IN
     </button>
     <button class="card-tab" [class.active]="currentTab === 'register'" (click)="switchTab('register')">
-      REGISTER
+      <span class="tab-icon">⊕</span> REGISTER
     </button>
-    <div class="tab-slider" [style.left.%]="currentTab === 'register' ? 50 : 3"></div>
+    <div class="tab-slider" [style.left]="currentTab === 'register' ? 'calc(50% + 3px)' : '3px'"></div>
   </div>
 
   <!-- ERROR -->
-  <div class="error-msg" *ngIf="errorMsg">{{ errorMsg }}</div>
+  <div class="error-msg" *ngIf="errorMsg">
+    <span class="error-icon">⚠</span>
+    {{ errorMsg }}
+  </div>
 
   <!-- ───────── LOGIN ───────── -->
-<div [hidden]="currentTab !== 'login' || showMfa">
+  <div class="auth-form" [class.active]="currentTab === 'login' && !showMfa">
 
-    <div class="form-group">
-      <label>Email</label>
-      <input type="email" [(ngModel)]="loginEmail" placeholder="votre@email.com" name="loginEmail"/>
-    </div>
-
-    <div class="form-group">
-      <label>Mot de passe</label>
-      <div class="pw-wrap">
-        <input #pwLogin type="password" [(ngModel)]="loginPassword" placeholder="••••••••" name="loginPassword"/>
-        <button type="button" (click)="togglePw(pwLogin)">👁</button>
+    <div class="field-group">
+      <label class="field-label">Email</label>
+      <div class="field-wrap">
+        <span class="field-icon">✦</span>
+        <input class="field-input" type="email" [(ngModel)]="loginEmail"
+               placeholder="votre@email.com" name="loginEmail"/>
       </div>
     </div>
 
-    <!-- CAPTCHA LOGIN -->
+    <div class="field-group">
+      <label class="field-label">Mot de passe</label>
+      <div class="field-wrap">
+        <span class="field-icon">◈</span>
+        <input #pwLogin class="field-input" type="password" [(ngModel)]="loginPassword"
+               placeholder="••••••••" name="loginPassword"/>
+        <button class="field-toggle" type="button" (click)="togglePw(pwLogin)">👁</button>
+      </div>
+    </div>
+
     <div class="captcha-wrap">
       <div id="login-captcha"></div>
     </div>
 
     <button class="btn-submit login-btn" (click)="onLogin()" [disabled]="loading">
-      <span *ngIf="!loading">SE CONNECTER</span>
-      <span *ngIf="loading" class="loading-dots">Connexion</span>
+      <span class="btn-bg"></span>
+      <span class="btn-shimmer"></span>
+      <span class="btn-text" *ngIf="!loading">
+        <span class="btn-arrow">→</span> SE CONNECTER
+      </span>
+      <span class="btn-text loading-dots" *ngIf="loading">Connexion en cours</span>
     </button>
 
+    <div class="switch-note">
+      Pas encore de compte ?
+      <a (click)="switchTab('register')">Créer un compte</a>
+    </div>
   </div>
 
   <!-- ───────── MFA ───────── -->
-  <div *ngIf="showMfa">
-
-    <p class="mfa-hint">
-      🔐 Entrez le code à 6 chiffres.
-    </p>
-
-    <div class="form-group">
-      <label>Code MFA</label>
-      <input type="text" [(ngModel)]="mfaCode" maxlength="6" inputmode="numeric"/>
+  <div class="auth-form mfa-form" [class.active]="showMfa">
+    <div class="mfa-header">
+      <div class="mfa-icon">🔐</div>
+      <p class="mfa-hint">Entrez le code à 6 chiffres généré par votre application.</p>
     </div>
-
-    <button class="btn-primary" (click)="onVerifyMfa()" [disabled]="loading">
-      {{ loading ? 'Vérification...' : 'Vérifier le code' }}
+    <div class="field-group">
+      <label class="field-label">Code MFA</label>
+      <div class="field-wrap">
+        <span class="field-icon">◈</span>
+        <input class="field-input mfa-input" type="text" [(ngModel)]="mfaCode"
+               maxlength="6" inputmode="numeric" placeholder="— — — — — —"/>
+      </div>
+    </div>
+    <button class="btn-submit login-btn" (click)="onVerifyMfa()" [disabled]="loading">
+      <span class="btn-bg"></span>
+      <span class="btn-shimmer"></span>
+      <span class="btn-text">{{ loading ? 'Vérification...' : '✓ Vérifier le code' }}</span>
     </button>
-
-    <button class="btn-link" (click)="showMfa = false; errorMsg = ''">
+    <button class="btn-back" (click)="showMfa = false; errorMsg = ''">
       ← Retour
     </button>
-
   </div>
 
   <!-- ───────── REGISTER ───────── -->
-<div [hidden]="currentTab !== 'register'">
+  <div class="auth-form" [class.active]="currentTab === 'register'">
 
-    <div class="form-group">
-      <label>Nom</label>
-      <input type="text" [(ngModel)]="regNom" placeholder="Bennani" name="regNom"/>
-    </div>
-
-    <div class="form-group">
-      <label>Prénom</label>
-      <input type="text" [(ngModel)]="regPrenom" placeholder="Ahmed" name="regPrenom"/>
-    </div>
-
-    <div class="form-group">
-      <label>Email</label>
-      <input type="email" [(ngModel)]="regEmail" placeholder="votre@email.com" name="regEmail"/>
-    </div>
-
-    <div class="form-group">
-      <label>Mot de passe</label>
-      <div class="pw-wrap">
-        <input
-          #pwReg
-          type="password"
-          [(ngModel)]="regPassword"
-          (input)="checkStrength(regPassword)"
-          placeholder="••••••••"
-          name="regPassword"
-        />
-        <button type="button" (click)="togglePw(pwReg)">👁</button>
+    <div class="fields-row">
+      <div class="field-group">
+        <label class="field-label">Nom</label>
+        <div class="field-wrap">
+          <span class="field-icon">✦</span>
+          <input class="field-input" type="text" [(ngModel)]="regNom"
+                 placeholder="Bennani" name="regNom"/>
+        </div>
       </div>
-
-      <!-- Strength -->
-      <div class="strength-bar">
-        <span *ngFor="let i of [1,2,3,4]" [style.background]="getStrengthColor(i)"></span>
+      <div class="field-group">
+        <label class="field-label">Prénom</label>
+        <div class="field-wrap">
+          <span class="field-icon">✦</span>
+          <input class="field-input" type="text" [(ngModel)]="regPrenom"
+                 placeholder="Ahmed" name="regPrenom"/>
+        </div>
       </div>
-      <small>{{ getStrengthLabel() }}</small>
     </div>
 
-    <!-- CAPTCHA REGISTER -->
+    <div class="field-group">
+      <label class="field-label">Email</label>
+      <div class="field-wrap">
+        <span class="field-icon">✦</span>
+        <input class="field-input" type="email" [(ngModel)]="regEmail"
+               placeholder="votre@email.com" name="regEmail"/>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">Mot de passe</label>
+      <div class="field-wrap">
+        <span class="field-icon">◈</span>
+        <input #pwReg class="field-input" type="password" [(ngModel)]="regPassword"
+               (input)="checkStrength(regPassword)" placeholder="••••••••" name="regPassword"/>
+        <button class="field-toggle" type="button" (click)="togglePw(pwReg)">👁</button>
+      </div>
+      <div class="strength-meter">
+        <div class="strength-blocks">
+          <span class="s-block" *ngFor="let i of [1,2,3,4]"
+                [style.background]="getStrengthColor(i)"
+                [style.transform]="strength >= i ? 'scaleX(1)' : 'scaleX(1)'">
+          </span>
+        </div>
+        <span class="strength-text">{{ getStrengthLabel() }}</span>
+      </div>
+    </div>
+
     <div class="captcha-wrap">
       <div id="register-captcha"></div>
     </div>
 
-    <div *ngIf="successMsg" class="success-msg">{{ successMsg }}</div>
+    <div *ngIf="successMsg" class="success-msg">
+      <span>✓</span> {{ successMsg }}
+    </div>
 
-    <button class="register-btn" (click)="onRegister()" [disabled]="loading">
-      {{ loading ? 'Création...' : 'Créer mon compte' }}
+    <button class="btn-submit register-btn" (click)="onRegister()" [disabled]="loading">
+      <span class="btn-bg"></span>
+      <span class="btn-shimmer"></span>
+      <span class="btn-text" *ngFor="let _ of [1]">
+        {{ loading ? 'Création du compte...' : '⊕ Créer mon compte' }}
+      </span>
     </button>
 
+    <div class="switch-note">
+      Déjà inscrit ?
+      <a (click)="switchTab('login')">Se connecter</a>
+    </div>
   </div>
 
 </div>
