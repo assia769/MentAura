@@ -1,171 +1,244 @@
 <div class="landing-wrapper">
-  <!-- Custom Cursor -->
   <app-cursor></app-cursor>
 
-  <!-- Navigation -->
+  <!-- ══════════════════════ NAV ══════════════════════ -->
   <nav id="mainNav" class="nav">
     <div class="nav-inner">
       <div class="nav-brand">
-        <img src="assets/logo.png" alt="Mentaura" class="nav-logo" />
-        <span class="nav-brand-text">MENTAURA</span>
+        <div class="nav-logo-ring">
+          <img src="assets/logo.png" alt="Mentaura" class="nav-logo" />
+        </div>
+        <div class="nav-brand-text-group">
+          <span class="nav-brand-text">MENTAURA</span>
+          <span class="nav-brand-tagline">Intelligence Engine</span>
+        </div>
       </div>
+
+      <div class="nav-links">
+        <a class="nav-link" href="#how">Process</a>
+        <a class="nav-link" href="#features">Features</a>
+        <a class="nav-link" href="#testimonials">Reviews</a>
+      </div>
+
       <div class="nav-right">
-        <button class="nav-cta" (click)="switchTab('register')">GET ACCESS</button>
-      </div>
-    </div>
-  </nav>
-
-  <!-- Hero Section -->
-  <section class="hero">
-    <!-- Left: Headline + Floating Orb -->
-    <div class="col-headline">
-      <div class="eyebrow">
-        <span class="eyebrow-dot"></span>
-        PRODUCTIVITY App · 2026
-      </div>
-
-      <h1 class="headline">
-        <span class="hl-word">Master</span>
-        <span class="hl-word">your mind's</span>
-        <span class="hl-word italic">potential.</span>
-      </h1>
-
-      <p class="sub-copy">
-        Mentaura is where intelligence meets intention. Think deeper, work sharper — AI woven seamlessly into your flow.
-      </p>
-
-      <div class="cta-row">
-        <button class="btn-primary" (click)="switchTab('register')">BEGIN FREE</button>
-        <button class="btn-ghost">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-            <circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1"/>
-            <path d="M5.5 4.5L9.5 7L5.5 9.5V4.5Z" fill="currentColor"/>
+        <button class="nav-login" (click)="switchTab('login')">Sign in</button>
+        <button class="nav-cta" (click)="switchTab('register')">
+          <span>GET ACCESS</span>
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+            <path d="M2 8L8 2M8 2H3M8 2v5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
           </svg>
-          WATCH DEMO
         </button>
       </div>
+    </div>
+    <div class="nav-progress-bar"></div>
+  </nav>
 
-      <!-- Stats -->
-      <div class="stat-bar">
-        <div class="stat-item">
-          <div class="stat-n">48K</div>
-          <div class="stat-l">ACTIVE USERS</div>
-        </div>
-        <div class="stat-sep"></div>
-        <div class="stat-item">
-          <div class="stat-n">3.2<span class="stat-x">×</span></div>
-          <div class="stat-l">PRODUCTIVITY</div>
-        </div>
-        <div class="stat-sep"></div>
-        <div class="stat-item">
-          <div class="stat-n">99<span class="stat-x">%</span></div>
-          <div class="stat-l">SATISFACTION</div>
-        </div>
-      </div>
-
-      <!-- Orb zone -->
-      <div class="orb-zone">
-        <app-floating-orb></app-floating-orb>
-
-        <!-- Floating ambient cards around the orb -->
-        <div class="ambient-card ambient-card--1 reveal">
-          <div class="ambient-card__icon">⚡</div>
-          <div class="ambient-card__text">
-            <span class="ambient-card__val">12×</span>
-            <span class="ambient-card__lbl">Faster Research</span>
-          </div>
-        </div>
-
-        <div class="ambient-card ambient-card--2 reveal">
-          <div class="ambient-card__icon">🧠</div>
-          <div class="ambient-card__text">
-            <span class="ambient-card__val">AI Memory</span>
-            <span class="ambient-card__lbl">Always On</span>
-          </div>
-        </div>
-
-        <div class="ambient-card ambient-card--3 reveal">
-          <div class="ambient-card__pulse"></div>
-          <div class="ambient-card__text">
-            <span class="ambient-card__val">Live</span>
-            <span class="ambient-card__lbl">Now Processing</span>
-          </div>
-        </div>
-      </div>
+  <!-- ══════════════════════ HERO ══════════════════════ -->
+  <section class="hero">
+    <!-- Layered atmospheric background -->
+    <div class="hero-bg">
+      <div class="hero-grid-overlay"></div>
+      <div class="hero-radial-1"></div>
+      <div class="hero-radial-2"></div>
+      <div class="hero-noise"></div>
     </div>
 
-    <!-- Right: Auth Panel -->
-    <div class="col-auth">
-      <app-auth-panel
-        [currentTab]="currentTab"
-        (tabChange)="switchTab($event)">
-      </app-auth-panel>
+    <div class="hero-inner">
+      <!-- Left column -->
+      <div class="col-headline">
+
+        <div class="eyebrow">
+          <div class="eyebrow-pill">
+            <div class="eyebrow-dot"></div>
+            <span>LIVE · 48,291 users active now</span>
+          </div>
+        </div>
+
+        <h1 class="headline">
+          <span class="hl-line">Master your</span>
+          <span class="hl-line hl-accent">mind's full</span>
+          <span class="hl-line hl-italic">potential.</span>
+        </h1>
+
+        <p class="sub-copy">
+          Mentaura is where intelligence meets intention.<br>
+          Think deeper, work sharper — AI woven seamlessly<br>
+          into your cognitive flow.
+        </p>
+
+        <div class="cta-row">
+          <button class="btn-primary" (click)="switchTab('register')">
+            <span class="btn-primary__text">BEGIN FREE</span>
+            <span class="btn-primary__arrow">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <path d="M2 12L12 2M12 2H4M12 2v8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+              </svg>
+            </span>
+            <div class="btn-primary__shine"></div>
+          </button>
+          <button class="btn-ghost">
+            <div class="btn-ghost__play">
+              <svg width="10" height="12" viewBox="0 0 10 12" fill="currentColor">
+                <path d="M0 0l10 6-10 6V0z"/>
+              </svg>
+            </div>
+            WATCH DEMO
+          </button>
+        </div>
+
+        <!-- Trust badges -->
+        <div class="trust-row">
+          <div class="trust-item">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1l1.3 3.9H11L8.1 7.1l1 3.9L6 9l-3.1 2 1-3.9L1 4.9h3.7z" fill="currentColor"/></svg>
+            <span>4.9/5 rating</span>
+          </div>
+          <div class="trust-sep"></div>
+          <div class="trust-item">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <span>SOC2 certified</span>
+          </div>
+          <div class="trust-sep"></div>
+          <div class="trust-item">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="2" y="5" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.2"/><path d="M4 5V3.5a2 2 0 0 1 4 0V5" stroke="currentColor" stroke-width="1.2"/></svg>
+            <span>Enterprise-grade</span>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stat-bar">
+          <div class="stat-item">
+            <div class="stat-n" data-target="48000">48K</div>
+            <div class="stat-l">Active Users</div>
+          </div>
+          <div class="stat-sep"></div>
+          <div class="stat-item">
+            <div class="stat-n">3.2<span class="stat-x">×</span></div>
+            <div class="stat-l">Productivity</div>
+          </div>
+          <div class="stat-sep"></div>
+          <div class="stat-item">
+            <div class="stat-n">99<span class="stat-x">%</span></div>
+            <div class="stat-l">Satisfaction</div>
+          </div>
+        </div>
+
+        <!-- Orb zone -->
+        <div class="orb-zone">
+          <app-floating-orb></app-floating-orb>
+
+          <div class="ambient-card ambient-card--1 reveal">
+            <div class="ambient-card__dot amber"></div>
+            <div class="ambient-card__text">
+              <span class="ambient-card__val">12×</span>
+              <span class="ambient-card__lbl">Faster Research</span>
+            </div>
+          </div>
+
+          <div class="ambient-card ambient-card--2 reveal">
+            <div class="ambient-card__icon-wrap">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="7" cy="5" r="3"/><path d="M1 13c0-3.3 2.7-6 6-6s6 2.7 6 6"/></svg>
+            </div>
+            <div class="ambient-card__text">
+              <span class="ambient-card__val">AI Memory</span>
+              <span class="ambient-card__lbl">Always Learning</span>
+            </div>
+          </div>
+
+          <div class="ambient-card ambient-card--3 reveal">
+            <div class="ambient-card__pulse"></div>
+            <div class="ambient-card__text">
+              <span class="ambient-card__val">Live</span>
+              <span class="ambient-card__lbl">Processing Now</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Auth Panel -->
+      <div class="col-auth">
+        <div class="auth-glow"></div>
+        <app-auth-panel
+          [currentTab]="currentTab"
+          (tabChange)="switchTab($event)">
+        </app-auth-panel>
+      </div>
     </div>
   </section>
 
-  <!-- How it works -->
-  <section class="how-it-works">
+  <!-- ══════════════════════ MARQUEE ══════════════════════ -->
+  <div class="marquee-section">
+    <div class="marquee-track">
+      <span *ngFor="let item of ['DEEP RESEARCH', 'AI MEMORY', 'CODE AUTONOMY', 'KNOWLEDGE GRAPHS', 'SEMANTIC SEARCH', 'WORKFLOW AI', 'CONTEXT ENGINE', 'NEURAL INDEXING', 'DEEP RESEARCH', 'AI MEMORY', 'CODE AUTONOMY', 'KNOWLEDGE GRAPHS', 'SEMANTIC SEARCH', 'WORKFLOW AI', 'CONTEXT ENGINE', 'NEURAL INDEXING']" class="marquee-item">
+        {{ item }}<span class="marquee-dot">·</span>
+      </span>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ HOW IT WORKS ══════════════════════ -->
+  <section class="how-it-works" id="how">
     <div class="how-inner">
-      <div class="section-label">HOW IT WORKS</div>
-      <h2 class="section-title">Three steps to <em>mastery</em></h2>
+      <div class="section-eyebrow reveal">HOW IT WORKS</div>
+      <h2 class="section-title reveal">Three steps to <em>mastery</em></h2>
+      <p class="section-sub reveal">A system designed for depth — not shortcuts.</p>
+
       <div class="steps-track">
         <ng-container *ngFor="let step of steps; let i = index">
-          <div class="step-card reveal">
-            <div class="step-number">{{ step.number }}</div>
-            <div class="step-body">
-              <h3 class="step-title">{{ step.title }}</h3>
-              <p class="step-desc">{{ step.desc }}</p>
+          <div class="step-card reveal" [style.transition-delay]="(i * 0.15) + 's'">
+            <div class="step-card__top">
+              <div class="step-number">{{ step.number }}</div>
+              <div class="step-icon" [innerHTML]="step.icon"></div>
             </div>
+            <h3 class="step-title">{{ step.title }}</h3>
+            <p class="step-desc">{{ step.desc }}</p>
+            <div class="step-line"></div>
           </div>
-          <div class="step-connector" *ngIf="i < steps.length - 1"></div>
+          <div class="step-connector" *ngIf="i < steps.length - 1">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
+            </svg>
+          </div>
         </ng-container>
       </div>
     </div>
   </section>
 
-  <!-- Features Section -->
-  <section class="features">
-    <div class="section-label">CAPABILITIES</div>
-    <h2 class="section-title">What You Get</h2>
-    <div class="features-grid">
-      <div class="feat-card reveal">
-        <div class="feat-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
-            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-          </svg>
+  <!-- ══════════════════════ FEATURES ══════════════════════ -->
+  <section class="features" id="features">
+    <div class="features-inner">
+      <div class="section-eyebrow reveal">CAPABILITIES</div>
+      <h2 class="section-title reveal">What you <em>unlock</em></h2>
+
+      <div class="features-grid">
+        <div class="feat-card reveal" *ngFor="let f of features; let i = index" [style.transition-delay]="(i * 0.1 + 0.2) + 's'">
+          <div class="feat-card__header">
+            <div class="feat-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" [innerHTML]="f.svgPath"></svg>
+            </div>
+            <span class="feat-tag">{{ f.tag }}</span>
+          </div>
+          <h3 class="feat-title">{{ f.title }}</h3>
+          <p class="feat-desc">{{ f.desc }}</p>
+          <div class="feat-card__footer">
+            <span class="feat-link">Learn more
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 8L8 2M8 2H3M8 2v5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            </span>
+          </div>
         </div>
-        <h3 class="feat-title">Deep Intelligence</h3>
-        <p class="feat-desc">Research that goes beyond surface level. Synthesize, analyze, and extract meaning in real-time.</p>
-      </div>
-      <div class="feat-card reveal">
-        <div class="feat-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
-            <path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/><circle cx="18" cy="6" r="3"/>
-          </svg>
-        </div>
-        <h3 class="feat-title">Memory That Persists</h3>
-        <p class="feat-desc">Never lose context. Your memory engine learns from every interaction and adapts to your workflow.</p>
-      </div>
-      <div class="feat-card reveal">
-        <div class="feat-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
-            <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
-          </svg>
-        </div>
-        <h3 class="feat-title">Code That Ships</h3>
-        <p class="feat-desc">Agentic code mode. Write, review, test, and deploy — all autonomously. Your IDE meets AI.</p>
       </div>
     </div>
   </section>
 
-  <!-- Testimonials -->
-  <section class="testimonials">
+  <!-- ══════════════════════ TESTIMONIALS ══════════════════════ -->
+  <section class="testimonials" id="testimonials">
     <div class="testi-inner">
-      <div class="section-label">TESTIMONIALS</div>
-      <h2 class="section-title">Trusted by <em>thinkers</em></h2>
+      <div class="section-eyebrow reveal">TESTIMONIALS</div>
+      <h2 class="section-title reveal">Trusted by <em>thinkers</em></h2>
+
       <div class="testi-grid">
-        <div class="testi-card reveal" *ngFor="let t of testimonials">
-          <div class="testi-quote-mark">"</div>
+        <div class="testi-card reveal" *ngFor="let t of testimonials; let i = index" [style.transition-delay]="(i * 0.12) + 's'">
+          <div class="testi-stars">
+            <svg *ngFor="let s of [1,2,3,4,5]" width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><path d="M6 1l1.3 3.9H11L8.1 7.1l1 3.9L6 9l-3.1 2 1-3.9L1 4.9h3.7z"/></svg>
+          </div>
           <p class="testi-quote">{{ t.quote }}</p>
           <div class="testi-author">
             <div class="testi-avatar">{{ t.name.charAt(0) }}</div>
@@ -179,31 +252,84 @@
     </div>
   </section>
 
-  <!-- CTA Banner -->
+  <!-- ══════════════════════ CTA BANNER ══════════════════════ -->
   <section class="cta-banner">
-    <div class="cta-banner__glow"></div>
+    <div class="cta-banner__bg">
+      <div class="cta-banner__orb cta-banner__orb--1"></div>
+      <div class="cta-banner__orb cta-banner__orb--2"></div>
+      <div class="cta-banner__grid"></div>
+    </div>
     <div class="cta-banner__inner">
-      <h2 class="cta-banner__title">Ready to <em>think differently?</em></h2>
-      <p class="cta-banner__sub">Join 48,000+ professionals using Mentaura to unlock their full potential.</p>
-      <!-- <button class="btn-primary" (click)="switchTab('register')">START FOR FREE →</button> -->
-      <button class="btn-primary" (click)="goToRegisterTop()">
-      START FOR FREE →
-    </button>
+      <div class="cta-banner__badge reveal">JOIN 48,000+ PROFESSIONALS</div>
+      <h2 class="cta-banner__title reveal">Ready to think<br><em>differently?</em></h2>
+      <p class="cta-banner__sub reveal">Unlock the cognitive tools that industry leaders rely on daily.</p>
+      <button class="btn-primary btn-primary--large reveal" (click)="goToRegisterTop()">
+        <span class="btn-primary__text">START FOR FREE</span>
+        <span class="btn-primary__arrow">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M2 12L12 2M12 2H4M12 2v8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <div class="btn-primary__shine"></div>
+      </button>
+      <p class="cta-note reveal">No credit card required · Cancel anytime</p>
     </div>
   </section>
 
-  <!-- Footer -->
+  <!-- ══════════════════════ FOOTER ══════════════════════ -->
   <footer class="footer">
-    <div class="footer-inner">
-      <div class="footer-brand">
-        <img src="assets/logo.png" alt="Mentaura" class="footer-logo" />
-        <span>MENTAURA</span>
+    <div class="footer-top">
+      <div class="footer-col footer-col--brand">
+        <div class="footer-brand">
+          <img src="assets/logo.png" alt="Mentaura" class="footer-logo" />
+          <span class="footer-brand-text">MENTAURA</span>
+        </div>
+        <p class="footer-tagline">Intelligence engineered<br>for human potential.</p>
+        <div class="footer-social">
+          <a href="#" class="footer-social-btn" aria-label="Twitter">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><path d="M13.5 2.5a5.4 5.4 0 0 1-1.5.4 2.7 2.7 0 0 0 1.2-1.5 5.4 5.4 0 0 1-1.7.6A2.7 2.7 0 0 0 7 4.3c0 .2 0 .4.1.6A7.7 7.7 0 0 1 1.4 2a2.7 2.7 0 0 0 .8 3.6 2.7 2.7 0 0 1-1.2-.3v.03a2.7 2.7 0 0 0 2.1 2.6 2.7 2.7 0 0 1-1.2 0 2.7 2.7 0 0 0 2.5 1.9A5.4 5.4 0 0 1 .8 11a7.7 7.7 0 0 0 4.1 1.2c5 0 7.7-4.1 7.7-7.7v-.35a5.4 5.4 0 0 0 .9-1.65z"/></svg>
+          </a>
+          <a href="#" class="footer-social-btn" aria-label="LinkedIn">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><path d="M1 4.5h2.5V13H1zm1.25-1a1.4 1.4 0 1 1 0-2.8 1.4 1.4 0 0 1 0 2.8zm3 1.5h2.4V6.1h.05C8 5.4 9 4.3 10.5 4.3c2.5 0 3 1.6 3 3.7V13h-2.5V8.6c0-.9 0-2-1.3-2-1.3 0-1.5 1-1.5 2V13H5.25z"/></svg>
+          </a>
+          <a href="#" class="footer-social-btn" aria-label="GitHub">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><path d="M7 .5a6.5 6.5 0 0 0-2.05 12.67c.33.06.45-.14.45-.3v-1.15C3.3 12.1 2.93 10.9 2.93 10.9c-.29-.75-.72-.95-.72-.95-.59-.4.04-.39.04-.39.65.05 1 .67 1 .67.58 1 1.53.71 1.9.54.06-.42.23-.71.41-.87-1.45-.16-2.98-.72-2.98-3.22 0-.71.25-1.29.67-1.74-.07-.17-.3-.83.06-1.72 0 0 .55-.18 1.8.67A6.3 6.3 0 0 1 7 4.18c.56 0 1.12.08 1.65.22 1.25-.85 1.8-.67 1.8-.67.36.9.13 1.55.06 1.72.42.45.67 1.03.67 1.74 0 2.5-1.53 3.06-2.99 3.22.24.2.45.6.45 1.21v1.8c0 .16.12.36.45.3A6.5 6.5 0 0 0 7 .5z"/></svg>
+          </a>
+        </div>
       </div>
-      <p>© 2025 MENTAURA · ALL RIGHTS RESERVED</p>
-      <div class="footer-links">
-        <a href="#">Privacy</a>
-        <a href="#">Terms</a>
-        <a href="#">Contact</a>
+
+      <div class="footer-col">
+        <div class="footer-col-title">Product</div>
+        <a href="#" class="footer-link">Features</a>
+        <a href="#" class="footer-link">Pricing</a>
+        <a href="#" class="footer-link">Changelog</a>
+        <a href="#" class="footer-link">Roadmap</a>
+      </div>
+
+      <div class="footer-col">
+        <div class="footer-col-title">Company</div>
+        <a href="#" class="footer-link">About</a>
+        <a href="#" class="footer-link">Blog</a>
+        <a href="#" class="footer-link">Careers</a>
+        <a href="#" class="footer-link">Press</a>
+      </div>
+
+      <div class="footer-col">
+        <div class="footer-col-title">Legal</div>
+        <a href="#" class="footer-link">Privacy</a>
+        <a href="#" class="footer-link">Terms</a>
+        <a href="#" class="footer-link">Security</a>
+        <a href="#" class="footer-link">Contact</a>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© 2026 MENTAURA · ALL RIGHTS RESERVED</p>
+      <div class="footer-bottom-right">
+        <span class="footer-status">
+          <span class="footer-status-dot"></span>
+          All systems operational
+        </span>
       </div>
     </div>
   </footer>

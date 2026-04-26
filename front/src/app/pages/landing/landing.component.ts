@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FloatingOrbComponent } from './floating-orb/floating-orb.component';
@@ -12,7 +12,7 @@ import { RouterModule } from '@angular/router';
   imports: [
     CommonModule,
     FormsModule,
-    RouterModule, 
+    RouterModule,
     FloatingOrbComponent,
     AuthPanelComponent,
     CursorComponent
@@ -20,54 +20,89 @@ import { RouterModule } from '@angular/router';
   templateUrl: './landing.component.html',
   styleUrls: ['./landing.component.scss']
 })
-export class LandingComponent implements AfterViewInit, OnDestroy {
+export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
 
   currentTab: 'login' | 'register' = 'login';
   private animationFrameId: number | null = null;
+  private scrollListeners: (() => void)[] = [];
 
-  // ── Steps data ────────────────────────────────────────────────
   steps = [
     {
       number: '01',
       title: 'Connect Your Mind',
-      desc: 'Import your notes, documents, and workflows. Mentaura maps your knowledge graph instantly.'
+      desc: 'Import your notes, documents, and workflows. Mentaura maps your knowledge graph instantly.',
+      icon: `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M10 2a8 8 0 1 0 0 16A8 8 0 0 0 10 2zm0 0v8m0 0l4-4m-4 4l-4-4"/></svg>`
     },
     {
       number: '02',
       title: 'AI Learns You',
-      desc: 'Over time, the engine adapts to your thinking style, priorities, and patterns.'
+      desc: 'Over time, the engine adapts to your thinking style, priorities, and patterns.',
+      icon: `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="10" cy="10" r="3"/><path d="M10 2v2m0 12v2M2 10h2m12 0h2m-3.17-4.83-1.41 1.41M4.58 15.42l1.41-1.41m0-8.24-1.41-1.41m11.24 11.24-1.41-1.41"/></svg>`
     },
     {
       number: '03',
       title: 'Think at Scale',
-      desc: 'Execute complex tasks, research and create — with AI that truly understands context.'
+      desc: 'Execute complex tasks, research and create — with AI that truly understands context.',
+      icon: `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M3 10l4 4 10-10"/><circle cx="10" cy="10" r="8"/></svg>`
     }
   ];
 
-  // ── Testimonials data ─────────────────────────────────────────
   testimonials = [
     {
       quote: 'Mentaura changed how I approach research entirely. It thinks the way I do — and faster.',
       name: 'Sophia M.',
-      role: 'Lead Researcher, Nexis AI'
+      role: 'Lead Researcher, Nexis AI',
+      rating: 5
     },
     {
       quote: 'The memory engine is unlike anything I\'ve used. My workflow is now truly frictionless.',
       name: 'James T.',
-      role: 'Senior Engineer, Orbit Labs'
+      role: 'Senior Engineer, Orbit Labs',
+      rating: 5
     },
     {
       quote: 'Finally an AI tool built for depth, not just speed. My productivity tripled in a month.',
       name: 'Layla K.',
-      role: 'Strategy Director, Verne Capital'
+      role: 'Strategy Director, Verne Capital',
+      rating: 5
     }
   ];
+
+  features = [
+    {
+      title: 'Deep Intelligence',
+      desc: 'Research that goes beyond surface level. Synthesize, analyze, and extract meaning in real-time.',
+      tag: 'Core',
+      svgPath: `<circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>`
+    },
+    {
+      title: 'Memory That Persists',
+      desc: 'Never lose context. Your memory engine learns from every interaction and adapts to your workflow.',
+      tag: 'Pro',
+      svgPath: `<path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/><circle cx="18" cy="6" r="3"/>`
+    },
+    {
+      title: 'Code That Ships',
+      desc: 'Agentic code mode. Write, review, test, and deploy — all autonomously. Your IDE meets AI.',
+      tag: 'Enterprise',
+      svgPath: `<polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>`
+    }
+  ];
+
+  ngOnInit(): void {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('tab') === 'register') {
+      this.currentTab = 'register';
+    }
+  }
 
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.initNav();
       this.initScrollReveal();
       this.initCounters();
+      this.initMarquee();
+      this.initParallax();
     }, 0);
   }
 
@@ -75,57 +110,73 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
     if (this.animationFrameId) {
       cancelAnimationFrame(this.animationFrameId);
     }
+    this.scrollListeners.forEach(fn => fn());
   }
-  ngOnInit(): void {
-  const params = new URLSearchParams(window.location.search);
-  if (params.get('tab') === 'register') {
-    this.currentTab = 'register';
-  }
-}
 
-  // ── Nav ───────────────────────────────────────────────────────
   private initNav(): void {
     const nav = document.getElementById('mainNav');
     if (!nav) return;
-
     let lastY = 0;
-
     const handleScroll = () => {
       const y = window.scrollY;
       nav.classList.toggle('scrolled', y > 20);
       nav.style.transform = (y > lastY && y > 80) ? 'translateY(-100%)' : 'translateY(0)';
       lastY = y;
     };
-
     window.addEventListener('scroll', handleScroll);
+    this.scrollListeners.push(() => window.removeEventListener('scroll', handleScroll));
   }
 
-  // ── Tab passthrough ───────────────────────────────────────────
   switchTab(tab: 'login' | 'register'): void {
     this.currentTab = tab;
   }
 
-  // ── Scroll reveal ─────────────────────────────────────────────
   private initScrollReveal(): void {
     const items = document.querySelectorAll('.reveal');
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) entry.target.classList.add('visible');
       });
-    }, { threshold: 0.15 });
+    }, { threshold: 0.1 });
     items.forEach(el => observer.observe(el));
   }
-   goToRegisterTop(): void {
-  window.location.href = window.location.origin + '/?tab=register';
-}
-  // ── Counters ──────────────────────────────────────────────────
+
+  private initParallax(): void {
+    const handleScroll = () => {
+      const y = window.scrollY;
+      const grid = document.querySelector('.hero-grid-overlay') as HTMLElement;
+      if (grid) grid.style.transform = `translateY(${y * 0.15}px)`;
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    this.scrollListeners.push(() => window.removeEventListener('scroll', handleScroll));
+  }
+
+  private initMarquee(): void {
+    const track = document.querySelector('.marquee-track') as HTMLElement;
+    if (!track) return;
+    let pos = 0;
+    const speed = 0.4;
+    const animate = () => {
+      pos -= speed;
+      const half = track.scrollWidth / 2;
+      if (Math.abs(pos) >= half) pos = 0;
+      track.style.transform = `translateX(${pos}px)`;
+      this.animationFrameId = requestAnimationFrame(animate);
+    };
+    animate();
+  }
+
+  goToRegisterTop(): void {
+    window.location.href = window.location.origin + '/?tab=register';
+  }
+
   private initCounters(): void {
-    document.querySelectorAll('.stat-n').forEach((el: any) => {
+    document.querySelectorAll('.stat-n[data-target]').forEach((el: any) => {
       const target = parseFloat(el.dataset.target);
       if (isNaN(target)) return;
       let count = 0;
       const update = () => {
-        count += target / 100;
+        count += target / 80;
         if (count < target) {
           el.innerText = Math.round(count).toLocaleString();
           requestAnimationFrame(update);
