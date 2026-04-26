@@ -9,13 +9,6 @@ export const routes: Routes = [
       import('./pages/landing/landing.component').then(m => m.LandingComponent)
   },
 
-  // ── MFA ────────────────────────────────────────────────────────────────
-  // {
-  //   path: 'mfa',
-  //   loadComponent: () =>
-  //     import('./pages/auth/mfa/mfa.component').then(m => m.MfaComponent)
-  // },
-
   // ── Admin (protected) ──────────────────────────────────────────────────
   {
     path: 'admin',
@@ -32,37 +25,16 @@ export const routes: Routes = [
     ]
   },
 
-  // ── User — placeholder Omaima & Khadija ───────────────────────────────
-  // {
-  //   path: 'user',
-  //   canActivate: [authGuard],
-  //   loadComponent: () =>
-  //     import('./pages/user/shell/user-shell.component').then(m => m.UserShellComponent),
-  //   children: [
-  //     // Khadija
-  //     // { path: 'sessions', ... }
-  //     // { path: 'notifications', ... }
-  //     // { path: 'settings', ... }
-  //     // Omaima
-  //     // { path: 'profile', ... }
-  //     // { path: 'groups', ... }
-  //     // { path: 'analytics', ... }
-  //     { path: '', pathMatch: 'full', component: undefined as any }
-  //   ]
-  // },
-{
-  path: 'user',
-  canActivate: [authGuard],
-  loadComponent: () =>
-    import('./pages/user/shell/user-shell.component').then(m => m.UserShellComponent),
-  children: [
-    // Khadija
-    // { path: 'sessions', ... }
-    // Omaima
-    // { path: 'profile', ... }
-    { path: '', redirectTo: '/user/dashboard', pathMatch: 'full' }  // ✅ Fix
-  ]
-},
+  // ── User (protected) ───────────────────────────────────────────────────
+  {
+    path: 'user',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./pages/user/shell/user-shell.component')
+        .then(m => m.UserShellComponent),
+    // Pas de children pour l'instant — la page shell IS la destination
+  },
+
   // ── Fallback ────────────────────────────────────────────────────────────
   { path: '**', redirectTo: '' }
 ]

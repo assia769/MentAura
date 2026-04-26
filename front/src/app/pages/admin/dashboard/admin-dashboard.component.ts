@@ -16,6 +16,9 @@ export class AdminDashboardComponent implements OnInit {
   private auth     = inject(AuthService)
   private router   = inject(Router)
 
+  // Expose Math to template
+  Math = Math
+
   stats: AdminStats | null = null
   auditLogs: AuditLog[]   = []
   totalLogs               = 0
@@ -29,7 +32,6 @@ export class AdminDashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadStats()
-    this.loadLogs()
   }
 
   loadStats(): void {
@@ -65,9 +67,12 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   setTab(tab: 'overview' | 'logs' | 'users'): void {
+     console.log('🔥 setTab called:', tab) 
     this.activeTab = tab
+    // Load data lazily per tab
     if (tab === 'users' && !this.users.length) this.loadUsers()
     if (tab === 'logs') this.loadLogs(1)
+    if (tab === 'overview' && !this.stats) this.loadStats()
   }
 
   toggleUser(userId: string, isActive: boolean): void {
@@ -95,8 +100,29 @@ export class AdminDashboardComponent implements OnInit {
 
   get completionColor(): string {
     const v = this.stats?.tauxCompletionGlobal ?? 0
-    if (v >= 80) return '#2d9e3e'
+    if (v >= 80) return '#27ae60'
     if (v >= 60) return '#e67e22'
-    return '#c0392b'
+    return '#e74c3c'
+  }
+
+  get completionIconClass(): string {
+    const v = this.stats?.tauxCompletionGlobal ?? 0
+    if (v >= 80) return 'kpi-icon-green'
+    if (v >= 60) return 'kpi-icon-gold'
+    return 'kpi-icon-red'
+  }
+
+  get completionTagClass(): string {
+    const v = this.stats?.tauxCompletionGlobal ?? 0
+    if (v >= 80) return 'tag-green'
+    if (v >= 60) return 'tag-orange'
+    return 'tag-red'
+  }
+
+  get completionGlowClass(): string {
+    const v = this.stats?.tauxCompletionGlobal ?? 0
+    if (v >= 80) return 'kpi-glow-green'
+    if (v >= 60) return 'kpi-glow-gold'
+    return 'kpi-glow-red'
   }
 }

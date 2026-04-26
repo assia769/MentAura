@@ -1,4 +1,3 @@
-// src/app/core/services/auth.service.ts
 import { Injectable, inject } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { Router } from '@angular/router'
@@ -25,19 +24,33 @@ export class AuthService {
   login(email: string, password: string, captchaToken: string): Observable<AuthUser> {
     return this.http
       .post<AuthUser>(`${this.api}/api/auth/login`, { email, password, captchaToken })
-      .pipe(tap(user => this.persist(user)))
+      .pipe(
+        tap(user => {
+          this.persist(user)
+          // ── Redirect based on role ──────────────────────────────────
+          if (user.role === 'admin') {
+            this.router.navigate(['/admin/dashboard'])
+          } else {
+            this.router.navigate(['/user'])
+          }
+        })
+      )
   }
 
   register(nom: string, prenom: string, email: string, password: string, captchaToken: string): Observable<AuthUser> {
     return this.http
       .post<AuthUser>(`${this.api}/api/auth/register`, { nom, prenom, email, password, captchaToken })
-      .pipe(tap(user => this.persist(user)))
+      .pipe(
+        tap(user => {
+          this.persist(user)
+          this.router.navigate(['/user'])
+        })
+      )
   }
 
   logout(): void {
     const user = this._user$.value
     if (user) {
-      // ✅ syntaxe correcte
       this.http.post(`${this.api}/api/auth/logout`, { refreshToken: user.refreshToken }).subscribe()
     }
     localStorage.removeItem('mentaura_user')

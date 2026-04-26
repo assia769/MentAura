@@ -1,192 +1,92 @@
-<div class="admin-shell">
-  <!-- ── Sidebar ──────────────────────────────────────────────────────── -->
-  <aside class="sidebar">
-    <div class="logo">
-      <span class="logo-dot"></span>
-      <span>Mentaura</span>
-      <span class="logo-badge">Admin</span>
+<div class="user-shell">
+  <div class="center-wrap">
+
+    <div class="brand">
+      <span class="brand-dot"></span>
+      <span class="brand-name">Mentaura</span>
     </div>
 
-    <nav class="nav">
-      <button class="nav-item" [class.active]="activeTab === 'overview'" (click)="setTab('overview')">
-        <span class="nav-icon">◈</span> Vue d'ensemble
-      </button>
-      <button class="nav-item" [class.active]="activeTab === 'logs'" (click)="setTab('logs')">
-        <span class="nav-icon">⊡</span> Activité & Logs
-      </button>
-      <button class="nav-item" [class.active]="activeTab === 'users'" (click)="setTab('users')">
-        <span class="nav-icon">◉</span> Utilisateurs
-      </button>
-    </nav>
+    <div class="devs-grid">
 
-    <button class="logout-btn" (click)="logout()">
-      <span>→</span> Déconnexion
-    </button>
-  </aside>
-
-  <!-- ── Main ─────────────────────────────────────────────────────────── -->
-  <main class="main">
-
-    <!-- Header -->
-    <header class="topbar">
-      <div class="topbar-title">
-        <span class="topbar-dot" [class.pulse]="!loading"></span>
-        <ng-container [ngSwitch]="activeTab">
-          <span *ngSwitchCase="'overview'">Vue d'ensemble</span>
-          <span *ngSwitchCase="'logs'">Journal d'activité</span>
-          <span *ngSwitchCase="'users'">Gestion des utilisateurs</span>
-        </ng-container>
+      <!-- Khadija -->
+      <div class="heart-wrap card-khadija">
+        <svg class="heart-svg" viewBox="0 0 280 240" xmlns="http://www.w3.org/2000/svg">
+          <path d="M140,210 C80,170 20,130 20,80 C20,45 45,20 80,20
+                   C105,20 125,35 140,55 C155,35 175,20 200,20
+                   C235,20 260,45 260,80 C260,130 200,170 140,210 Z"
+                fill="#fdf0f4" stroke="#e8b4c8" stroke-width="1"/>
+        </svg>
+        <div class="card-inner">
+          <div class="card-top">
+            <div class="dev-avatar">K</div>
+            <div>
+              <div class="dev-tag">Module 01</div>
+              <div class="dev-name">Khadija</div>
+            </div>
+          </div>
+          <div class="dev-modules">
+            <span class="module-chip">Sessions</span>
+            <span class="module-chip">Notifications</span>
+            <span class="module-chip">Paramètres</span>
+          </div>
+          <p class="dev-quote">
+            Tu bâtis chaque session —<br>
+            <em>tu façonnes l'avenir.</em>
+          </p>
+          <div class="dev-progress">
+            <div class="progress-label">
+              <span>En construction</span><span>En cours</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-bar bar-khadija"></div>
+            </div>
+          </div>
+        </div>
       </div>
-      <span class="topbar-date">{{ today | date:'EEEE d MMMM yyyy' : '' : 'fr-FR' }}</span>
-    </header>
 
-    <!-- Loading skeleton -->
-    <div class="skeleton-wrap" *ngIf="loading">
-      <div class="skeleton-card" *ngFor="let i of [1,2,3,4]"></div>
+      <!-- Omaima -->
+      <div class="heart-wrap card-omaima">
+        <svg class="heart-svg" viewBox="0 0 280 240" xmlns="http://www.w3.org/2000/svg">
+          <path d="M140,210 C80,170 20,130 20,80 C20,45 45,20 80,20
+                   C105,20 125,35 140,55 C155,35 175,20 200,20
+                   C235,20 260,45 260,80 C260,130 200,170 140,210 Z"
+                fill="#eef3fd" stroke="#b3c9fa" stroke-width="1"/>
+        </svg>
+        <div class="card-inner">
+          <div class="card-top">
+            <div class="dev-avatar">O</div>
+            <div>
+              <div class="dev-tag">Module 02</div>
+              <div class="dev-name">Omaima</div>
+            </div>
+          </div>
+          <div class="dev-modules">
+            <span class="module-chip">Profil</span>
+            <span class="module-chip">Groupes</span>
+            <span class="module-chip">Analytics</span>
+          </div>
+          <p class="dev-quote">
+            Tu connectes chaque groupe —<br>
+            <em>tu allumes l'intelligence.</em>
+          </p>
+          <div class="dev-progress">
+            <div class="progress-label">
+              <span>En construction</span><span>En cours</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-bar bar-omaima"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
 
-    <!-- ══ TAB: OVERVIEW ══════════════════════════════════════════════ -->
-    <ng-container *ngIf="!loading && activeTab === 'overview' && stats">
+    <div class="team-msg">
+      <div class="team-line"></div>
+      <span>L'équipe Mentaura croit en vous — livrez quelque chose d'extraordinaire 🚀</span>
+      <div class="team-line"></div>
+    </div>
 
-      <!-- KPI Cards -->
-      <section class="kpi-grid">
-        <div class="kpi-card">
-          <div class="kpi-label">Total utilisateurs</div>
-          <div class="kpi-value">{{ stats.totalUsers }}</div>
-          <div class="kpi-sub">{{ stats.totalStudents }} étudiants</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-label">Comptes actifs</div>
-          <div class="kpi-value accent-green">{{ stats.activeUsers }}</div>
-          <div class="kpi-sub">sur {{ stats.totalUsers }} total</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-label">Sessions créées</div>
-          <div class="kpi-value accent-gold">{{ stats.totalSessions }}</div>
-          <div class="kpi-sub">{{ stats.totalGroups }} groupes actifs</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-label">Taux de complétion</div>
-          <div class="kpi-value" [style.color]="completionColor">
-            {{ stats.tauxCompletionGlobal | number:'1.1-1' }}%
-          </div>
-          <div class="kpi-sub">Moyenne globale</div>
-        </div>
-      </section>
-
-      <!-- Charts row -->
-      <section class="charts-row">
-
-        <!-- Top matières -->
-        <div class="chart-card">
-          <h3 class="chart-title">Top matières <span>(heures étudiées)</span></h3>
-          <div class="bar-list">
-            <div class="bar-item" *ngFor="let m of stats.topMatieres; let i = index">
-              <span class="bar-label">{{ m._id }}</span>
-              <div class="bar-track">
-                <div class="bar-fill"
-                     [style.width.%]="(m.totalHeures / stats.topMatieres[0].totalHeures) * 100"
-                     [style.animation-delay]="i * 100 + 'ms'">
-                </div>
-              </div>
-              <span class="bar-val">{{ m.totalHeures }}h</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Sessions récentes -->
-        <div class="chart-card">
-          <h3 class="chart-title">Sessions récentes</h3>
-          <div class="session-list">
-            <div class="session-item" *ngFor="let s of stats.recentSessions">
-              <div class="session-dot" [class.done]="s.statut === 'realisee'"></div>
-              <div class="session-info">
-                <span class="session-name">{{ s.titre }}</span>
-                <span class="session-date">{{ s.dateDebut | date:'dd/MM/yyyy' }}</span>
-              </div>
-              <span class="session-hours">{{ s.heuresRealisees }}h</span>
-            </div>
-          </div>
-        </div>
-      </section>
-    </ng-container>
-
-    <!-- ══ TAB: LOGS ══════════════════════════════════════════════════ -->
-    <ng-container *ngIf="activeTab === 'logs'">
-      <div class="logs-header">
-        <button class="filter-btn" [class.active]="showSuspiciousOnly" (click)="toggleSuspicious()">
-          <span>⚠</span> Activités suspectes {{ showSuspiciousOnly ? 'ON' : 'OFF' }}
-        </button>
-        <span class="logs-count">{{ totalLogs }} entrées</span>
-      </div>
-
-      <div class="log-table-wrap" *ngIf="!logsLoading; else logsSpinner">
-        <table class="log-table">
-          <thead>
-            <tr>
-              <th>Action</th>
-              <th>Utilisateur</th>
-              <th>IP</th>
-              <th>Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let log of auditLogs" [class.suspicious]="isSuspicious(log.action)">
-              <td>
-                <span class="action-badge" [class.danger]="isSuspicious(log.action)">
-                  {{ actionIcon(log.action) }} {{ log.action }}
-                </span>
-              </td>
-              <td>
-                <ng-container *ngIf="log.user; else noUser">
-                  {{ log.user.prenom }} {{ log.user.nom }}
-                  <span class="log-email">{{ log.user.email }}</span>
-                </ng-container>
-                <ng-template #noUser><span class="muted">—</span></ng-template>
-              </td>
-              <td class="mono">{{ log.ipAddress }}</td>
-              <td class="mono">{{ log.createdAt | date:'dd/MM/yy HH:mm:ss' }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <ng-template #logsSpinner>
-        <div class="center-spinner">
-          <div class="spin-ring"></div>
-        </div>
-      </ng-template>
-
-      <!-- Pagination -->
-      <div class="pagination" *ngIf="totalLogs > 50">
-        <button [disabled]="currentPage === 1" (click)="loadLogs(currentPage - 1)">←</button>
-        <span>Page {{ currentPage }}</span>
-        <button [disabled]="currentPage * 50 >= totalLogs" (click)="loadLogs(currentPage + 1)">→</button>
-      </div>
-    </ng-container>
-
-    <!-- ══ TAB: USERS ══════════════════════════════════════════════════ -->
-    <ng-container *ngIf="activeTab === 'users'">
-      <div class="users-grid">
-        <div class="user-card" *ngFor="let u of users">
-          <div class="user-avatar">
-            {{ u.prenom?.[0] }}{{ u.nom?.[0] }}
-          </div>
-          <div class="user-info">
-            <span class="user-name">{{ u.prenom }} {{ u.nom }}</span>
-            <span class="user-email">{{ u.email }}</span>
-            <div class="user-meta">
-              <span class="role-tag" [class.admin]="u.role === 'admin'">{{ u.role }}</span>
-              <span class="status-dot" [class.on]="u.isActive" [title]="u.isActive ? 'Actif' : 'Inactif'"></span>
-            </div>
-          </div>
-          <button class="toggle-btn" (click)="toggleUser(u._id, u.isActive)"
-                  [class.deactivate]="u.isActive">
-            {{ u.isActive ? 'Désactiver' : 'Activer' }}
-          </button>
-        </div>
-      </div>
-    </ng-container>
-
-  </main>
+  </div>
 </div>
