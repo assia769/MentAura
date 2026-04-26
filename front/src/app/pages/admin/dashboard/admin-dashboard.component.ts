@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core'
+import { Component, OnInit, inject, ChangeDetectorRef, NgZone } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { Router } from '@angular/router'
 import { AdminService, AdminStats, AuditLog } from '../../../core/services/admin.service'
@@ -15,6 +15,8 @@ export class AdminDashboardComponent implements OnInit {
   private adminSvc = inject(AdminService)
   private auth     = inject(AuthService)
   private router   = inject(Router)
+  private cdr      = inject(ChangeDetectorRef)
+  private zone     = inject(NgZone)
 
   // Expose Math to template
   Math = Math
@@ -37,27 +39,29 @@ export class AdminDashboardComponent implements OnInit {
   loadStats(): void {
     this.loading = true
     this.adminSvc.getStats().subscribe({
-      next: s  => { this.stats = s; this.loading = false },
-      error: () => { this.loading = false }
+      next: s  => this.zone.run(() => { this.stats = s; this.loading = false }),
+      error: () => this.zone.run(() => { this.loading = false })
     })
   }
 
   loadLogs(page = 1): void {
     this.logsLoading = true
     this.adminSvc.getAuditLogs(this.showSuspiciousOnly, page).subscribe({
-      next: res => {
+      next: res => this.zone.run(() => {
         this.auditLogs   = res.logs
         this.totalLogs   = res.total
         this.currentPage = res.page
         this.logsLoading = false
-      },
-      error: () => { this.logsLoading = false }
+      }),
+      error: () => this.zone.run(() => { this.logsLoading = false })
     })
   }
 
   loadUsers(): void {
     this.adminSvc.getUsers().subscribe({
-      next: res => this.users = res.users as any[]
+      next: res => this.zone.run(() => {
+        this.users = res.users as any[]
+      })
     })
   }
 
@@ -67,9 +71,10 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   setTab(tab: 'overview' | 'logs' | 'users'): void {
-     console.log('🔥 setTab called:', tab) 
+    if (this.activeTab === tab) return
     this.activeTab = tab
-    // Load data lazily per tab
+    this.cdr.detectChanges()
+
     if (tab === 'users' && !this.users.length) this.loadUsers()
     if (tab === 'logs') this.loadLogs(1)
     if (tab === 'overview' && !this.stats) this.loadStats()
@@ -79,7 +84,9 @@ export class AdminDashboardComponent implements OnInit {
     this.adminSvc.toggleUser(userId, !isActive).subscribe(() => this.loadUsers())
   }
 
-  logout(): void { this.auth.logout() }
+  logout(): void {
+    this.auth.logout()
+  }
 
   isSuspicious(action: string): boolean {
     return ['LOGIN_FAILED', 'ACCOUNT_LOCKED', 'CAPTCHA_FAILED'].includes(action)

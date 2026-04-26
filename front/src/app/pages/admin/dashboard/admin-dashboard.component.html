@@ -1,92 +1,270 @@
-<div class="user-shell">
-  <div class="center-wrap">
-
-    <div class="brand">
-      <span class="brand-dot"></span>
-      <span class="brand-name">Mentaura</span>
+<div class="admin-shell">
+  <!-- ── Sidebar ──────────────────────────────────────────────────────── -->
+  <aside class="sidebar">
+    <div class="logo">
+      <span class="logo-dot"></span>
+      <span class="logo-text">Mentaura</span>
+      <span class="logo-badge">Admin</span>
     </div>
 
-    <div class="devs-grid">
+    <nav class="nav">
+      <button class="nav-item" [class.active]="activeTab === 'overview'" (click)="setTab('overview')">
+        <span class="nav-icon">◈</span>
+        <span class="nav-label">Vue d'ensemble</span>
+      </button>
+      <button class="nav-item" [class.active]="activeTab === 'logs'" (click)="setTab('logs')">
+        <span class="nav-icon">⊡</span>
+        <span class="nav-label">Activité & Logs</span>
+      </button>
+      <button class="nav-item" [class.active]="activeTab === 'users'" (click)="setTab('users')">
+        <span class="nav-icon">◉</span>
+        <span class="nav-label">Utilisateurs</span>
+      </button>
+    </nav>
 
-      <!-- Khadija -->
-      <div class="heart-wrap card-khadija">
-        <svg class="heart-svg" viewBox="0 0 280 240" xmlns="http://www.w3.org/2000/svg">
-          <path d="M140,210 C80,170 20,130 20,80 C20,45 45,20 80,20
-                   C105,20 125,35 140,55 C155,35 175,20 200,20
-                   C235,20 260,45 260,80 C260,130 200,170 140,210 Z"
-                fill="#fdf0f4" stroke="#e8b4c8" stroke-width="1"/>
-        </svg>
-        <div class="card-inner">
-          <div class="card-top">
-            <div class="dev-avatar">K</div>
-            <div>
-              <div class="dev-tag">Module 01</div>
-              <div class="dev-name">Khadija</div>
+    <div class="sidebar-footer">
+      <div class="admin-badge">
+        <span class="admin-avatar">A</span>
+        <div class="admin-info">
+          <span class="admin-role">Administrateur</span>
+          <span class="admin-status">● En ligne</span>
+        </div>
+      </div>
+      <button class="logout-btn" (click)="logout()">
+        <span class="logout-icon">⇠</span>
+        <span class="nav-label">Déconnexion</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ── Main ─────────────────────────────────────────────────────────── -->
+  <main class="main">
+
+    <!-- Header -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <span class="topbar-dot" [class.pulse]="!loading"></span>
+        <div class="topbar-titles">
+          <ng-container [ngSwitch]="activeTab">
+            <span *ngSwitchCase="'overview'" class="topbar-title">Vue d'ensemble</span>
+            <span *ngSwitchCase="'logs'" class="topbar-title">Journal d'activité</span>
+            <span *ngSwitchCase="'users'" class="topbar-title">Gestion des utilisateurs</span>
+          </ng-container>
+          <span class="topbar-sub">Tableau de bord Mentaura</span>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <span class="topbar-date">{{ today | date:'EEEE d MMMM yyyy' : '' : 'fr-FR' }}</span>
+        <div class="topbar-clock">{{ today | date:'HH:mm' }}</div>
+      </div>
+    </header>
+
+    <!-- Loading skeleton -->
+    <div class="skeleton-wrap" *ngIf="loading && activeTab === 'overview'">
+      <div class="skeleton-card" *ngFor="let i of [1,2,3,4]"></div>
+    </div>
+
+    <!-- ══ TAB: OVERVIEW ══════════════════════════════════════════════ -->
+    <ng-container *ngIf="activeTab === 'overview'">
+      <ng-container *ngIf="!loading && stats; else overviewLoading">
+
+        <!-- KPI Cards -->
+        <section class="kpi-grid">
+          <div class="kpi-card" style="--delay:0ms">
+            <div class="kpi-icon-wrap kpi-icon-blue">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <div class="kpi-content">
+              <div class="kpi-label">Total utilisateurs</div>
+              <div class="kpi-value">{{ stats.totalUsers }}</div>
+              <div class="kpi-sub">
+                <span class="kpi-tag tag-blue">{{ stats.totalStudents }} étudiants</span>
+              </div>
+            </div>
+            <div class="kpi-glow kpi-glow-blue"></div>
+          </div>
+
+          <div class="kpi-card" style="--delay:80ms">
+            <div class="kpi-icon-wrap kpi-icon-green">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="kpi-content">
+              <div class="kpi-label">Comptes actifs</div>
+              <div class="kpi-value accent-green">{{ stats.activeUsers }}</div>
+              <div class="kpi-sub">
+                <span class="kpi-tag tag-green">sur {{ stats.totalUsers }} total</span>
+              </div>
+            </div>
+            <div class="kpi-glow kpi-glow-green"></div>
+          </div>
+
+          <div class="kpi-card" style="--delay:160ms">
+            <div class="kpi-icon-wrap kpi-icon-gold">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </div>
+            <div class="kpi-content">
+              <div class="kpi-label">Sessions créées</div>
+              <div class="kpi-value accent-gold">{{ stats.totalSessions }}</div>
+              <div class="kpi-sub">
+                <span class="kpi-tag tag-gold">{{ stats.totalGroups }} groupes actifs</span>
+              </div>
+            </div>
+            <div class="kpi-glow kpi-glow-gold"></div>
+          </div>
+
+          <div class="kpi-card" style="--delay:240ms">
+            <div class="kpi-icon-wrap" [ngClass]="completionIconClass">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </div>
+            <div class="kpi-content">
+              <div class="kpi-label">Taux de complétion</div>
+              <div class="kpi-value" [style.color]="completionColor">
+                {{ stats.tauxCompletionGlobal | number:'1.1-1' }}%
+              </div>
+              <div class="kpi-sub">
+                <span class="kpi-tag" [ngClass]="completionTagClass">Moyenne globale</span>
+              </div>
+            </div>
+            <div class="kpi-glow" [ngClass]="completionGlowClass"></div>
+          </div>
+        </section>
+
+        <!-- Charts row -->
+        <section class="charts-row">
+          <!-- Top matières -->
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3 class="chart-title">Top matières</h3>
+              <span class="chart-sub">heures étudiées</span>
+            </div>
+            <div class="bar-list">
+              <div class="bar-item" *ngFor="let m of stats.topMatieres; let i = index">
+                <span class="bar-label">{{ m._id }}</span>
+                <div class="bar-track">
+                  <div class="bar-fill"
+                       [style.width.%]="(m.totalHeures / stats.topMatieres[0].totalHeures) * 100"
+                       [style.animation-delay]="(i * 100 + 200) + 'ms'">
+                  </div>
+                </div>
+                <span class="bar-val">{{ m.totalHeures }}h</span>
+              </div>
             </div>
           </div>
-          <div class="dev-modules">
-            <span class="module-chip">Sessions</span>
-            <span class="module-chip">Notifications</span>
-            <span class="module-chip">Paramètres</span>
-          </div>
-          <p class="dev-quote">
-            Tu bâtis chaque session —<br>
-            <em>tu façonnes l'avenir.</em>
-          </p>
-          <div class="dev-progress">
-            <div class="progress-label">
-              <span>En construction</span><span>En cours</span>
+
+          <!-- Sessions récentes -->
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3 class="chart-title">Sessions récentes</h3>
+              <span class="chart-sub">dernières réalisées</span>
             </div>
-            <div class="progress-track">
-              <div class="progress-bar bar-khadija"></div>
+            <div class="session-list">
+              <div class="session-item" *ngFor="let s of stats.recentSessions">
+                <div class="session-dot" [class.done]="s.statut === 'realisee'"></div>
+                <div class="session-info">
+                  <span class="session-name">{{ s.titre }}</span>
+                  <span class="session-date">{{ s.dateDebut | date:'dd/MM/yyyy' }}</span>
+                </div>
+                <span class="session-hours">{{ s.heuresRealisees }}h</span>
+              </div>
             </div>
           </div>
+        </section>
+
+      </ng-container>
+      <ng-template #overviewLoading>
+        <div class="skeleton-wrap" *ngIf="loading">
+          <div class="skeleton-card" *ngFor="let i of [1,2,3,4]"></div>
+        </div>
+      </ng-template>
+    </ng-container>
+
+    <!-- ══ TAB: LOGS ══════════════════════════════════════════════════ -->
+    <ng-container *ngIf="activeTab === 'logs'">
+      <div class="logs-header">
+        <button class="filter-btn" [class.active]="showSuspiciousOnly" (click)="toggleSuspicious()">
+          <span class="filter-icon">⚠</span>
+          <span>Activités suspectes</span>
+          <span class="filter-pill" [class.active]="showSuspiciousOnly">{{ showSuspiciousOnly ? 'ON' : 'OFF' }}</span>
+        </button>
+        <span class="logs-count">{{ totalLogs }} entrées</span>
+      </div>
+
+      <div class="log-table-wrap" *ngIf="!logsLoading; else logsSpinner">
+        <table class="log-table">
+          <thead>
+            <tr>
+              <th>Action</th>
+              <th>Utilisateur</th>
+              <th>Adresse IP</th>
+              <th>Date & Heure</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let log of auditLogs" [class.suspicious]="isSuspicious(log.action)">
+              <td>
+                <span class="action-badge" [class.danger]="isSuspicious(log.action)">
+                  {{ actionIcon(log.action) }} {{ log.action }}
+                </span>
+              </td>
+              <td>
+                <ng-container *ngIf="log.user; else noUser">
+                  <span class="user-full">{{ log.user.prenom }} {{ log.user.nom }}</span>
+                  <span class="log-email">{{ log.user.email }}</span>
+                </ng-container>
+                <ng-template #noUser><span class="muted">—</span></ng-template>
+              </td>
+              <td class="mono">{{ log.ipAddress }}</td>
+              <td class="mono">{{ log.createdAt | date:'dd/MM/yy HH:mm:ss' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <ng-template #logsSpinner>
+        <div class="center-spinner">
+          <div class="spin-ring"></div>
+          <span class="spin-label">Chargement des logs...</span>
+        </div>
+      </ng-template>
+
+      <div class="pagination" *ngIf="totalLogs > 50">
+        <button [disabled]="currentPage === 1" (click)="loadLogs(currentPage - 1)">← Précédent</button>
+        <span class="page-info">Page <strong>{{ currentPage }}</strong> sur {{ Math.ceil(totalLogs / 50) }}</span>
+        <button [disabled]="currentPage * 50 >= totalLogs" (click)="loadLogs(currentPage + 1)">Suivant →</button>
+      </div>
+    </ng-container>
+
+    <!-- ══ TAB: USERS ══════════════════════════════════════════════════ -->
+    <ng-container *ngIf="activeTab === 'users'">
+      <div class="users-toolbar">
+        <span class="users-count" *ngIf="users.length">{{ users.length }} utilisateurs</span>
+        <div class="skeleton-row" *ngIf="!users.length">
+          <div class="skeleton-user" *ngFor="let i of [1,2,3,4,5,6]"></div>
         </div>
       </div>
 
-      <!-- Omaima -->
-      <div class="heart-wrap card-omaima">
-        <svg class="heart-svg" viewBox="0 0 280 240" xmlns="http://www.w3.org/2000/svg">
-          <path d="M140,210 C80,170 20,130 20,80 C20,45 45,20 80,20
-                   C105,20 125,35 140,55 C155,35 175,20 200,20
-                   C235,20 260,45 260,80 C260,130 200,170 140,210 Z"
-                fill="#eef3fd" stroke="#b3c9fa" stroke-width="1"/>
-        </svg>
-        <div class="card-inner">
-          <div class="card-top">
-            <div class="dev-avatar">O</div>
-            <div>
-              <div class="dev-tag">Module 02</div>
-              <div class="dev-name">Omaima</div>
+      <div class="users-grid" *ngIf="users.length">
+        <div class="user-card" *ngFor="let u of users; let i = index" [style.animation-delay]="(i * 50) + 'ms'">
+          <div class="user-avatar" [class.avatar-admin]="u.role === 'admin'">
+            {{ u.prenom?.[0] }}{{ u.nom?.[0] }}
+          </div>
+          <div class="user-info">
+            <span class="user-name">{{ u.prenom }} {{ u.nom }}</span>
+            <span class="user-email">{{ u.email }}</span>
+            <div class="user-meta">
+              <span class="role-tag" [class.admin]="u.role === 'admin'">{{ u.role }}</span>
+              <span class="status-badge" [class.active]="u.isActive">
+                {{ u.isActive ? 'Actif' : 'Inactif' }}
+              </span>
             </div>
           </div>
-          <div class="dev-modules">
-            <span class="module-chip">Profil</span>
-            <span class="module-chip">Groupes</span>
-            <span class="module-chip">Analytics</span>
-          </div>
-          <p class="dev-quote">
-            Tu connectes chaque groupe —<br>
-            <em>tu allumes l'intelligence.</em>
-          </p>
-          <div class="dev-progress">
-            <div class="progress-label">
-              <span>En construction</span><span>En cours</span>
-            </div>
-            <div class="progress-track">
-              <div class="progress-bar bar-omaima"></div>
-            </div>
-          </div>
+          <button class="toggle-btn" (click)="toggleUser(u._id, u.isActive)"
+                  [class.deactivate]="u.isActive">
+            {{ u.isActive ? 'Désactiver' : 'Activer' }}
+          </button>
         </div>
       </div>
+    </ng-container>
 
-    </div>
-
-    <div class="team-msg">
-      <div class="team-line"></div>
-      <span>L'équipe Mentaura croit en vous — livrez quelque chose d'extraordinaire 🚀</span>
-      <div class="team-line"></div>
-    </div>
-
-  </div>
+  </main>
 </div>
