@@ -6,59 +6,92 @@
 
   <!-- Tabs -->
   <div class="card-tabs">
-    <button
-      class="card-tab"
-      [class.active]="currentTab === 'login'"
-      (click)="switchTab('login')">
+    <button class="card-tab" [class.active]="currentTab === 'login'" (click)="switchTab('login')">
       LOG IN
     </button>
-    <button
-      class="card-tab"
-      [class.active]="currentTab === 'register'"
-      (click)="switchTab('register')">
+    <button class="card-tab" [class.active]="currentTab === 'register'" (click)="switchTab('register')">
       REGISTER
     </button>
     <div class="tab-slider" [style.left.%]="currentTab === 'register' ? 50 : 3"></div>
   </div>
 
+  <!-- Message d'erreur -->
+  <div class="error-msg" *ngIf="errorMsg">{{ errorMsg }}</div>
+
   <!-- LOGIN FORM -->
-  <form class="auth-form" [class.active]="currentTab === 'login'">
+  <form class="auth-form" [class.active]="currentTab === 'login'" (ngSubmit)="onLogin()">
     <div class="field-group">
       <label class="field-label">EMAIL</label>
-      <input class="field-input" type="email" placeholder="you@example.com" />
+      <input
+        class="field-input"
+        type="email"
+        placeholder="you@example.com"
+        [(ngModel)]="loginEmail"
+        name="loginEmail"
+        autocomplete="email" />
     </div>
-
     <div class="field-group">
       <label class="field-label">PASSWORD</label>
-      <input class="field-input" type="password" placeholder="••••••••" #pwInput />
+      <input
+        class="field-input"
+        type="password"
+        placeholder="••••••••"
+        [(ngModel)]="loginPassword"
+        name="loginPassword"
+        autocomplete="current-password"
+        #pwInput />
       <button class="field-toggle" type="button" (click)="togglePw(pwInput)">
         {{ pwInput.type === 'password' ? '○' : '●' }}
       </button>
     </div>
-
-    <button type="submit" class="btn-submit">LOG IN</button>
+    <button type="submit" class="btn-submit" [disabled]="loading">
+      {{ loading ? 'Connexion...' : 'LOG IN' }}
+    </button>
     <p class="switch-note">No account? <a (click)="switchTab('register')">Register here</a></p>
   </form>
 
   <!-- REGISTER FORM -->
-  <form class="auth-form" [class.active]="currentTab === 'register'">
+  <form class="auth-form" [class.active]="currentTab === 'register'" (ngSubmit)="onRegister()">
     <div class="field-group">
       <label class="field-label">FIRST NAME</label>
-      <input class="field-input" type="text" placeholder="Jane" />
+      <input
+        class="field-input"
+        type="text"
+        placeholder="Jane"
+        [(ngModel)]="regPrenom"
+        name="regPrenom"
+        autocomplete="given-name" />
     </div>
-
+    <div class="field-group">
+      <label class="field-label">LAST NAME</label>
+      <input
+        class="field-input"
+        type="text"
+        placeholder="Doe"
+        [(ngModel)]="regNom"
+        name="regNom"
+        autocomplete="family-name" />
+    </div>
     <div class="field-group">
       <label class="field-label">EMAIL</label>
-      <input class="field-input" type="email" placeholder="you@example.com" />
+      <input
+        class="field-input"
+        type="email"
+        placeholder="you@example.com"
+        [(ngModel)]="regEmail"
+        name="regEmail"
+        autocomplete="email" />
     </div>
-
     <div class="field-group">
       <label class="field-label">PASSWORD</label>
       <input
         class="field-input"
         type="password"
         placeholder="Min. 8 characters"
-        (input)="checkStrength($any($event.target).value)"
+        [(ngModel)]="regPassword"
+        name="regPassword"
+        autocomplete="new-password"
+        (input)="checkStrength(regPassword)"
         #regPw />
       <button class="field-toggle" type="button" (click)="togglePw(regPw)">
         {{ regPw.type === 'password' ? '○' : '●' }}
@@ -73,8 +106,9 @@
         <span class="strength-text">{{ getStrengthLabel() }}</span>
       </div>
     </div>
-
-    <button type="submit" class="btn-submit">CREATE ACCOUNT</button>
+    <button type="submit" class="btn-submit" [disabled]="loading">
+      {{ loading ? 'Création...' : 'CREATE ACCOUNT' }}
+    </button>
     <p class="switch-note">Have an account? <a (click)="switchTab('login')">Log in</a></p>
   </form>
 </div>

@@ -1,0 +1,192 @@
+<div class="admin-shell">
+  <!-- ── Sidebar ──────────────────────────────────────────────────────── -->
+  <aside class="sidebar">
+    <div class="logo">
+      <span class="logo-dot"></span>
+      <span>Mentaura</span>
+      <span class="logo-badge">Admin</span>
+    </div>
+
+    <nav class="nav">
+      <button class="nav-item" [class.active]="activeTab === 'overview'" (click)="setTab('overview')">
+        <span class="nav-icon">◈</span> Vue d'ensemble
+      </button>
+      <button class="nav-item" [class.active]="activeTab === 'logs'" (click)="setTab('logs')">
+        <span class="nav-icon">⊡</span> Activité & Logs
+      </button>
+      <button class="nav-item" [class.active]="activeTab === 'users'" (click)="setTab('users')">
+        <span class="nav-icon">◉</span> Utilisateurs
+      </button>
+    </nav>
+
+    <button class="logout-btn" (click)="logout()">
+      <span>→</span> Déconnexion
+    </button>
+  </aside>
+
+  <!-- ── Main ─────────────────────────────────────────────────────────── -->
+  <main class="main">
+
+    <!-- Header -->
+    <header class="topbar">
+      <div class="topbar-title">
+        <span class="topbar-dot" [class.pulse]="!loading"></span>
+        <ng-container [ngSwitch]="activeTab">
+          <span *ngSwitchCase="'overview'">Vue d'ensemble</span>
+          <span *ngSwitchCase="'logs'">Journal d'activité</span>
+          <span *ngSwitchCase="'users'">Gestion des utilisateurs</span>
+        </ng-container>
+      </div>
+      <span class="topbar-date">{{ today | date:'EEEE d MMMM yyyy' : '' : 'fr-FR' }}</span>
+    </header>
+
+    <!-- Loading skeleton -->
+    <div class="skeleton-wrap" *ngIf="loading">
+      <div class="skeleton-card" *ngFor="let i of [1,2,3,4]"></div>
+    </div>
+
+    <!-- ══ TAB: OVERVIEW ══════════════════════════════════════════════ -->
+    <ng-container *ngIf="!loading && activeTab === 'overview' && stats">
+
+      <!-- KPI Cards -->
+      <section class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">Total utilisateurs</div>
+          <div class="kpi-value">{{ stats.totalUsers }}</div>
+          <div class="kpi-sub">{{ stats.totalStudents }} étudiants</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Comptes actifs</div>
+          <div class="kpi-value accent-green">{{ stats.activeUsers }}</div>
+          <div class="kpi-sub">sur {{ stats.totalUsers }} total</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Sessions créées</div>
+          <div class="kpi-value accent-gold">{{ stats.totalSessions }}</div>
+          <div class="kpi-sub">{{ stats.totalGroups }} groupes actifs</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Taux de complétion</div>
+          <div class="kpi-value" [style.color]="completionColor">
+            {{ stats.tauxCompletionGlobal | number:'1.1-1' }}%
+          </div>
+          <div class="kpi-sub">Moyenne globale</div>
+        </div>
+      </section>
+
+      <!-- Charts row -->
+      <section class="charts-row">
+
+        <!-- Top matières -->
+        <div class="chart-card">
+          <h3 class="chart-title">Top matières <span>(heures étudiées)</span></h3>
+          <div class="bar-list">
+            <div class="bar-item" *ngFor="let m of stats.topMatieres; let i = index">
+              <span class="bar-label">{{ m._id }}</span>
+              <div class="bar-track">
+                <div class="bar-fill"
+                     [style.width.%]="(m.totalHeures / stats.topMatieres[0].totalHeures) * 100"
+                     [style.animation-delay]="i * 100 + 'ms'">
+                </div>
+              </div>
+              <span class="bar-val">{{ m.totalHeures }}h</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sessions récentes -->
+        <div class="chart-card">
+          <h3 class="chart-title">Sessions récentes</h3>
+          <div class="session-list">
+            <div class="session-item" *ngFor="let s of stats.recentSessions">
+              <div class="session-dot" [class.done]="s.statut === 'realisee'"></div>
+              <div class="session-info">
+                <span class="session-name">{{ s.titre }}</span>
+                <span class="session-date">{{ s.dateDebut | date:'dd/MM/yyyy' }}</span>
+              </div>
+              <span class="session-hours">{{ s.heuresRealisees }}h</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </ng-container>
+
+    <!-- ══ TAB: LOGS ══════════════════════════════════════════════════ -->
+    <ng-container *ngIf="activeTab === 'logs'">
+      <div class="logs-header">
+        <button class="filter-btn" [class.active]="showSuspiciousOnly" (click)="toggleSuspicious()">
+          <span>⚠</span> Activités suspectes {{ showSuspiciousOnly ? 'ON' : 'OFF' }}
+        </button>
+        <span class="logs-count">{{ totalLogs }} entrées</span>
+      </div>
+
+      <div class="log-table-wrap" *ngIf="!logsLoading; else logsSpinner">
+        <table class="log-table">
+          <thead>
+            <tr>
+              <th>Action</th>
+              <th>Utilisateur</th>
+              <th>IP</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let log of auditLogs" [class.suspicious]="isSuspicious(log.action)">
+              <td>
+                <span class="action-badge" [class.danger]="isSuspicious(log.action)">
+                  {{ actionIcon(log.action) }} {{ log.action }}
+                </span>
+              </td>
+              <td>
+                <ng-container *ngIf="log.user; else noUser">
+                  {{ log.user.prenom }} {{ log.user.nom }}
+                  <span class="log-email">{{ log.user.email }}</span>
+                </ng-container>
+                <ng-template #noUser><span class="muted">—</span></ng-template>
+              </td>
+              <td class="mono">{{ log.ipAddress }}</td>
+              <td class="mono">{{ log.createdAt | date:'dd/MM/yy HH:mm:ss' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <ng-template #logsSpinner>
+        <div class="center-spinner">
+          <div class="spin-ring"></div>
+        </div>
+      </ng-template>
+
+      <!-- Pagination -->
+      <div class="pagination" *ngIf="totalLogs > 50">
+        <button [disabled]="currentPage === 1" (click)="loadLogs(currentPage - 1)">←</button>
+        <span>Page {{ currentPage }}</span>
+        <button [disabled]="currentPage * 50 >= totalLogs" (click)="loadLogs(currentPage + 1)">→</button>
+      </div>
+    </ng-container>
+
+    <!-- ══ TAB: USERS ══════════════════════════════════════════════════ -->
+    <ng-container *ngIf="activeTab === 'users'">
+      <div class="users-grid">
+        <div class="user-card" *ngFor="let u of users">
+          <div class="user-avatar">
+            {{ u.prenom?.[0] }}{{ u.nom?.[0] }}
+          </div>
+          <div class="user-info">
+            <span class="user-name">{{ u.prenom }} {{ u.nom }}</span>
+            <span class="user-email">{{ u.email }}</span>
+            <div class="user-meta">
+              <span class="role-tag" [class.admin]="u.role === 'admin'">{{ u.role }}</span>
+              <span class="status-dot" [class.on]="u.isActive" [title]="u.isActive ? 'Actif' : 'Inactif'"></span>
+            </div>
+          </div>
+          <button class="toggle-btn" (click)="toggleUser(u._id, u.isActive)"
+                  [class.deactivate]="u.isActive">
+            {{ u.isActive ? 'Désactiver' : 'Activer' }}
+          </button>
+        </div>
+      </div>
+    </ng-container>
+
+  </main>
+</div>

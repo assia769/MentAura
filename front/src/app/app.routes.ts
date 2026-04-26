@@ -2,35 +2,37 @@ import { Routes } from '@angular/router'
 import { authGuard } from './core/guards/auth.guard'
 
 export const routes: Routes = [
-  // ── Public ─────────────────────────────────────────────────────────────────
+  // ── Public ─────────────────────────────────────────────────────────────
   {
     path: '',
     loadComponent: () =>
       import('./pages/landing/landing.component').then(m => m.LandingComponent)
   },
+
+  // ── MFA ────────────────────────────────────────────────────────────────
   // {
   //   path: 'mfa',
   //   loadComponent: () =>
   //     import('./pages/auth/mfa/mfa.component').then(m => m.MfaComponent)
   // },
 
-  // // ── Admin (protected) ───────────────────────────────────────────────────────
-  // {
-  //   path: 'admin',
-  //   canActivate: [authGuard],
-  //   data: { role: 'admin' },
-  //   children: [
-  //     {
-  //       path: 'dashboard',
-  //       loadComponent: () =>
-  //         import('./pages/admin/dashboard/admin-dashboard.component')
-  //           .then(m => m.AdminDashboardComponent)
-  //     },
-  //     { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
-  //   ]
-  // },
+  // ── Admin (protected) ──────────────────────────────────────────────────
+  {
+    path: 'admin',
+    canActivate: [authGuard],
+    data: { role: 'admin' },
+    children: [
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./pages/admin/dashboard/admin-dashboard.component')
+            .then(m => m.AdminDashboardComponent)
+      },
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
+    ]
+  },
 
-  // // ── User (protected) ────────────────────────────────────────────────────────
+  // ── User — placeholder Omaima & Khadija ───────────────────────────────
   // {
   //   path: 'user',
   //   canActivate: [authGuard],
@@ -38,47 +40,29 @@ export const routes: Routes = [
   //     import('./pages/user/shell/user-shell.component').then(m => m.UserShellComponent),
   //   children: [
   //     // Khadija
-  //     {
-  //       path: 'sessions',
-  //       loadComponent: () =>
-  //         import('./pages/user/khadija/sessions/sessions.component')
-  //           .then(m => m.SessionsComponent)
-  //     },
-  //     {
-  //       path: 'notifications',
-  //       loadComponent: () =>
-  //         import('./pages/user/khadija/notifications/notifications.component')
-  //           .then(m => m.NotificationsComponent)
-  //     },
-  //     {
-  //       path: 'settings',
-  //       loadComponent: () =>
-  //         import('./pages/user/khadija/settings/settings.component')
-  //           .then(m => m.SettingsComponent)
-  //     },
+  //     // { path: 'sessions', ... }
+  //     // { path: 'notifications', ... }
+  //     // { path: 'settings', ... }
   //     // Omaima
-  //     {
-  //       path: 'profile',
-  //       loadComponent: () =>
-  //         import('./pages/user/omaima/profile/profile.component')
-  //           .then(m => m.ProfileComponent)
-  //     },
-  //     {
-  //       path: 'groups',
-  //       loadComponent: () =>
-  //         import('./pages/user/omaima/groups/groups.component')
-  //           .then(m => m.GroupsComponent)
-  //     },
-  //     {
-  //       path: 'analytics',
-  //       loadComponent: () =>
-  //         import('./pages/user/omaima/analytics/analytics.component')
-  //           .then(m => m.AnalyticsComponent)
-  //     },
-  //     { path: '', redirectTo: 'sessions', pathMatch: 'full' }
+  //     // { path: 'profile', ... }
+  //     // { path: 'groups', ... }
+  //     // { path: 'analytics', ... }
+  //     { path: '', pathMatch: 'full', component: undefined as any }
   //   ]
   // },
-
-  // ── Fallback ────────────────────────────────────────────────────────────────
+{
+  path: 'user',
+  canActivate: [authGuard],
+  loadComponent: () =>
+    import('./pages/user/shell/user-shell.component').then(m => m.UserShellComponent),
+  children: [
+    // Khadija
+    // { path: 'sessions', ... }
+    // Omaima
+    // { path: 'profile', ... }
+    { path: '', redirectTo: '/user/dashboard', pathMatch: 'full' }  // ✅ Fix
+  ]
+},
+  // ── Fallback ────────────────────────────────────────────────────────────
   { path: '**', redirectTo: '' }
 ]

@@ -1,75 +1,71 @@
-import { Injectable, signal } from '@angular/core'
+// src/app/core/services/auth.service.ts
+import { Injectable, inject } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
-import { firstValueFrom } from 'rxjs'
+import { Router } from '@angular/router'
+import { BehaviorSubject, Observable, tap } from 'rxjs'
+import { environment } from '../../../environments/environment'
 
-export interface User {
-  id:        string
-  prenom:    string
-  nom:       string
-  email:     string
-  role:      'user' | 'admin'
-  avatarUrl?: string
+export interface AuthUser {
+  userId: string
+  email: string
+  role: 'admin' | 'student'
+  accessToken: string
+  refreshToken: string
 }
-
-export interface LoginPayload    { email: string; password: string; captchaToken: string }
-export interface RegisterPayload { prenom: string; nom: string; email: string; password: string; captchaToken: string }
-export interface LoginResult     { token?: string; requiresMfa?: boolean; tempToken?: string }
-
-const API = '/api/auth'
-const TOKEN_KEY = 'mentaura_token'
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
+  private http   = inject(HttpClient)
+  private router = inject(Router)
+  private api    = environment.apiUrl
 
-  // Reactive current user
-  private _user = signal<User | null>(null)
-  readonly user  = this._user.asReadonly()
+  private _user$ = new BehaviorSubject<AuthUser | null>(this.loadFromStorage())
+  user$: Observable<AuthUser | null> = this._user$.asObservable()
 
-  get currentUser(): User | null { return this._user() }
-  get isLoggedIn():  boolean     { return !!this._user() }
-
-  constructor(private http: HttpClient) {
-    this.hydrateFromToken()
+  login(email: string, password: string, captchaToken: string): Observable<AuthUser> {
+    return this.http
+      .post<AuthUser>(`${this.api}/api/auth/login`, { email, password, captchaToken })
+      .pipe(tap(user => this.persist(user)))
   }
 
-  // ── Login ──────────────────────────────────────────────────────────────────
-  async login(payload: LoginPayload): Promise<LoginResult> {
-    const res = await firstValueFrom(
-      this.http.post<LoginResult & { user?: User }>(`${API}/login`, payload)
-    )
-    if (res.token) {
-      localStorage.setItem(TOKEN_KEY, res.token)
-      if (res.user) this._user.set(res.user)
-    }
-    return res
+  register(nom: string, prenom: string, email: string, password: string, captchaToken: string): Observable<AuthUser> {
+    return this.http
+      .post<AuthUser>(`${this.api}/api/auth/register`, { nom, prenom, email, password, captchaToken })
+      .pipe(tap(user => this.persist(user)))
   }
 
-  // ── Register ───────────────────────────────────────────────────────────────
-  async register(payload: RegisterPayload): Promise<void> {
-    await firstValueFrom(this.http.post(`${API}/register`, payload))
-  }
-
-  // ── Logout ─────────────────────────────────────────────────────────────────
   logout(): void {
-    localStorage.removeItem(TOKEN_KEY)
-    this._user.set(null)
-  }
-
-  // ── Token helpers ──────────────────────────────────────────────────────────
-  getToken(): string | null {
-    return localStorage.getItem(TOKEN_KEY)
-  }
-
-  // Decode JWT payload (no signature verification — server does that)
-  private hydrateFromToken(): void {
-    const token = this.getToken()
-    if (!token) return
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]))
-      if (payload.exp * 1000 < Date.now()) { this.logout(); return }
-      this._user.set(payload.user ?? null)
-    } catch {
-      this.logout()
+    const user = this._user$.value
+    if (user) {
+      // ✅ syntaxe correcte
+      this.http.post(`${this.api}/api/auth/logout`, { refreshToken: user.refreshToken }).subscribe()
     }
+    localStorage.removeItem('mentaura_user')
+    this._user$.next(null)
+    this.router.navigate(['/'])
+  }
+
+  get currentUser(): AuthUser | null { return this._user$.value }
+  get accessToken(): string | null   { return this._user$.value?.accessToken ?? null }
+  get isAdmin(): boolean             { return this._user$.value?.role === 'admin' }
+  get isLoggedIn(): boolean          { return !!this._user$.value }
+
+  refreshToken(): Observable<{ accessToken: string }> {
+    const user = this._user$.value!
+    return this.http
+      .post<{ accessToken: string }>(`${this.api}/api/auth/refresh`, { refreshToken: user.refreshToken })
+      .pipe(tap(res => this.persist({ ...user, accessToken: res.accessToken })))
+  }
+
+  private persist(user: AuthUser): void {
+    localStorage.setItem('mentaura_user', JSON.stringify(user))
+    this._user$.next(user)
+  }
+
+  private loadFromStorage(): AuthUser | null {
+    try {
+      const raw = localStorage.getItem('mentaura_user')
+      return raw ? JSON.parse(raw) : null
+    } catch { return null }
   }
 }

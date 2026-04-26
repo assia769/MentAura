@@ -1,17 +1,13 @@
-// src/app/core/interceptors/auth.interceptor.ts
-// ⚠️  REMPLACER le fichier existant par celui-ci
-
 import { HttpInterceptorFn, HttpRequest, HttpHandlerFn, HttpErrorResponse } from '@angular/common/http'
 import { inject } from '@angular/core'
 import { catchError, switchMap, throwError } from 'rxjs'
 import { AuthService } from '../services/auth.service'
 
-export const authInterceptor: HttpInterceptorFn = (
+export const jwtInterceptor: HttpInterceptorFn = (
   req: HttpRequest<unknown>,
   next: HttpHandlerFn
 ) => {
   const auth  = inject(AuthService)
-  // ✅  auth.accessToken  (pas getToken)
   const token = auth.accessToken
 
   const authReq = token
@@ -20,6 +16,7 @@ export const authInterceptor: HttpInterceptorFn = (
 
   return next(authReq).pipe(
     catchError((err: HttpErrorResponse) => {
+      // Auto-refresh on 401 (except auth endpoints)
       if (err.status === 401 && !req.url.includes('/api/auth/')) {
         return auth.refreshToken().pipe(
           switchMap(res => {
