@@ -27,15 +27,28 @@ export interface TopMatiere {
   totalHeures: number
 }
 
+// export interface AuditLog {
+//   _id: string
+//   action: string
+//   ipAddress: string
+//   userAgent: string
+//   createdAt: string
+//   user?: { nom: string; prenom: string; email: string }
+// }
 export interface AuditLog {
   _id: string
+  userId?: string
   action: string
-  ipAddress: string
-  userAgent: string
-  createdAt: string
-  user?: { nom: string; prenom: string; email: string }
+  ipAddress?: string | null      // ← add ?  (was: string)
+  userAgent?: string | null      // ← add ?  (was: string)
+  createdAt: string | Date
+  user?: {
+    _id: string
+    nom: string
+    prenom: string
+    email: string
+  } | null
 }
-
 export interface AuditResponse {
   logs: AuditLog[]
   total: number

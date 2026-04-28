@@ -175,28 +175,28 @@ export class CursorComponent implements OnInit, OnDestroy {
 
   /* Smooth follow pour ring + aura */
   private loop() {
-    this.rafId = requestAnimationFrame(() => {
-      const ease = (from: number, to: number, f: number) =>
-        from + (to - from) * f
+  this.rafId = requestAnimationFrame(() => {
+    const ease = (from: number, to: number, f: number) =>
+      from + (to - from) * f
 
-      this.ringX = ease(this.ringX, this.targetX, .18)
-      this.ringY = ease(this.ringY, this.targetY, .18)
-      this.auraX = ease(this.auraX, this.targetX, .06)
-      this.auraY = ease(this.auraY, this.targetY, .06)
+    // Avant : .18 (trop lent)
+    // Après : .35 pour le ring (plus réactif), .08 pour l'aura (reste douce)
+    this.ringX = ease(this.ringX, this.targetX, .35)
+    this.ringY = ease(this.ringY, this.targetY, .35)
+    this.auraX = ease(this.auraX, this.targetX, .08)
+    this.auraY = ease(this.auraY, this.targetY, .08)
 
-      this.rx = this.ringX; this.ry = this.ringY
-      this.ax = this.auraX; this.ay = this.auraY
+    this.rx = this.ringX; this.ry = this.ringY
+    this.ax = this.auraX; this.ay = this.auraY
 
-      /* arc animé en orbite */
-      const t   = Date.now() / 1200
-      const pct = (Math.sin(t) * .5 + .5) * .7 + .15  // 15%–85%
-      this.dashOffset = +(113 * (1 - pct)).toFixed(2)
+    const t = Date.now() / 1200
+    const pct = (Math.sin(t) * .5 + .5) * .7 + .15
+    this.dashOffset = +(113 * (1 - pct)).toFixed(2)
 
-      this.cdr.markForCheck()
-      this.loop()
-    })
-  }
-
+    this.cdr.markForCheck()
+    this.loop()
+  })
+}
   /* Injecte <defs> SVG pour le gradient doré */
   private injectSvgDefs() {
     if (document.getElementById('cursor-gold-grad')) return

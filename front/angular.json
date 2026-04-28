@@ -75,7 +75,11 @@
               "buildTarget": "front:build:development"
             }
           },
+          "options": {
+            "allowedHosts": ["hypercomposite-prefavorably-madaline.ngrok-free.dev"]
+          },
           "defaultConfiguration": "development"
+          
         },
         "test": {
           "builder": "@angular/build:unit-test"
