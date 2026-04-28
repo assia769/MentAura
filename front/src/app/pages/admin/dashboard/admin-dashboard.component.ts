@@ -3,11 +3,12 @@ import { CommonModule, DatePipe, DecimalPipe } from '@angular/common'
 import { Router } from '@angular/router'
 import { AdminService, AdminStats, AuditLog } from '../../../core/services/admin.service'
 import { AuthService } from '../../../core/services/auth.service'
+import { FormsModule } from '@angular/forms'
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, DatePipe, DecimalPipe],
+  imports: [CommonModule, DatePipe, DecimalPipe , FormsModule],
   templateUrl: './admin-dashboard.component.html',
   styleUrls: ['./admin-dashboard.component.scss']
 })
@@ -93,9 +94,9 @@ export class AdminDashboardComponent implements OnInit {
     if (tab === 'overview' && !this.stats) this.loadStats()
   }
 
-  toggleUser(userId: string, isActive: boolean): void {
-    this.adminSvc.toggleUser(userId, !isActive).subscribe(() => this.loadUsers())
-  }
+  // toggleUser(userId: string, isActive: boolean): void {
+  //   this.adminSvc.toggleUser(userId, !isActive).subscribe(() => this.loadUsers())
+  // }
 
   logout(): void {
     this.auth.logout()
@@ -147,4 +148,64 @@ export class AdminDashboardComponent implements OnInit {
     if (v >= 60) return 'kpi-glow-gold'
     return 'kpi-glow-red'
   }
+  // Ajoutez ces propriétés
+editingUser: any = null
+showEditModal = false
+
+// Remplacez toggleUser et ajoutez les nouvelles méthodes
+toggleUser(userId: string, isActive: boolean): void {
+  this.adminSvc.toggleUser(userId, !isActive).subscribe({
+    next: () => {
+      // Mise à jour locale immédiate (pas besoin de recharger toute la liste)
+      const user = this.users.find(u => u._id === userId)
+      if (user) {
+        user.isActive = !isActive
+        this.cdr.detectChanges()
+      }
+    },
+    error: (err) => console.error('Erreur toggleUser:', err)
+  })
+}
+
+openEdit(user: any): void {
+  // Copie pour ne pas modifier l'original avant confirmation
+  this.editingUser = { ...user }
+  this.showEditModal = true
+  this.cdr.detectChanges()
+}
+
+saveEdit(): void {
+  if (!this.editingUser) return
+  this.adminSvc.updateUser(this.editingUser._id, {
+    prenom: this.editingUser.prenom,
+    nom:    this.editingUser.nom,
+    email:  this.editingUser.email,
+    role:   this.editingUser.role
+  }).subscribe({
+    next: () => {
+      // Mettre à jour la liste locale
+      const idx = this.users.findIndex(u => u._id === this.editingUser._id)
+      if (idx !== -1) this.users[idx] = { ...this.users[idx], ...this.editingUser }
+      this.closeModal()
+    },
+    error: (err) => console.error('Erreur saveEdit:', err)
+  })
+}
+
+deleteUser(userId: string): void {
+  if (!confirm('Confirmer la suppression ?')) return
+  this.adminSvc.deleteUser(userId).subscribe({
+    next: () => {
+      this.users = this.users.filter(u => u._id !== userId)
+      this.cdr.detectChanges()
+    },
+    error: (err) => console.error('Erreur deleteUser:', err)
+  })
+}
+
+closeModal(): void {
+  this.showEditModal = false
+  this.editingUser = null
+  this.cdr.detectChanges()
+}
 }

@@ -75,7 +75,20 @@ export class AdminService {
     return this.http.get<{ users: unknown[] }>(`${this.api}/api/admin/users`)
   }
 
-  toggleUser(userId: string, isActive: boolean): Observable<unknown> {
-    return this.http.patch(`${this.api}/api/admin/users`, { userId, isActive })
-  }
+  // toggleUser(userId: string, isActive: boolean): Observable<unknown> {
+  //   return this.http.patch(`${this.api}/api/admin/users`, { userId, isActive })
+  // }
+  // // Dans AdminService, assurez-vous que ces méthodes existent :
+
+toggleUser(userId: string, isActive: boolean): Observable<unknown> {
+  return this.http.patch(`${this.api}/api/admin/users`, { userId, isActive })
+}
+
+deleteUser(userId: string): Observable<unknown> {
+  return this.http.delete(`${this.api}/api/admin/users/${userId}`)
+}
+
+updateUser(userId: string, data: Partial<any>): Observable<any> {
+  return this.http.put(`${this.api}/api/admin/users/${userId}`, data)
+}
 }

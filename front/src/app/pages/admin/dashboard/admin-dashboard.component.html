@@ -228,43 +228,95 @@
     </ng-container>
 
     <!-- ══════════ USERS ══════════ -->
-    <ng-container *ngIf="activeTab==='users'">
-      <div class="usr-wrap">
+    <!-- ══════════ USERS ══════════ -->
+<ng-container *ngIf="activeTab==='users'">
+  <div class="usr-wrap">
 
-        <div class="usr-header">
-          <div class="usr-big">{{ users.length }}</div>
-          <div class="usr-lbl">COMPTES<br>ENREGISTRÉS</div>
-          <div class="usr-line"></div>
+    <div class="usr-header">
+      <div class="usr-big">{{ users.length }}</div>
+      <div class="usr-lbl">COMPTES<br>ENREGISTRÉS</div>
+      <div class="usr-line"></div>
+    </div>
+
+    <div class="usr-mosaic">
+      <div class="usr-tile" *ngFor="let u of users; let i = index"
+           [class.tile-admin]="u.role==='admin'"
+           [style.animation-delay]="(i*30)+'ms'">
+
+        <div class="tile-hd">
+          <span class="tile-idx">{{ (i+1).toString().padStart(2,'0') }}</span>
+          <div class="tile-ava" [class.ava-admin]="u.role==='admin'">
+            {{ (u.prenom?.[0]??'') + (u.nom?.[0]??'') }}
+          </div>
+          <span class="tile-role" [class.role-admin]="u.role==='admin'">{{ u.role }}</span>
         </div>
 
-        <div class="usr-mosaic">
-          <div class="usr-tile" *ngFor="let u of users; let i = index"
-               [class.tile-admin]="u.role==='admin'"
-               [style.animation-delay]="(i*30)+'ms'">
-            <div class="tile-hd">
-              <span class="tile-idx">{{ (i+1).toString().padStart(2,'0') }}</span>
-              <div class="tile-ava" [class.ava-admin]="u.role==='admin'">
-                {{ (u.prenom?.[0]??'') + (u.nom?.[0]??'') }}
-              </div>
-              <span class="tile-role" [class.role-admin]="u.role==='admin'">{{ u.role }}</span>
-            </div>
-            <div class="tile-name">{{ u.prenom }} {{ u.nom }}</div>
-            <div class="tile-email">{{ u.email }}</div>
-            <div class="tile-ft">
-              <span class="tile-st" [class.st-on]="u.isActive">
-                {{ u.isActive ? 'ACTIF' : 'INACTIF' }}
-              </span>
-              <button class="tile-btn" *ngIf="u.role!=='admin'"
-                      [class.btn-off]="u.isActive"
-                      (click)="toggleUser(u._id, u.isActive)">
-                {{ u.isActive ? 'DÉSACTIVER' : 'ACTIVER' }}
-              </button>
-            </div>
+        <div class="tile-name">{{ u.prenom }} {{ u.nom }}</div>
+        <div class="tile-email">{{ u.email }}</div>
+
+        <div class="tile-ft">
+          <span class="tile-st" [class.st-on]="u.isActive">
+            {{ u.isActive ? 'ACTIF' : 'INACTIF' }}
+          </span>
+          <!-- Actions CRUD -->
+          <div class="tile-actions" *ngIf="u.role!=='admin'">
+            <button class="tile-btn"
+                    [class.btn-off]="u.isActive"
+                    (click)="toggleUser(u._id, u.isActive)">
+              {{ u.isActive ? 'DÉSACTIVER' : 'ACTIVER' }}
+            </button>
+            <button class="tile-btn btn-edit" (click)="openEdit(u)">
+              MODIFIER
+            </button>
+            <button class="tile-btn btn-del" (click)="deleteUser(u._id)">
+              SUPPRIMER
+            </button>
           </div>
         </div>
 
       </div>
-    </ng-container>
+    </div>
+
+    <!-- ── Modale édition ── -->
+    <div class="modal-overlay" *ngIf="showEditModal" (click)="closeModal()">
+      <div class="modal-card" (click)="$event.stopPropagation()">
+        <div class="modal-hd">
+          <span class="modal-idx">MODIFIER</span>
+          <button class="modal-close" (click)="closeModal()">✕</button>
+        </div>
+
+        <div class="modal-body" *ngIf="editingUser">
+          <div class="med-field">
+            <label>PRÉNOM</label>
+            <input [(ngModel)]="editingUser.prenom" placeholder="Prénom"/>
+          </div>
+          <div class="med-field">
+            <label>NOM</label>
+            <input [(ngModel)]="editingUser.nom" placeholder="Nom"/>
+          </div>
+          <div class="med-field">
+            <label>EMAIL</label>
+            <input [(ngModel)]="editingUser.email" placeholder="Email" type="email"/>
+          </div>
+          <div class="med-field">
+            <label>RÔLE</label>
+            <select [(ngModel)]="editingUser.role">
+              <option value="student">student</option>
+              <option value="teacher">teacher</option>
+              <option value="admin">admin</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="modal-ft">
+          <button class="modal-cancel" (click)="closeModal()">ANNULER</button>
+          <button class="modal-save" (click)="saveEdit()">ENREGISTRER</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</ng-container>
 
   </div>
 </div>
