@@ -1,36 +1,52 @@
-import { HttpInterceptorFn, HttpRequest, HttpHandlerFn, HttpErrorResponse } from '@angular/common/http'
+import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http'
 import { inject } from '@angular/core'
 import { catchError, switchMap, throwError } from 'rxjs'
 import { AuthService } from '../services/auth.service'
 
-export const jwtInterceptor: HttpInterceptorFn = (
-  req: HttpRequest<unknown>,
-  next: HttpHandlerFn
-) => {
-  const auth  = inject(AuthService)
+export const authInterceptor: HttpInterceptorFn = (req, next) => {
+  const auth = inject(AuthService)
   const token = auth.accessToken
 
+  // ✅ Ajouter token à la requête
   const authReq = token
     ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } })
     : req
 
   return next(authReq).pipe(
     catchError((err: HttpErrorResponse) => {
-      // Auto-refresh on 401 (except auth endpoints)
-      if (err.status === 401 && !req.url.includes('/api/auth/')) {
+
+      const isAuthRoute = req.url.includes('/api/auth/')
+
+      // 🔥 Si 401 → refresh
+      if (err.status === 401 && !isAuthRoute) {
+        console.warn('[Interceptor] 401 → refresh')
+
         return auth.refreshToken().pipe(
-          switchMap(res => {
-            const retried = req.clone({
-              setHeaders: { Authorization: `Bearer ${res.accessToken}` }
+          switchMap(() => {
+            // ✅ IMPORTANT : on prend le token MAJ depuis le service
+            const updatedToken = auth.accessToken
+
+            if (!updatedToken) {
+              auth.logout()
+              return throwError(() => new Error('No token after refresh'))
+            }
+
+            console.log('[Interceptor] retry avec nouveau token')
+
+            const retryReq = req.clone({
+              setHeaders: { Authorization: `Bearer ${updatedToken}` }
             })
-            return next(retried)
+
+            return next(retryReq)
           }),
-          catchError(refreshErr => {
+          catchError(() => {
+            console.error('[Interceptor] refresh failed → logout')
             auth.logout()
-            return throwError(() => refreshErr)
+            return throwError(() => err)
           })
         )
       }
+
       return throwError(() => err)
     })
   )

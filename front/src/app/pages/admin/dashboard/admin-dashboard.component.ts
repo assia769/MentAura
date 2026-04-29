@@ -1,4 +1,5 @@
-import { Component, OnInit, inject, ChangeDetectorRef, NgZone } from '@angular/core'
+import { Component, OnInit, inject, ChangeDetectorRef, NgZone, PLATFORM_ID } from '@angular/core'
+import { isPlatformBrowser } from '@angular/common'
 import { CommonModule } from '@angular/common'
 import { Router } from '@angular/router'
 import { AdminService, AdminStats, AuditLog } from '../../../core/services/admin.service'
@@ -12,13 +13,13 @@ import { AuthService } from '../../../core/services/auth.service'
   styleUrls: ['./admin-dashboard.component.scss']
 })
 export class AdminDashboardComponent implements OnInit {
-  private adminSvc = inject(AdminService)
-  private auth     = inject(AuthService)
-  private router   = inject(Router)
-  private cdr      = inject(ChangeDetectorRef)
-  private zone     = inject(NgZone)
+  private adminSvc   = inject(AdminService)
+  private auth       = inject(AuthService)
+  private router     = inject(Router)
+  private cdr        = inject(ChangeDetectorRef)
+  private zone       = inject(NgZone)
+  private platformId = inject(PLATFORM_ID)
 
-  // Expose Math to template
   Math = Math
 
   stats: AdminStats | null = null
@@ -33,6 +34,8 @@ export class AdminDashboardComponent implements OnInit {
   today                   = new Date()
 
   ngOnInit(): void {
+    if (!isPlatformBrowser(this.platformId)) return
+
     this.loadStats()
   }
 
@@ -84,9 +87,7 @@ export class AdminDashboardComponent implements OnInit {
     this.adminSvc.toggleUser(userId, !isActive).subscribe(() => this.loadUsers())
   }
 
-  logout(): void {
-    this.auth.logout()
-  }
+  logout(): void { this.auth.logout() }
 
   isSuspicious(action: string): boolean {
     return ['LOGIN_FAILED', 'ACCOUNT_LOCKED', 'CAPTCHA_FAILED'].includes(action)

@@ -1,0 +1,159 @@
+<div class="edit-shell">
+
+  <!-- Header -->
+  <div class="edit-header">
+    <button class="back-btn" (click)="cancel()">⇠ Retour</button>
+    <div class="edit-titles">
+      <h1 class="edit-title">Modifier le profil</h1>
+      <span class="edit-sub">Mettez à jour vos informations</span>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tab-bar">
+    <button class="tab-btn" [class.active]="activeTab === 'info'"         (click)="activeTab = 'info'">
+      <span>◈</span> Informations
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'subjects'"     (click)="activeTab = 'subjects'">
+      <span>⊕</span> Matières
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'availability'" (click)="activeTab = 'availability'">
+      <span>◉</span> Disponibilités
+    </button>
+  </div>
+
+  <!-- Alerts -->
+  <div class="alert alert-success" *ngIf="success">✓ {{ success }}</div>
+  <div class="alert alert-error"   *ngIf="error">⚠ {{ error }}</div>
+
+  <!-- Loading -->
+  <div class="center-spinner" *ngIf="loading">
+    <div class="spin-ring"></div>
+  </div>
+
+  <ng-container *ngIf="!loading">
+
+    <!-- ══ TAB: INFO ══ -->
+    <div class="tab-panel" *ngIf="activeTab === 'info'">
+      <div class="form-card">
+        <div class="form-row">
+          <div class="field">
+            <label class="field-label">Prénom</label>
+            <input class="field-input" type="text" [(ngModel)]="profile.prenom" placeholder="Votre prénom">
+          </div>
+          <div class="field">
+            <label class="field-label">Nom</label>
+            <input class="field-input" type="text" [(ngModel)]="profile.nom" placeholder="Votre nom">
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label">Email</label>
+          <input class="field-input" type="email" [(ngModel)]="profile.email" placeholder="votre@email.com">
+        </div>
+        <div class="field">
+          <label class="field-label">Bio</label>
+          <textarea class="field-input field-textarea" [(ngModel)]="profile.bio" placeholder="Quelques mots sur vous..."></textarea>
+        </div>
+        <div class="form-actions">
+          <button class="btn-cancel" (click)="cancel()">Annuler</button>
+          <button class="btn-save" (click)="saveProfile()" [class.loading]="saving">
+            <span class="spin-mini" *ngIf="saving"></span>
+            {{ saving ? 'Sauvegarde...' : '✓ Sauvegarder' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ TAB: SUBJECTS ══ -->
+    <div class="tab-panel" *ngIf="activeTab === 'subjects'">
+      <!-- Add form -->
+      <div class="form-card add-card">
+        <h3 class="add-title">Ajouter une matière</h3>
+        <div class="form-row">
+          <div class="field flex2">
+            <label class="field-label">Nom de la matière</label>
+            <input class="field-input" [(ngModel)]="newSubject.nom" placeholder="ex: Mathématiques">
+          </div>
+          <div class="field">
+            <label class="field-label">Couleur</label>
+            <input class="field-input field-color" type="color" [(ngModel)]="newSubject.couleur">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label class="field-label">Priorité</label>
+            <select class="field-input field-select" [(ngModel)]="newSubject.priorite">
+              <option *ngFor="let p of priorites" [value]="p">{{ p }}</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="field-label">Heures étudiées</label>
+            <input class="field-input" type="number" [(ngModel)]="newSubject.totalHeuresEtudiees" min="0">
+          </div>
+        </div>
+        <button class="btn-add" (click)="addSubject()" [disabled]="!newSubject.nom">
+          ＋ Ajouter
+        </button>
+      </div>
+
+      <!-- List -->
+      <div class="subject-list" *ngIf="subjects.length">
+        <div class="subject-row" *ngFor="let s of subjects; let i = index" [style.animation-delay]="(i*50)+'ms'">
+          <div class="subject-color-dot" [style.background]="s.couleur"></div>
+          <div class="subject-info">
+            <span class="subject-name">{{ s.nom }}</span>
+            <div class="subject-meta">
+              <span class="priority-pill" [attr.data-prio]="s.priorite">{{ s.priorite }}</span>
+              <span class="subject-h">{{ s.totalHeuresEtudiees }}h</span>
+            </div>
+          </div>
+          <button class="delete-btn" (click)="deleteSubject(s._id)">✕</button>
+        </div>
+      </div>
+      <p class="empty-hint" *ngIf="!subjects.length">Aucune matière. Ajoutez-en une ci-dessus.</p>
+    </div>
+
+    <!-- ══ TAB: AVAILABILITY ══ -->
+    <div class="tab-panel" *ngIf="activeTab === 'availability'">
+      <!-- Add form -->
+      <div class="form-card add-card">
+        <h3 class="add-title">Ajouter un créneau</h3>
+        <div class="day-picker">
+          <button class="day-btn" *ngFor="let j of jours"
+                  [class.active]="newSlot.jourSemaine === j.key"
+                  (click)="newSlot.jourSemaine = j.key">{{ j.label }}</button>
+        </div>
+        <div class="form-row" style="margin-top: 14px">
+          <div class="field">
+            <label class="field-label">Heure début</label>
+            <input class="field-input" type="time" [(ngModel)]="newSlot.heureDebut">
+          </div>
+          <div class="field">
+            <label class="field-label">Heure fin</label>
+            <input class="field-input" type="time" [(ngModel)]="newSlot.heureFin">
+          </div>
+          <div class="field field-check">
+            <label class="field-label">Récurrent</label>
+            <label class="toggle">
+              <input type="checkbox" [(ngModel)]="newSlot.recurrente">
+              <span class="toggle-track"></span>
+            </label>
+          </div>
+        </div>
+        <button class="btn-add" (click)="addSlot()">＋ Ajouter ce créneau</button>
+      </div>
+
+      <!-- List -->
+      <div class="avail-list" *ngIf="availability.length">
+        <div class="avail-row" *ngFor="let a of availability; let i = index" [style.animation-delay]="(i*40)+'ms'">
+          <div class="avail-day-pill">{{ a.jourSemaine | uppercase }}</div>
+          <div class="avail-time">{{ a.heureDebut }} → {{ a.heureFin }}</div>
+          <span class="avail-rec" *ngIf="a.recurrente">Récurrent</span>
+          <button class="delete-btn" (click)="removeSlot(i)">✕</button>
+        </div>
+      </div>
+      <p class="empty-hint" *ngIf="!availability.length">Aucun créneau. Ajoutez-en un ci-dessus.</p>
+    </div>
+
+  </ng-container>
+</div>

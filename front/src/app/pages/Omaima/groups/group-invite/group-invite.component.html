@@ -1,0 +1,33 @@
+<div class="invite-shell">
+
+  <div class="page-header">
+    <button class="back-btn" (click)="back()">← Retour</button>
+    <div class="page-titles">
+      <h1 class="page-title">Inviter un membre</h1>
+      <span class="page-sub">Envoyez une invitation par email</span>
+    </div>
+  </div>
+
+  <div class="invite-card">
+
+    <div class="field">
+      <label class="field-label">Adresse email</label>
+      <input
+        class="field-input"
+        type="email"
+        placeholder="etudiant@example.com"
+        [(ngModel)]="email"
+        (keyup.enter)="send()"
+      />
+    </div>
+
+    <div class="success-msg" *ngIf="success">✓ {{ success }}</div>
+    <div class="error-msg"   *ngIf="error">⚠ {{ error }}</div>
+
+    <button class="send-btn" (click)="send()" [disabled]="sending || !email.trim()">
+      {{ sending ? 'Envoi...' : 'Envoyer l\'invitation' }}
+    </button>
+
+  </div>
+
+</div>

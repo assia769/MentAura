@@ -1,30 +1,23 @@
-$gold: #d4a843;
-$blue: #3d6af0;
+$gold:    #d4a843;
+$blue:    #3d6af0;
 $bg:      #080a10;
 $surface: #0e1118;
-$card:    #141720;
 $border:  #1e2334;
-$border2: #252c3d;
 $text:    #dde2f0;
 $muted:   #4a5270;
-$muted2:  #6b7494;
 $red:     #e74c3c;
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+* { box-sizing: border-box; margin: 0; padding: 0 }
 
 .user-shell {
   min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'DM Mono', 'Courier New', monospace;
   background: $bg;
-  padding: 40px 24px;
+  font-family: 'DM Mono', 'Courier New', monospace;
   position: relative;
   overflow: hidden;
 }
 
-// ── Ambient orbs ───────────────────────────────────────
+// ── Ambient background ────────────────────────────────
 .ambient {
   position: fixed;
   inset: 0;
@@ -37,24 +30,9 @@ $red:     #e74c3c;
   border-radius: 50%;
   filter: blur(80px);
 
-  &.orb-1 {
-    width: 320px; height: 320px;
-    background: $gold;
-    opacity: .04;
-    top: 5%; left: 5%;
-  }
-  &.orb-2 {
-    width: 260px; height: 260px;
-    background: $blue;
-    opacity: .05;
-    bottom: 10%; right: 8%;
-  }
-  &.orb-3 {
-    width: 200px; height: 200px;
-    background: $gold;
-    opacity: .03;
-    bottom: 30%; left: 40%;
-  }
+  &.orb-1 { width: 320px; height: 320px; background: $gold; opacity: .04; top: 5%; left: 5% }
+  &.orb-2 { width: 260px; height: 260px; background: $blue; opacity: .05; bottom: 10%; right: 8% }
+  &.orb-3 { width: 200px; height: 200px; background: $gold; opacity: .03; bottom: 30%; left: 40% }
 }
 
 .grid-lines {
@@ -67,376 +45,72 @@ $red:     #e74c3c;
   opacity: .18;
 }
 
-// ── Center wrap ────────────────────────────────────────
-.center-wrap {
-  width: 100%;
-  max-width: 660px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2rem;
+// ── Content area (where router-outlet renders) ────────
+.shell-content {
   position: relative;
   z-index: 2;
+  min-height: calc(100vh - 70px);
+  padding: 32px 24px 100px;
 }
 
-// ── Brand ──────────────────────────────────────────────
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  letter-spacing: .08em;
-  color: $muted;
-
-  .brand-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: $gold;
-    box-shadow: 0 0 10px $gold, 0 0 20px rgba($gold, .4);
-  }
-
-  .brand-name {
-    font-weight: 700;
-    color: $text;
-    letter-spacing: .1em;
-  }
-}
-
-// ── Devs grid ──────────────────────────────────────────
-.devs-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  width: 100%;
-
-  @media (max-width: 520px) {
-    grid-template-columns: 1fr;
-  }
-}
-
-// ── Dev card ───────────────────────────────────────────
-.dev-card {
-  background: $card;
-  border: 1px solid $border;
-  border-radius: 14px;
-  padding: 22px;
-  position: relative;
-  overflow: hidden;
-  transition: border-color .2s, transform .2s;
-
-  &:hover {
-    transform: translateY(-3px);
-  }
-
-  &::after {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,.05), transparent);
-  }
-
-  &.card-khadija {
-    &:hover { border-color: rgba($gold, .35); }
-    .card-accent { background: $gold; }
-    .dev-quote   { border-color: rgba($gold, .4); }
-    .bar-khadija { background: $gold; }
-    .dev-avatar  {
-      background: rgba($gold, .12);
-      color: $gold;
-      border: 1px solid rgba($gold, .25);
-    }
-  }
-
-  &.card-omaima {
-    &:hover { border-color: rgba($blue, .35); }
-    .card-accent { background: $blue; }
-    .dev-quote   { border-color: rgba($blue, .4); }
-    .bar-omaima  { background: $blue; }
-    .dev-avatar  {
-      background: rgba($blue, .12);
-      color: $blue;
-      border: 1px solid rgba($blue, .25);
-    }
-  }
-}
-
-// Top accent line
-.card-accent {
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 2px;
-  opacity: .7;
-}
-
-// Corner decoration
-.card-corner {
-  position: absolute;
-  bottom: 14px; right: 16px;
-  font-size: 18px;
-  opacity: .12;
-  color: $text;
-}
-
-// ── Card inner content ─────────────────────────────────
-.card-inner {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.card-top {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.dev-avatar {
-  width: 38px; height: 38px;
-  border-radius: 9px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 800;
-  font-size: 15px;
-  flex-shrink: 0;
-}
-
-.dev-tag {
-  font-size: 9px;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  color: $muted;
-}
-
-.dev-name {
-  font-size: 15px;
-  font-weight: 700;
-  color: $text;
-  line-height: 1.2;
-}
-
-// ── Chips ──────────────────────────────────────────────
-.dev-modules {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-}
-
-.module-chip {
-  font-size: 10px;
-  padding: 2px 9px;
-  border-radius: 99px;
-  border: 1px solid $border2;
-  color: $muted2;
-  background: rgba($border2, .5);
-  letter-spacing: .03em;
-}
-
-// ── Quote ──────────────────────────────────────────────
-.dev-quote {
-  font-size: 11px;
-  line-height: 1.7;
-  color: $muted2;
-  border-left: 2px solid $border;
-  padding-left: 8px;
-
-  em {
-    font-style: normal;
-    font-weight: 700;
-    color: $text;
-  }
-}
-
-// ── Progress ───────────────────────────────────────────
-.dev-progress {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.progress-label {
-  display: flex;
-  justify-content: space-between;
-  font-size: 10px;
-  color: $muted;
-  letter-spacing: .03em;
-}
-
-.progress-track {
-  height: 3px;
-  background: $border;
-  border-radius: 99px;
-  overflow: hidden;
-}
-
-.progress-bar {
-  height: 100%;
-  border-radius: 99px;
-}
-
-.bar-khadija { width: 40%; }
-.bar-omaima  { width: 35%; }
-
-// ── Footer message ─────────────────────────────────────
-.team-msg {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-  font-size: 11px;
-  color: $muted;
-  text-align: center;
-  letter-spacing: .03em;
-
-  .team-line {
-    flex: 1;
-    height: 1px;
-    background: $border;
-  }
-}
-
-// ── Logout button ──────────────────────────────────────
-.logout-user-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 9px 22px;
-  background: none;
-  border: 1px solid rgba($red, .3);
-  color: rgba($red, .65);
-  font-family: inherit;
-  font-size: 11px;
-  letter-spacing: .06em;
-  border-radius: 7px;
-  cursor: pointer;
-  transition: all .2s;
-
-  .logout-icon { font-size: 14px; }
-
-  &:hover {
-    background: rgba($red, .07);
-    border-color: rgba($red, .55);
-    color: $red;
-  }
-}
-// ── Heart wrapper ──────────────────────────────────────
-.heart-wrap {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0;
-}
-
-.heart-svg {
-  width: 100%;
-  max-width: 300px;
-  height: auto;
-  display: block;
-  filter: drop-shadow(0 0 18px rgba($gold, .35));
-
-  // Coloriser les cœurs SVG en doré/bleu selon la carte
-  .card-khadija & .heart-fill { fill: $gold; }
-  .card-omaima  & .heart-fill { fill: $blue; }
-}
-
-.card-inner {
-  width: 72%;
-  margin-top: -18%;
-  background: $card;
-  border: 1px solid $border;
-  border-radius: 14px;
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  position: relative;
-  z-index: 2;
-  box-shadow: 0 4px 24px rgba(0,0,0,.4);
-}
-.hearts-footer {
+// ── Footer ────────────────────────────────────────────
+.shell-footer {
   position: fixed;
   bottom: 22px;
   left: 50%;
   transform: translateX(-50%);
-
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 24px;
-
   padding: 12px 20px;
-
   border: 1px solid $border;
   background: rgba($surface, .55);
   backdrop-filter: blur(14px);
-
   border-radius: 16px;
-
   box-shadow: 0 10px 30px rgba(0,0,0,.35);
-
   z-index: 20;
 }
-.hearts-footer .brand {
+
+.brand {
   display: flex;
   align-items: center;
   gap: 8px;
-
   font-size: 12px;
   color: $text;
   letter-spacing: .08em;
 
   .brand-dot {
-    width: 7px;
-    height: 7px;
+    width: 7px; height: 7px;
     border-radius: 50%;
     background: $gold;
     box-shadow: 0 0 12px $gold;
   }
 
-  .brand-name {
-    font-weight: 700;
-  }
+  .brand-name { font-weight: 700 }
 }
-.hearts-footer .logout-btn {
+
+.logout-btn {
   display: flex;
   align-items: center;
   gap: 8px;
-
   padding: 10px 18px;
-
   border-radius: 999px;
-
-  background: linear-gradient(135deg, rgba($red, .35), rgba($red, .12));
-  border: 1px solid rgba($red, .45);
-
+  background: linear-gradient(135deg, rgba($red,.35), rgba($red,.12));
+  border: 1px solid rgba($red,.45);
   color: $red;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: .06em;
-
   cursor: pointer;
-
   transition: all .25s ease;
+  font-family: inherit;
 
-  box-shadow:
-    0 8px 20px rgba($red, .18),
-    inset 0 1px 0 rgba(255,255,255,.08);
-
-  span {
-    font-size: 14px;
-  }
+  span { font-size: 14px }
 
   &:hover {
     transform: translateY(-2px);
-    background: rgba($red, .18);
-    box-shadow:
-      0 12px 28px rgba($red, .28),
-      inset 0 1px 0 rgba(255,255,255,.12);
+    background: rgba($red,.18);
   }
 
-  &:active {
-    transform: scale(0.96);
-    box-shadow: 0 6px 14px rgba($red, .18);
-  }
+  &:active { transform: scale(0.96) }
 }

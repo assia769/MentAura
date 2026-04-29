@@ -1,53 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
 
+const CORS = {
+  'Access-Control-Allow-Origin': 'http://localhost:4200',
+  'Access-Control-Allow-Methods': 'GET, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  'Access-Control-Allow-Credentials': 'true',
+}
+
+export async function OPTIONS() {
+  return new NextResponse(null, { status: 204, headers: CORS })
+}
+
 export async function GET(req: NextRequest) {
-  // Role already validated by middleware
-  try {
-    const db = await getDb()
-
-    const [
-      totalUsers,
-      totalStudents,
-      activeUsers,
-      totalSessions,
-      totalGroups,
-      recentSessions,
-      topMatieres,
-      globalStats
-    ] = await Promise.all([
-      db.collection('users').countDocuments(),
-      db.collection('users').countDocuments({ role: 'student' }),
-      db.collection('users').countDocuments({ isActive: true }),
-      db.collection('sessionetudes').countDocuments(),
-      db.collection('groupeetudes').countDocuments(),
-      db.collection('sessionetudes')
-        .find({ statut: 'realisee' })
-        .sort({ dateDebut: -1 })
-        .limit(5)
-        .toArray(),
-      db.collection('matieres')
-        .aggregate([
-          { $group: { _id: '$nom', totalHeures: { $sum: '$totalHeuresEtudiees' } } },
-          { $sort: { totalHeures: -1 } },
-          { $limit: 5 }
-        ])
-        .toArray(),
-      db.collection('statglobales').findOne({}, { sort: { date: -1 } })
-    ])
-
-    return NextResponse.json({
-      totalUsers,
-      totalStudents,
-      activeUsers,
-      totalSessions,
-      totalGroups,
-      tauxCompletionGlobal: globalStats?.tauxCompletionGlobal ?? 0,
-      recentSessions,
-      topMatieres
-    })
-  } catch (err) {
-    console.error('[AdminStats]', err)
-    return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 })
+  const role = req.headers.get('x-user-role')
+  if (role !== 'admin') {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403, headers: CORS })
   }
+
+  const db = await getDb()
+  const [totalUsers, activeSessions, totalGroups] = await Promise.all([
+    db.collection('users').countDocuments(),
+    db.collection('sessionetudes').countDocuments({ statut: 'en_cours' }),
+    db.collection('groupeetudes').countDocuments(),
+  ])
+
+  return NextResponse.json({ totalUsers, activeSessions, totalGroups }, { headers: CORS })
 }

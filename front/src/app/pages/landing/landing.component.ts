@@ -90,6 +90,7 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
   ];
 
   ngOnInit(): void {
+    if (typeof window === 'undefined') return
     const params = new URLSearchParams(window.location.search);
     if (params.get('tab') === 'register') {
       this.currentTab = 'register';
@@ -97,6 +98,7 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
+    if (typeof window === 'undefined') return
     setTimeout(() => {
       this.initNav();
       this.initScrollReveal();

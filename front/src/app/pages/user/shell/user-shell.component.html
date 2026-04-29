@@ -1,116 +1,22 @@
-<div class="devs-grid">
-
-  <!-- Khadija -->
-  <div class="dev-card card-khadija">
-    <div class="card-accent"></div>
-    <div class="heart-wrap">
-
-      <!-- Cœur SVG doré -->
-      <svg class="heart-svg" viewBox="0 0 200 180" xmlns="http://www.w3.org/2000/svg">
-        <path class="heart-fill"
-          d="M100 155 C100 155 20 100 20 55 C20 28 40 10 62 10 C78 10 92 20 100 34 C108 20 122 10 138 10 C160 10 180 28 180 55 C180 100 100 155 100 155Z"
-          fill="#d4a843" opacity="0.9"/>
-        <!-- Reflet subtil -->
-        <path d="M52 32 C58 22 72 16 82 22"
-          stroke="white" stroke-width="3" fill="none"
-          opacity="0.25" stroke-linecap="round"/>
-        <!-- Anneau de glow -->
-        <circle cx="100" cy="82" r="62"
-          fill="none" stroke="#d4a843"
-          stroke-width="0.8" opacity="0.2"/>
-      </svg>
-
-      <div class="card-inner">
-        <div class="card-top">
-          <div class="dev-avatar">K</div>
-          <div>
-            <div class="dev-tag">MODULE 01</div>
-            <div class="dev-name">Khadija</div>
-          </div>
-        </div>
-        <div class="dev-modules">
-          <span class="module-chip">Sessions d'étude</span>
-          <span class="module-chip">Notifications</span>
-          <span class="module-chip">Paramètres</span>
-        </div>
-        <p class="dev-quote">
-          "Tu es la gardienne du temps —<br>
-          chaque session que tu bâtis<br>
-          <em>façonne l'avenir d'un étudiant.</em>"
-        </p>
-        <div class="dev-progress">
-          <div class="progress-label">
-            <span>En construction</span>
-            <span>🔥 En cours</span>
-          </div>
-          <div class="progress-track">
-            <div class="progress-bar bar-khadija"></div>
-          </div>
-        </div>
-      </div>
-
-    </div><!-- /.heart-wrap -->
-    <div class="card-corner">◈</div>
+<div class="user-shell">
+  <div class="ambient">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="grid-lines"></div>
   </div>
 
-  <!-- Omaima -->
-  <div class="dev-card card-omaima">
-    <div class="card-accent"></div>
-    <div class="heart-wrap">
-
-      <!-- Cœur SVG bleu -->
-      <svg class="heart-svg" viewBox="0 0 200 180" xmlns="http://www.w3.org/2000/svg">
-        <path class="heart-fill"
-          d="M100 155 C100 155 20 100 20 55 C20 28 40 10 62 10 C78 10 92 20 100 34 C108 20 122 10 138 10 C160 10 180 28 180 55 C180 100 100 155 100 155Z"
-          fill="#3d6af0" opacity="0.9"/>
-        <path d="M52 32 C58 22 72 16 82 22"
-          stroke="white" stroke-width="3" fill="none"
-          opacity="0.25" stroke-linecap="round"/>
-        <circle cx="100" cy="82" r="62"
-          fill="none" stroke="#3d6af0"
-          stroke-width="0.8" opacity="0.2"/>
-      </svg>
-
-      <div class="card-inner">
-        <div class="card-top">
-          <div class="dev-avatar">O</div>
-          <div>
-            <div class="dev-tag">MODULE 02</div>
-            <div class="dev-name">Omaima</div>
-          </div>
-        </div>
-        <div class="dev-modules">
-          <span class="module-chip">Profil étudiant</span>
-          <span class="module-chip">Groupes</span>
-          <span class="module-chip">Analytics</span>
-        </div>
-        <p class="dev-quote">
-          "Tu es l'architecte du lien —<br>
-          chaque groupe que tu connectes<br>
-          <em>allume une nouvelle intelligence.</em>"
-        </p>
-        <div class="dev-progress">
-          <div class="progress-label">
-            <span>En construction</span>
-            <span>🔥 En cours</span>
-          </div>
-          <div class="progress-track">
-            <div class="progress-bar bar-omaima"></div>
-          </div>
-        </div>
-      </div>
-
-    </div><!-- /.heart-wrap -->
-    <div class="card-corner">◉</div>
-  </div>
-<footer class="hearts-footer">
-  <div class="brand">
-    <span class="brand-dot"></span>
-    <span class="brand-name">Mentaura</span>
+  <div class="shell-content">
+    <router-outlet></router-outlet>
   </div>
 
-  <button class="logout-btn" (click)="logout()">
-    <span>⎋</span> Se déconnecter
-  </button>
-</footer>
-</div><!-- /.devs-grid -->
+  <footer class="shell-footer">
+    <div class="brand">
+      <span class="brand-dot"></span>
+      <span class="brand-name">Mentaura</span>
+    </div>
+    <button class="logout-btn" (click)="logout()">
+      <span>⎋</span> Se déconnecter
+    </button>
+  </footer>
+</div>

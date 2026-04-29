@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Verify signature
-    const payload = verifyRefreshToken(refreshToken)
+    const payload = await verifyRefreshToken(refreshToken)
 
     // Check token exists in DB (not revoked)
     const db  = await getDb()
@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Issue new access token
-    const accessToken = signAccessToken({
+    const accessToken = await signAccessToken({
       userId: payload.userId,
       email:  payload.email,
       role:   payload.role

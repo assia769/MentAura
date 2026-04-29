@@ -1,11 +1,12 @@
 import { Component, inject } from '@angular/core'
 import { CommonModule } from '@angular/common'
+import { RouterOutlet } from '@angular/router'
 import { AuthService } from '../../../core/services/auth.service'
 
 @Component({
   selector: 'app-user-shell',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterOutlet],
   templateUrl: './user-shell.component.html',
   styleUrls: ['./user-shell.component.scss']
 })

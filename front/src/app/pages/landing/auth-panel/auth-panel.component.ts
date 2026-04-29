@@ -131,7 +131,6 @@ export class AuthPanelComponent {
           return
         }
 
-        this.router.navigate(res.role === 'admin' ? ['/admin/dashboard'] : ['/user'])
       },
       error: err => {
         this.loading  = false
@@ -151,7 +150,6 @@ export class AuthPanelComponent {
     this.auth.verifyMfa(this.pendingUser.userId, this.mfaCode).subscribe({
       next: (res: any) => {
         this.loading = false
-        this.router.navigate(res.role === 'admin' ? ['/admin/dashboard'] : ['/user'])
       },
       error: err => {
         this.loading  = false

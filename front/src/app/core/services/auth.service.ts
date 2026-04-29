@@ -1,7 +1,8 @@
-import { Injectable, inject } from '@angular/core'
+import { Injectable, inject, PLATFORM_ID } from '@angular/core'
+import { isPlatformBrowser } from '@angular/common'
 import { HttpClient } from '@angular/common/http'
 import { Router } from '@angular/router'
-import { BehaviorSubject, Observable, tap } from 'rxjs'
+import { BehaviorSubject, Observable, throwError, tap } from 'rxjs'
 import { environment } from '../../../environments/environment'
 
 export interface AuthUser {
@@ -16,91 +17,165 @@ export interface AuthUser {
 export class AuthService {
   private http   = inject(HttpClient)
   private router = inject(Router)
-  private api    = environment.apiUrl
+  private platformId = inject(PLATFORM_ID)
+  private api = environment.apiUrl
 
-  private _user$ = new BehaviorSubject<AuthUser | null>(this.loadFromStorage())
-  user$: Observable<AuthUser | null> = this._user$.asObservable()
+  private _user$ = new BehaviorSubject<AuthUser | null>(null)
+  user$ = this._user$.asObservable()
 
-  login(email: string, password: string, captchaToken: string): Observable<any> {
-    return this.http
-      .post<any>(`${this.api}/api/auth/login`, { email, password, captchaToken })
-      .pipe(
-        tap(res => {
-          // Si MFA requis, on ne persiste rien — le composant gère
-          if (res.mfaRequired) return
-
-          this.persist(res)
-          this.router.navigate(res.role === 'admin' ? ['/admin/dashboard'] : ['/user'])
-        })
-      )
+  constructor() {
+    if (typeof window !== 'undefined') {
+      const raw = localStorage.getItem('mentaura_user')
+      if (raw) {
+        try {
+          this._user$.next(JSON.parse(raw))
+        } catch {}
+      }
+    }
   }
 
-  // ✅ register ne persist PAS et ne redirige PAS
-  register(
-    nom: string, prenom: string,
-    email: string, password: string,
-    captchaToken: string
-  ): Observable<any> {
-    return this.http.post<any>(
-      `${this.api}/api/auth/register`,
-      { nom, prenom, email, password, captchaToken }
+  // ========================
+  // GETTERS
+  // ========================
+  get currentUser(): AuthUser | null {
+    return this._user$.value
+  }
+
+  get accessToken(): string | null {
+    return this._user$.value?.accessToken ?? null
+  }
+  
+
+
+  get isLoggedIn(): boolean {
+    return !!this._user$.value
+  }
+
+  get isAdmin(): boolean {
+    return this._user$.value?.role === 'admin'
+  }
+
+  // ========================
+  // AUTH METHODS
+  // ========================
+  login(email: string, password: string, captchaToken: string) {
+    return this.http.post<any>(`${this.api}/api/auth/login`, {
+      email,
+      password,
+      captchaToken
+    }).pipe(
+      tap(res => {
+        if (res.mfaRequired) return
+        this.persist(res)
+        this.router.navigate(
+          res.role === 'admin' ? ['/admin/dashboard'] : ['/user']
+        )
+      })
     )
-    // Pas de tap ici — le composant affiche le message et switche vers login
   }
 
-  // ✅ URL corrigée + après vérification MFA on persiste et redirige
-  verifyMfa(userId: string, code: string): Observable<any> {
-    return this.http
-      .post<any>(`${this.api}/api/auth/mfa/verify`, { userId, code })
-      .pipe(
-        tap(res => {
-          this.persist(res)
-          this.router.navigate(res.role === 'admin' ? ['/admin/dashboard'] : ['/user'])
-        })
-      )
+  register(
+    nom: string,
+    prenom: string,
+    email: string,
+    password: string,
+    captchaToken: string
+  ) {
+    return this.http.post<any>(`${this.api}/api/auth/register`, {
+      nom,
+      prenom,
+      email,
+      password,
+      captchaToken
+    })
   }
 
-  // ✅ Vérification du token email (lien cliqué dans le mail)
-  verifyEmail(token: string): Observable<any> {
-    return this.http.post<any>(`${this.api}/api/auth/verify-email`, { token })
+  verifyMfa(userId: string, code: string) {
+    return this.http.post<any>(`${this.api}/api/auth/mfa/verify`, {
+      userId,
+      code
+    }).pipe(
+      tap(res => {
+        this.persist(res)
+        this.router.navigate(
+          res.role === 'admin' ? ['/admin/dashboard'] : ['/user']
+        )
+      })
+    )
   }
 
-  // ✅ Renvoyer l'email de vérification
-  resendVerification(email: string): Observable<any> {
-    return this.http.post<any>(`${this.api}/api/auth/resend-verification`, { email })
+  verifyEmail(token: string) {
+    return this.http.post<any>(`${this.api}/api/auth/verify-email`, {
+      token
+    })
   }
 
+  resendVerification(email: string) {
+    return this.http.post<any>(`${this.api}/api/auth/resend-verification`, {
+      email
+    })
+  }
+
+  // ========================
+  // TOKEN REFRESH
+  // ========================
+ refreshToken(): Observable<{ accessToken: string }> {
+  const user = this._user$.value
+  if (!user?.refreshToken) {
+    return throwError(() => new Error('No refresh token'))
+  }
+
+  return this.http
+    .post<{ accessToken: string }>(
+      `${this.api}/api/auth/refresh`,
+      { refreshToken: user.refreshToken }
+    )
+    .pipe(
+      tap(res => {
+        const updatedUser = {
+          ...user,
+          accessToken: res.accessToken
+        }
+        this.persist(updatedUser) // ✅ CRUCIAL
+      })
+    )
+}
+
+  // ========================
+  // LOGOUT
+  // ========================
   logout(): void {
     const user = this._user$.value
+
     if (user) {
-      this.http.post(`${this.api}/api/auth/logout`, { refreshToken: user.refreshToken }).subscribe()
+      this.http.post(`${this.api}/api/auth/logout`, {
+        refreshToken: user.refreshToken
+      }).subscribe()
     }
-    localStorage.removeItem('mentaura_user')
+
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('mentaura_user')
+    }
+
     this._user$.next(null)
     this.router.navigate(['/'])
   }
 
-  get currentUser(): AuthUser | null { return this._user$.value }
-  get accessToken(): string | null   { return this._user$.value?.accessToken ?? null }
-  get isAdmin(): boolean             { return this._user$.value?.role === 'admin' }
-  get isLoggedIn(): boolean          { return !!this._user$.value }
-
-  refreshToken(): Observable<{ accessToken: string }> {
-    const user = this._user$.value!
-    return this.http
-      .post<{ accessToken: string }>(`${this.api}/api/auth/refresh`, { refreshToken: user.refreshToken })
-      .pipe(tap(res => this.persist({ ...user, accessToken: res.accessToken })))
+  softResetSession(): void {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('mentaura_user')
+    }
+    this._user$.next(null)
   }
+ 
 
-  private persist(user: AuthUser): void {
-    localStorage.setItem('mentaura_user', JSON.stringify(user))
+  // ========================
+  // STORAGE
+  // ========================
+  private persist(user: AuthUser) {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('mentaura_user', JSON.stringify(user))
+    }
     this._user$.next(user)
-  }
-
-  private loadFromStorage(): AuthUser | null {
-    try {
-      const raw = localStorage.getItem('mentaura_user')
-      return raw ? JSON.parse(raw) : null
-    } catch { return null }
   }
 }

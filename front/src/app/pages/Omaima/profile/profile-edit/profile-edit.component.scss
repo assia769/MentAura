@@ -1,0 +1,423 @@
+@use 'sass:color';
+
+$bg:      #080a10;
+$surface: #0e1118;
+$card:    #141720;
+$border:  #1e2334;
+$border2: #252c3d;
+$text:    #dde2f0;
+$muted:   #4a5270;
+$muted2:  #6b7494;
+$gold:    #d4a843;
+$gold-dim:rgba(#d4a843,.15);
+$green:   #27ae60;
+$blue:    #3d6af0;
+$red:     #e74c3c;
+
+* { box-sizing: border-box; margin: 0; padding: 0 }
+
+.edit-shell {
+  padding: 32px 0;
+  color: $text;
+  font-family: 'DM Mono', 'Courier New', monospace;
+  max-width: 760px;
+}
+
+// ── Header ────────────────────────────────────────────────────────────────
+.edit-header {
+  display: flex; align-items: center; gap: 16px;
+  margin-bottom: 24px;
+  animation: fadeUp .35s both;
+}
+
+.back-btn {
+  padding: 8px 14px;
+  background: none;
+  border: 1px solid $border;
+  color: $muted2;
+  font-family: inherit;
+  font-size: 11px;
+  border-radius: 7px;
+  cursor: pointer;
+  letter-spacing: .05em;
+  transition: all .2s;
+  flex-shrink: 0;
+
+  &:hover { border-color: $gold; color: $gold }
+}
+
+.edit-titles { flex: 1 }
+
+.edit-title {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: $text;
+  margin-bottom: 2px;
+}
+
+.edit-sub {
+  font-size: 10px;
+  color: $muted;
+  letter-spacing: .04em;
+}
+
+// ── Tabs ──────────────────────────────────────────────────────────────────
+.tab-bar {
+  display: flex; gap: 4px;
+  background: $surface;
+  border: 1px solid $border;
+  border-radius: 10px;
+  padding: 5px;
+  margin-bottom: 24px;
+  animation: fadeUp .4s .05s both;
+}
+
+.tab-btn {
+  flex: 1;
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  padding: 9px;
+  border: none;
+  background: none;
+  color: $muted;
+  font-family: inherit;
+  font-size: 11px;
+  letter-spacing: .06em;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: all .2s;
+
+  &:hover { background: rgba($border2,.8); color: $text }
+
+  &.active {
+    background: $gold-dim;
+    color: $gold;
+    border: 1px solid rgba($gold,.2);
+  }
+}
+
+// ── Alerts ────────────────────────────────────────────────────────────────
+.alert {
+  padding: 12px 18px;
+  border-radius: 9px;
+  font-size: 12px;
+  margin-bottom: 16px;
+  letter-spacing: .03em;
+
+  &.alert-success { background: rgba($green,.1); color: $green; border: 1px solid rgba($green,.25) }
+  &.alert-error   { background: rgba($red,.1);   color: $red;   border: 1px solid rgba($red,.25) }
+}
+
+// ── Spinner ───────────────────────────────────────────────────────────────
+.center-spinner {
+  display: flex; justify-content: center; padding: 60px;
+}
+
+.spin-ring {
+  width: 32px; height: 32px;
+  border: 2px solid $border;
+  border-top-color: $gold;
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+}
+
+.spin-mini {
+  width: 12px; height: 12px;
+  border: 1.5px solid rgba($gold,.3);
+  border-top-color: $gold;
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin { to { transform: rotate(360deg) } }
+
+// ── Tab panel ─────────────────────────────────────────────────────────────
+.tab-panel { animation: fadeUp .35s both }
+
+// ── Form card ─────────────────────────────────────────────────────────────
+.form-card {
+  background: $card;
+  border: 1px solid $border;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 16px;
+}
+
+.add-card {
+  border-color: rgba($gold,.15);
+  background: color.adjust($card, $lightness: 1%);
+}
+
+.add-title {
+  font-size: 10px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: $gold;
+  margin-bottom: 16px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 14px;
+
+  &:last-child { margin-bottom: 0 }
+}
+
+.field { display: flex; flex-direction: column; gap: 6px }
+.field.flex2 { grid-column: span 2 }
+
+.field-label {
+  font-size: 9.5px;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: $muted;
+}
+
+.field-input {
+  background: $surface;
+  border: 1px solid $border;
+  border-radius: 7px;
+  color: $text;
+  font-family: inherit;
+  font-size: 12px;
+  padding: 10px 14px;
+  outline: none;
+  transition: border-color .2s;
+  width: 100%;
+
+  &:focus { border-color: rgba($gold,.4) }
+  &::placeholder { color: $muted }
+}
+
+.field-textarea {
+  resize: vertical;
+  min-height: 90px;
+}
+
+.field-color {
+  height: 42px;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+.field-select {
+  cursor: pointer;
+  option { background: $card }
+}
+
+.field-check {
+  justify-content: flex-start;
+}
+
+// ── Toggle ────────────────────────────────────────────────────────────────
+.toggle {
+  display: flex; align-items: center; cursor: pointer;
+  gap: 8px;
+
+  input { display: none }
+
+  .toggle-track {
+    width: 36px; height: 20px;
+    background: $border;
+    border-radius: 99px;
+    position: relative;
+    transition: background .2s;
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 3px; left: 3px;
+      width: 14px; height: 14px;
+      background: $muted2;
+      border-radius: 50%;
+      transition: transform .2s, background .2s;
+    }
+  }
+
+  input:checked + .toggle-track {
+    background: rgba($green,.3);
+
+    &::after {
+      transform: translateX(16px);
+      background: $green;
+    }
+  }
+}
+
+// ── Form actions ──────────────────────────────────────────────────────────
+.form-actions {
+  display: flex; justify-content: flex-end; gap: 10px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid $border;
+}
+
+.btn-cancel {
+  padding: 10px 18px;
+  background: none;
+  border: 1px solid $border;
+  color: $muted2;
+  font-family: inherit;
+  font-size: 11px;
+  letter-spacing: .05em;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: all .2s;
+  &:hover { border-color: $red; color: $red }
+}
+
+.btn-save {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 22px;
+  background: $gold-dim;
+  border: 1px solid rgba($gold,.3);
+  color: $gold;
+  font-family: inherit;
+  font-size: 11px;
+  letter-spacing: .06em;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: all .2s;
+
+  &:hover { background: rgba($gold,.25) }
+  &.loading { opacity: .7; cursor: default }
+}
+
+.btn-add {
+  margin-top: 14px;
+  padding: 9px 18px;
+  background: $gold-dim;
+  border: 1px solid rgba($gold,.3);
+  color: $gold;
+  font-family: inherit;
+  font-size: 11px;
+  letter-spacing: .06em;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: all .2s;
+
+  &:hover { background: rgba($gold,.25) }
+  &:disabled { opacity: .4; cursor: default }
+}
+
+// ── Subject list ──────────────────────────────────────────────────────────
+.subject-list { display: flex; flex-direction: column; gap: 8px }
+
+.subject-row {
+  display: flex; align-items: center; gap: 12px;
+  background: $card;
+  border: 1px solid $border;
+  border-radius: 9px;
+  padding: 12px 16px;
+  animation: fadeUp .3s both;
+  transition: border-color .2s;
+
+  &:hover { border-color: $border2 }
+}
+
+.subject-color-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.subject-info { flex: 1 }
+.subject-name { font-size: 12px; font-weight: 600; color: $text; display: block; margin-bottom: 4px }
+.subject-meta { display: flex; align-items: center; gap: 8px }
+
+.priority-pill {
+  font-size: 9px;
+  letter-spacing: .06em;
+  padding: 1px 7px;
+  border-radius: 4px;
+  font-weight: 700;
+
+  &[data-prio="haute"]   { background: rgba(#d4a843,.15); color: #d4a843; border: 1px solid rgba(#d4a843,.25) }
+  &[data-prio="moyenne"] { background: rgba(#3d6af0,.15); color: #3d6af0; border: 1px solid rgba(#3d6af0,.25) }
+  &[data-prio="faible"]  { background: rgba(#4a5270,.2);  color: #6b7494; border: 1px solid rgba(#4a5270,.3) }
+}
+
+.subject-h { font-size: 10px; color: $muted }
+
+// ── Availability ──────────────────────────────────────────────────────────
+.day-picker {
+  display: flex; gap: 6px; flex-wrap: wrap;
+}
+
+.day-btn {
+  padding: 6px 12px;
+  background: $surface;
+  border: 1px solid $border;
+  color: $muted2;
+  font-family: inherit;
+  font-size: 11px;
+  letter-spacing: .05em;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all .2s;
+
+  &:hover { border-color: $gold; color: $gold }
+  &.active { background: $gold-dim; border-color: rgba($gold,.35); color: $gold }
+}
+
+.avail-list { display: flex; flex-direction: column; gap: 8px }
+
+.avail-row {
+  display: flex; align-items: center; gap: 12px;
+  background: $card;
+  border: 1px solid $border;
+  border-radius: 9px;
+  padding: 12px 16px;
+  animation: fadeUp .3s both;
+}
+
+.avail-day-pill {
+  font-size: 9px; font-weight: 800; letter-spacing: .1em;
+  background: $gold-dim; color: $gold;
+  border: 1px solid rgba($gold,.2);
+  border-radius: 5px;
+  padding: 3px 9px;
+  flex-shrink: 0;
+}
+
+.avail-time { flex: 1; font-size: 12px; color: $muted2; letter-spacing: .03em }
+
+.avail-rec {
+  font-size: 9px; letter-spacing: .06em; text-transform: uppercase;
+  background: rgba($green,.1); color: $green;
+  border: 1px solid rgba($green,.2); border-radius: 4px; padding: 2px 7px;
+}
+
+.delete-btn {
+  width: 28px; height: 28px;
+  background: none;
+  border: 1px solid $border;
+  color: $muted;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 10px;
+  transition: all .2s;
+  flex-shrink: 0;
+
+  &:hover { border-color: rgba($red,.4); color: $red; background: rgba($red,.08) }
+}
+
+// ── Empty hint ────────────────────────────────────────────────────────────
+.empty-hint {
+  font-size: 11px; color: $muted; text-align: center;
+  padding: 24px; letter-spacing: .04em;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px) }
+  to   { opacity: 1; transform: none }
+}
+
+@media (max-width: 600px) {
+  .form-row { grid-template-columns: 1fr }
+  .field.flex2 { grid-column: span 1 }
+}
