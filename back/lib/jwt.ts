@@ -9,7 +9,7 @@ export interface TokenPayload {
   role: 'admin' | 'student'
 }
 
-export async function signAccessToken(payload: TokenPayload): Promise<string> {
+export function signAccessToken(payload: TokenPayload): Promise<string> {
   return new SignJWT({ ...payload })
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()

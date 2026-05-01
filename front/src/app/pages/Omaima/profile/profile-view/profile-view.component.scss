@@ -21,10 +21,9 @@ $red:     #e74c3c;
   padding: 32px 0;
   color: $text;
   font-family: 'DM Mono', 'Courier New', monospace;
-  max-width: 900px;
 }
 
-// ── Skeleton ─────────────────────────────────────────────────────────────
+// ── Skeleton ──────────────────────────────────────────
 .skeleton-wrap { display: flex; flex-direction: column; gap: 20px }
 
 .skeleton-hero {
@@ -38,12 +37,12 @@ $red:     #e74c3c;
 
 .skeleton-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 1fr 1fr;
   gap: 14px;
 }
 
 .skeleton-card {
-  height: 90px;
+  height: 160px;
   background: linear-gradient(90deg, $card 25%, color.adjust($card, $lightness: 3%) 50%, $card 75%);
   background-size: 200% 100%;
   border-radius: 12px;
@@ -56,19 +55,18 @@ $red:     #e74c3c;
   100% { background-position: -200% 0 }
 }
 
-// ── Error ─────────────────────────────────────────────────────────────────
+// ── Error ─────────────────────────────────────────────
 .error-state {
   display: flex; align-items: center; gap: 12px;
   padding: 20px 24px;
   background: rgba($red, .08);
   border: 1px solid rgba($red, .25);
   border-radius: 12px;
-  color: $red;
-  font-size: 13px;
+  color: $red; font-size: 13px;
   .error-icon { font-size: 18px }
 }
 
-// ── Hero card ─────────────────────────────────────────────────────────────
+// ── Hero card ─────────────────────────────────────────
 .hero-card {
   position: relative;
   background: $card;
@@ -77,6 +75,15 @@ $red:     #e74c3c;
   overflow: hidden;
   margin-bottom: 20px;
   animation: fadeUp .4s both;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg,
+      transparent, rgba($gold,.4) 40%,
+      rgba($gold,.7) 50%, rgba($gold,.4) 60%, transparent);
+  }
 }
 
 .hero-bg {
@@ -91,13 +98,10 @@ $red:     #e74c3c;
   display: flex;
   align-items: center;
   gap: 20px;
-  padding: 28px 28px;
+  padding: 28px;
 }
 
-.avatar-ring {
-  position: relative;
-  flex-shrink: 0;
-}
+.avatar-ring { position: relative; flex-shrink: 0 }
 
 .avatar {
   width: 72px; height: 72px;
@@ -110,8 +114,7 @@ $red:     #e74c3c;
 }
 
 .avatar-pulse {
-  position: absolute;
-  inset: -3px;
+  position: absolute; inset: -3px;
   border-radius: 18px;
   border: 1px solid rgba($gold, .2);
   animation: pulseBorder 3s ease-in-out infinite;
@@ -125,41 +128,26 @@ $red:     #e74c3c;
 .hero-info { flex: 1 }
 
 .hero-name {
-  font-size: 20px;
-  font-weight: 800;
-  letter-spacing: .03em;
-  color: $text;
-  margin-bottom: 4px;
+  font-size: 20px; font-weight: 800;
+  letter-spacing: .03em; color: $text; margin-bottom: 4px;
 }
 
 .hero-email {
-  font-size: 11px;
-  color: $muted2;
-  letter-spacing: .04em;
-  margin-bottom: 12px;
+  font-size: 11px; color: $muted2;
+  letter-spacing: .04em; margin-bottom: 12px;
 }
 
-.hero-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
-}
+.hero-tags { display: flex; flex-wrap: wrap; gap: 7px }
 
 .tag {
-  font-size: 9px;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  padding: 3px 9px;
-  border-radius: 5px;
-  border: 1px solid $border;
-  background: rgba($border2, .6);
-  color: $muted2;
-  font-weight: 600;
+  font-size: 9px; letter-spacing: .08em;
+  text-transform: uppercase; padding: 3px 9px;
+  border-radius: 5px; border: 1px solid $border;
+  background: rgba($border2, .6); color: $muted2; font-weight: 600;
 
-  &.tag-role   { background: $blue-dim; color: $blue; border-color: rgba($blue,.2) }
-  &.tag-active { background: rgba($green,.1); color: $green; border-color: rgba($green,.25) }
+  &.tag-role     { background: $blue-dim; color: $blue; border-color: rgba($blue,.2) }
+  &.tag-active   { background: rgba($green,.1); color: $green; border-color: rgba($green,.25) }
   &.tag-inactive { background: rgba($red,.1); color: $red; border-color: rgba($red,.25) }
-  &.tag-gold   { background: $gold-dim; color: $gold; border-color: rgba($gold,.25) }
 }
 
 .edit-btn {
@@ -167,75 +155,15 @@ $red:     #e74c3c;
   padding: 10px 18px;
   background: $gold-dim;
   border: 1px solid rgba($gold, .3);
-  color: $gold;
-  font-family: inherit;
-  font-size: 11px;
-  letter-spacing: .06em;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all .2s;
-  flex-shrink: 0;
+  color: $gold; font-family: inherit;
+  font-size: 11px; letter-spacing: .06em;
+  border-radius: 8px; cursor: pointer;
+  transition: all .2s; flex-shrink: 0;
 
-  &:hover {
-    background: rgba($gold, .25);
-    border-color: rgba($gold, .5);
-  }
+  &:hover { background: rgba($gold, .25); border-color: rgba($gold, .5) }
 }
 
-// ── Stats row ─────────────────────────────────────────────────────────────
-.stats-row {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
-  margin-bottom: 20px;
-}
-
-.stat-card {
-  background: $card;
-  border: 1px solid $border;
-  border-radius: 12px;
-  padding: 18px 20px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  animation: fadeUp .4s var(--delay, 0ms) both;
-  transition: border-color .2s, transform .2s;
-
-  &:hover { border-color: $border2; transform: translateY(-2px) }
-}
-
-.stat-icon {
-  width: 36px; height: 36px;
-  border-radius: 9px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 15px; flex-shrink: 0;
-
-  &.stat-icon-gold  { background: $gold-dim; color: $gold; border: 1px solid rgba($gold,.2) }
-  &.stat-icon-blue  { background: $blue-dim; color: $blue; border: 1px solid rgba($blue,.2) }
-  &.stat-icon-green { background: rgba($green,.1); color: $green; border: 1px solid rgba($green,.2) }
-}
-
-.stat-body { flex: 1 }
-
-.stat-label {
-  font-size: 9.5px;
-  letter-spacing: .09em;
-  color: $muted;
-  text-transform: uppercase;
-  margin-bottom: 5px;
-}
-
-.stat-value {
-  font-size: 26px;
-  font-weight: 800;
-  letter-spacing: -.02em;
-  color: $text;
-
-  &.accent-blue  { color: $blue }
-  &.accent-green { color: $green }
-}
-
-// ── Two columns ───────────────────────────────────────────────────────────
+// ── Two columns ───────────────────────────────────────
 .two-col {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -251,142 +179,78 @@ $red:     #e74c3c;
 }
 
 .section-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 18px;
+  display: flex; align-items: center;
+  gap: 10px; margin-bottom: 18px;
 }
 
 .section-title {
-  font-size: 11px;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  color: $text;
-  font-weight: 700;
-  flex: 1;
+  font-size: 11px; letter-spacing: .08em;
+  text-transform: uppercase; color: $text;
+  font-weight: 700; flex: 1;
 }
 
 .section-badge {
-  font-size: 10px;
-  background: $gold-dim;
-  color: $gold;
-  border: 1px solid rgba($gold,.2);
-  border-radius: 99px;
-  padding: 1px 9px;
-  font-weight: 700;
+  font-size: 10px; background: $gold-dim;
+  color: $gold; border: 1px solid rgba($gold,.2);
+  border-radius: 99px; padding: 1px 9px; font-weight: 700;
 }
 
-// ── Subjects ──────────────────────────────────────────────────────────────
+// ── Subjects ──────────────────────────────────────────
 .subject-list { display: flex; flex-direction: column; gap: 12px }
 
 .subject-item {
-  display: grid;
-  grid-template-columns: 10px 1fr;
-  gap: 10px;
-  align-items: start;
-  animation: fadeUp .3s both;
+  display: flex; align-items: center;
+  gap: 10px; animation: fadeUp .3s both;
 }
 
 .subject-dot {
   width: 10px; height: 10px;
-  border-radius: 50%;
-  margin-top: 4px;
-  flex-shrink: 0;
+  border-radius: 50%; flex-shrink: 0;
   box-shadow: 0 0 6px currentColor;
 }
 
-.subject-body { display: flex; flex-direction: column; gap: 5px }
+.subject-body { display: flex; flex-direction: column; gap: 4px; flex: 1 }
 
-.subject-name {
-  font-size: 12px;
-  color: $text;
-  font-weight: 600;
-}
+.subject-name { font-size: 12px; color: $text; font-weight: 600 }
 
 .subject-meta { display: flex; align-items: center; gap: 8px }
 
 .priority-tag {
-  font-size: 9px;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  padding: 1px 7px;
-  border-radius: 4px;
-  border: 1px solid;
-  font-weight: 700;
+  font-size: 9px; letter-spacing: .06em;
+  text-transform: uppercase; padding: 1px 7px;
+  border-radius: 4px; border: 1px solid; font-weight: 700;
 }
 
-.subject-hours {
-  font-size: 10px;
-  color: $muted;
-}
-
-.subject-bar-wrap {
-  grid-column: 2;
-  height: 3px;
-  background: $border;
-  border-radius: 99px;
-  overflow: hidden;
-}
-
-.subject-bar {
-  height: 100%;
-  border-radius: 99px;
-  opacity: .7;
-  animation: growBar .6s ease both;
-}
-
-@keyframes growBar {
-  from { width: 0 !important }
-}
-
-// ── Availability ──────────────────────────────────────────────────────────
+// ── Availability ──────────────────────────────────────
 .avail-list { display: flex; flex-direction: column; gap: 0 }
 
 .avail-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  display: flex; align-items: center; gap: 12px;
   padding: 10px 0;
   border-bottom: 1px solid rgba($border, .6);
   animation: fadeUp .3s both;
-
   &:last-child { border-bottom: none }
 }
 
 .avail-day {
-  font-size: 11px;
-  color: $gold;
-  font-weight: 700;
-  width: 68px;
-  flex-shrink: 0;
-  letter-spacing: .04em;
+  font-size: 11px; color: $gold;
+  font-weight: 700; width: 68px;
+  flex-shrink: 0; letter-spacing: .04em;
 }
 
-.avail-time {
-  font-size: 11px;
-  color: $muted2;
-  flex: 1;
-  letter-spacing: .03em;
-}
+.avail-time { font-size: 11px; color: $muted2; flex: 1; letter-spacing: .03em }
 
 .avail-badge {
-  font-size: 8.5px;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  padding: 2px 7px;
-  background: rgba($green,.1);
-  color: $green;
-  border: 1px solid rgba($green,.2);
-  border-radius: 4px;
+  font-size: 8.5px; letter-spacing: .06em;
+  text-transform: uppercase; padding: 2px 7px;
+  background: rgba($green,.1); color: $green;
+  border: 1px solid rgba($green,.2); border-radius: 4px;
 }
 
-// ── Empty ─────────────────────────────────────────────────────────────────
+// ── Empty ─────────────────────────────────────────────
 .empty-hint {
-  font-size: 11px;
-  color: $muted;
-  text-align: center;
-  padding: 20px 0;
-  letter-spacing: .04em;
+  font-size: 11px; color: $muted;
+  text-align: center; padding: 20px 0; letter-spacing: .04em;
 }
 
 @keyframes fadeUp {
@@ -396,6 +260,5 @@ $red:     #e74c3c;
 
 @media (max-width: 768px) {
   .two-col { grid-template-columns: 1fr }
-  .stats-row { grid-template-columns: 1fr }
   .hero-body { flex-wrap: wrap }
 }

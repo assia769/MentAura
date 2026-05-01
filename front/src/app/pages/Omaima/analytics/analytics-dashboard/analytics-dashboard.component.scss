@@ -18,10 +18,11 @@ $red:     #e74c3c;
 * { box-sizing: border-box; margin: 0; padding: 0 }
 
 .analytics-shell {
-  padding: 32px 0;
+  padding: 16px 0;
   color: $text;
   font-family: 'DM Mono', 'Courier New', monospace;
   max-width: 900px;
+  margin: 0 auto;
 }
 
 // ── Header ────────────────────────────────────────────────────────────────
@@ -38,7 +39,7 @@ $red:     #e74c3c;
 
 .page-sub { font-size: 10px; color: $muted; letter-spacing: .04em }
 
-// ── Skeleton ─────────────────────────────────────────────────────────────
+// ── Skeleton ──────────────────────────────────────────────────────────────
 .skeleton-wrap {
   display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
   margin-bottom: 20px;
@@ -124,10 +125,36 @@ $red:     #e74c3c;
 
 // ── Sessions row ──────────────────────────────────────────────────────────
 .sessions-row {
-  display: grid; grid-template-columns: 1fr 1fr 2fr;
-  gap: 14px; margin-bottom: 20px;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 14px;
+  margin-bottom: 20px;
+  align-items: start;
 }
 
+.left-col {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.right-col {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.info-cards-mini {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.chart-wrapper {
+  padding: 16px;
+}
+
+// ── Info card ─────────────────────────────────────────────────────────────
 .info-card {
   background: $card; border: 1px solid $border; border-radius: 12px;
   padding: 18px 20px;
@@ -135,10 +162,6 @@ $red:     #e74c3c;
   transition: border-color .2s;
 
   &:hover { border-color: $border2 }
-}
-
-.progress-card {
-  display: flex; align-items: center; gap: 14px;
 }
 
 .info-label {
@@ -149,6 +172,16 @@ $red:     #e74c3c;
 .info-val {
   font-size: 28px; font-weight: 800; letter-spacing: -.02em; color: $text;
   &.accent-green { color: $green }
+  &.accent-gold  { color: $gold }
+}
+
+// ── Progress card ─────────────────────────────────────────────────────────
+.progress-card {
+  .info-label { margin-bottom: 12px }
+}
+
+.progress-row {
+  display: flex; align-items: center; gap: 12px;
 }
 
 .progress-track {
@@ -163,11 +196,12 @@ $red:     #e74c3c;
 
 .progress-pct { font-size: 14px; font-weight: 800; flex-shrink: 0 }
 
-// ── Chart card ────────────────────────────────────────────────────────────
+// ── Chart card (fallback bar list) ────────────────────────────────────────
 .chart-card {
   background: $card; border: 1px solid $border;
   border-radius: 12px; padding: 24px;
   animation: fadeUp .45s .15s both;
+  margin-bottom: 20px;
 }
 
 .chart-header {
@@ -191,6 +225,14 @@ $red:     #e74c3c;
 
 .bar-label-col { display: flex; flex-direction: column; gap: 2px }
 
+.bar-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 0 5px currentColor;
+  margin-bottom: 2px;
+}
+
 .bar-label {
   font-size: 11px; color: $muted2;
   overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
@@ -205,8 +247,8 @@ $red:     #e74c3c;
 
 .bar-fill {
   height: 100%;
-  background: linear-gradient(90deg, $gold, rgba($gold,.4));
   border-radius: 99px;
+  opacity: .85;
   animation: growBar .7s ease both;
 }
 
@@ -224,12 +266,23 @@ $red:     #e74c3c;
   to   { opacity: 1; transform: none }
 }
 
+// ── Responsive ────────────────────────────────────────────────────────────
 @media (max-width: 1100px) {
   .kpi-row { grid-template-columns: repeat(2, 1fr) }
 }
 
+@media (max-width: 800px) {
+  .sessions-row {
+    grid-template-columns: 1fr;
+  }
+
+  .info-cards-mini {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
 @media (max-width: 700px) {
-  .sessions-row { grid-template-columns: 1fr }
   .kpi-row { grid-template-columns: 1fr 1fr }
   .bar-item { grid-template-columns: 120px 1fr 36px }
+  .info-cards-mini { grid-template-columns: 1fr }
 }

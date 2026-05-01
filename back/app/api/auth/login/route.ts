@@ -147,7 +147,7 @@ const update: UserUpdate = {
     }
 
     const accessToken = await signAccessToken(payload)
-    const refreshToken = signRefreshToken(payload)
+    const refreshToken = await signRefreshToken(payload)
 
     await db.collection('refreshtokens').insertOne({
       userId: new ObjectId(userId),

@@ -46,4 +46,9 @@ export class ProfileService {
       { slots }
     )
   }
+
+  // ── Account ──────────────────────────────────────────────
+  deleteAccount(): Observable<{ message: string }> {
+    return this.http.delete<{ message: string }>(`${this.api}/api/profile`)
+  }
 }

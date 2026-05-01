@@ -2,32 +2,31 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 
-// PUT /api/profile/subjects/[id]
+interface SubjectUpdateBody {
+  nom?: string
+  couleur?: string
+  priorite?: 'haute' | 'moyenne' | 'faible'
+}
+
 export async function PUT(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
     const userId = req.headers.get('x-user-id')
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-    const body = await req.json()
-    const { name, color, weeklyGoalHours, priority } = body
+    const body = await req.json() as SubjectUpdateBody
+    const { nom, couleur, priorite } = body
 
-    const db = await getDb()
-    const result = await db.collection('subjects').updateOne(
-      {
-        _id:    new ObjectId(params.id),
-        userId: new ObjectId(userId),       // sécurité : la matière doit appartenir à l'user
-      },
+    const db     = await getDb()
+    const result = await db.collection('matieres').updateOne(
+      { _id: new ObjectId(params.id), userId: new ObjectId(userId) },
       {
         $set: {
-          ...(name             !== undefined && { name }),
-          ...(color            !== undefined && { color }),
-          ...(weeklyGoalHours  !== undefined && { weeklyGoalHours }),
-          ...(priority         !== undefined && { priority }),
+          ...(nom      !== undefined && { nom }),
+          ...(couleur  !== undefined && { couleur }),
+          ...(priorite !== undefined && { priorite }),
           updatedAt: new Date(),
         },
       }
@@ -43,19 +42,16 @@ export async function PUT(
   }
 }
 
-// DELETE /api/profile/subjects/[id]
 export async function DELETE(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
     const userId = req.headers.get('x-user-id')
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-    const db = await getDb()
-    const result = await db.collection('subjects').deleteOne({
+    const db     = await getDb()
+    const result = await db.collection('matieres').deleteOne({
       _id:    new ObjectId(params.id),
       userId: new ObjectId(userId),
     })

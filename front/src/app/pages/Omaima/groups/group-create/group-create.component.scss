@@ -1,0 +1,21 @@
+$card:#141720;$border:#1e2334;$border2:#252c3d;$text:#dde2f0;$muted:#4a5270;$muted2:#6b7494;$gold:#d4a843;$gold-dim:rgba(#d4a843,.15);$green:#27ae60;$surface:#0e1118;$red:#e74c3c;
+*{box-sizing:border-box;margin:0;padding:0}
+.create-shell{padding:32px 0;color:$text;font-family:'DM Mono','Courier New',monospace;max-width:560px}
+.page-header{display:flex;align-items:center;gap:16px;margin-bottom:24px;animation:fadeUp .35s both}
+.back-btn{padding:8px 14px;background:none;border:1px solid $border;color:$muted2;font-family:inherit;font-size:11px;border-radius:7px;cursor:pointer;letter-spacing:.05em;transition:all .2s;&:hover{border-color:$gold;color:$gold}}
+.page-titles{flex:1}
+.page-title{font-size:15px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:$text;margin-bottom:2px}
+.page-sub{font-size:10px;color:$muted;letter-spacing:.04em}
+.form-card{background:$card;border:1px solid $border;border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:18px;animation:fadeUp .4s .05s both}
+.alert{padding:12px 18px;border-radius:8px;font-size:12px;&.alert-error{background:rgba($red,.1);color:$red;border:1px solid rgba($red,.25)}}
+.field{display:flex;flex-direction:column;gap:6px}
+.field-label{font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:$muted}
+.field-input{background:$surface;border:1px solid $border;border-radius:7px;color:$text;font-family:inherit;font-size:12px;padding:10px 14px;outline:none;transition:border-color .2s;&:focus{border-color:rgba($gold,.4)}&::placeholder{color:$muted}}
+.toggle-row{display:flex;gap:8px}
+.vis-btn{flex:1;padding:9px;background:$surface;border:1px solid $border;color:$muted2;font-family:inherit;font-size:11px;letter-spacing:.05em;border-radius:7px;cursor:pointer;transition:all .2s;&:hover{border-color:$gold;color:$gold}&.active{background:$gold-dim;border-color:rgba($gold,.35);color:$gold;font-weight:700}}
+.form-actions{display:flex;justify-content:flex-end;gap:10px;padding-top:8px;border-top:1px solid $border}
+.btn-cancel{padding:10px 18px;background:none;border:1px solid $border;color:$muted2;font-family:inherit;font-size:11px;letter-spacing:.05em;border-radius:7px;cursor:pointer;transition:all .2s;&:hover{border-color:$red;color:$red}}
+.btn-save{display:flex;align-items:center;gap:8px;padding:10px 22px;background:$gold-dim;border:1px solid rgba($gold,.3);color:$gold;font-family:inherit;font-size:11px;letter-spacing:.06em;border-radius:7px;cursor:pointer;transition:all .2s;&:hover:not(:disabled){background:rgba($gold,.25)}&:disabled{opacity:.4;cursor:default}}
+.spin-mini{width:12px;height:12px;border:1.5px solid rgba($gold,.3);border-top-color:$gold;border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}

@@ -1,42 +1,57 @@
 import { Component, OnInit, inject } from '@angular/core'
 import { CommonModule } from '@angular/common'
+import { forkJoin } from 'rxjs'
+
 import { AnalyticsService } from '../../../shared/services/analytics.service'
-import { UserStats } from '../../../shared/models'
+import { UserStats, AnalyticsOverview, SubjectStats } from '../../../shared/models'
+import { BarChartComponent } from '../charts/bar-chart/bar-chart.component'
+import { LineChartComponent } from '../charts/line-chart/line-chart.component'
+import { PieChartComponent } from '../charts/pie-chart/pie-chart.component'
 
 @Component({
   selector: 'app-analytics-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, BarChartComponent, LineChartComponent, PieChartComponent],
   templateUrl: './analytics-dashboard.component.html',
   styleUrls: ['./analytics-dashboard.component.scss']
 })
 export class AnalyticsDashboardComponent implements OnInit {
   private analyticsSvc = inject(AnalyticsService)
 
-  stats:   UserStats | null = null
+  weekly:   UserStats | null      = null
+  overview: AnalyticsOverview | null = null
+  subjects: SubjectStats[]        = []
+
   loading = true
   error   = ''
 
   ngOnInit() {
-    this.analyticsSvc.getWeeklyStats().subscribe({
-      next: res => { this.stats = res.stats; this.loading = false },
-      error: ()  => { this.error = 'Erreur chargement.'; this.loading = false }
+    this.loading = true
+    this.error   = ''
+
+    forkJoin({
+      weekly:   this.analyticsSvc.getWeeklyStats(),
+      overview: this.analyticsSvc.getStats(),
+      subjects: this.analyticsSvc.getStatsBySubject()
+    }).subscribe({
+      next: ({ weekly, overview, subjects }) => {
+        this.weekly   = weekly?.weekly   ?? null
+        this.overview = overview?.analytics ?? null
+        this.subjects = subjects?.subjects  ?? []
+        this.loading  = false
+      },
+      error: (err) => {
+        console.error(err)
+        this.error   = 'Erreur chargement.'
+        this.loading = false
+      }
     })
   }
 
   get completionColor(): string {
-    const v = this.stats?.tauxCompletion ?? 0
+    const v = this.weekly?.tauxCompletion ?? 0
     if (v >= 80) return '#27ae60'
     if (v >= 60) return '#d4a843'
     return '#e74c3c'
-  }
-
-  get maxHours(): number {
-    if (!this.stats?.parMatiere?.length) return 1
-    return Math.max(...this.stats.parMatiere.map(m => m.heures))
-  }
-
-  barWidth(heures: number): number {
-    return Math.min((heures / this.maxHours) * 100, 100)
   }
 }

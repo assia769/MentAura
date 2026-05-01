@@ -17,13 +17,11 @@ export class ProfileViewComponent implements OnInit {
   private router     = inject(Router)
   private platformId = inject(PLATFORM_ID)
 
-  profile: UserProfile | null      = null
-  subjects: Subject[]              = []
-  availability: AvailabilitySlot[] = []
+  profile:      UserProfile | null      = null
+  subjects:     Subject[]              = []
+  availability: AvailabilitySlot[]     = []
   loading = true
   error   = ''
-
-  readonly Math = Math
 
   readonly days: Record<string, string> = {
     lun: 'Lundi', mar: 'Mardi', mer: 'Mercredi',
@@ -38,7 +36,6 @@ export class ProfileViewComponent implements OnInit {
 
   ngOnInit() {
     if (!isPlatformBrowser(this.platformId)) return
-
     this.profileSvc.getProfile().subscribe({
       next: res => {
         this.profile = res.profile
@@ -46,10 +43,7 @@ export class ProfileViewComponent implements OnInit {
         this.loadSubjects()
         this.loadAvailability()
       },
-      error: () => {
-        this.error   = 'Impossible de charger le profil.'
-        this.loading = false
-      }
+      error: () => { this.error = 'Impossible de charger le profil.'; this.loading = false }
     })
   }
 
@@ -72,11 +66,5 @@ export class ProfileViewComponent implements OnInit {
     return `${this.profile.prenom?.[0] ?? ''}${this.profile.nom?.[0] ?? ''}`.toUpperCase()
   }
 
-  get totalHours(): number {
-    return this.subjects.reduce((acc, s) => acc + (s.totalHeuresEtudiees ?? 0), 0)
-  }
-
-  goEdit() {
-    this.router.navigate(['/user/profile/edit'])
-  }
+  goEdit() { this.router.navigate(['/user/profile/edit']) }
 }

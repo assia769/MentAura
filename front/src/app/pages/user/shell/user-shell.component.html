@@ -1,22 +1,118 @@
-<div class="user-shell">
-  <div class="ambient">
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
-    <div class="grid-lines"></div>
+<app-cursor></app-cursor>
+
+<nav class="shell-nav">
+  <div class="nav-brand" routerLink="/user/dashboard">
+    <span class="brand-dot">●</span>
+    <span class="brand-name">Mentaura</span>
   </div>
 
-  <div class="shell-content">
-    <router-outlet></router-outlet>
+  <div class="nav-links">
+    <a routerLink="/user/dashboard"   routerLinkActive="active">⊞ Dashboard</a>
+    <a routerLink="/user/profile"     routerLinkActive="active">◉ Profil</a>
+    <a routerLink="/user/groups"      routerLinkActive="active">
+      ⊕ Groupes
+      <span class="nav-badge" *ngIf="totalUnreadMessages > 0">
+        {{ totalUnreadMessages }}
+      </span>
+    </a>
+    <a routerLink="/user/invitations" routerLinkActive="active">✉ Invitations</a>
+    <a routerLink="/user/analytics"   routerLinkActive="active">⊞ Analytique</a>
   </div>
 
-  <footer class="shell-footer">
-    <div class="brand">
-      <span class="brand-dot"></span>
-      <span class="brand-name">Mentaura</span>
+  <div class="nav-actions">
+
+    <!-- ── Cloche notifications ────────────────────────────────────────── -->
+    <div class="notif-wrapper" (click)="$event.stopPropagation()">
+
+      <button class="notif-bell" (click)="notifSvc.toggle()"
+              [class.has-unread]="notifSvc.totalUnread() > 0">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+        </svg>
+        <span class="notif-count" *ngIf="notifSvc.totalUnread() > 0">
+          {{ notifSvc.totalUnread() > 99 ? '99+' : notifSvc.totalUnread() }}
+        </span>
+      </button>
+
+      <!-- ── Panneau déroulant ─────────────────────────────────────────── -->
+      <div class="notif-panel" *ngIf="notifSvc.isOpen()">
+
+        <div class="notif-panel-header">
+          <span class="notif-panel-title">Notifications</span>
+          <button class="notif-mark-all"
+                  *ngIf="notifSvc.totalUnread() > 0"
+                  (click)="notifSvc.markAllAsRead()">
+            Tout lire
+          </button>
+        </div>
+
+        <!-- Messages non lus par groupe -->
+        <div *ngIf="notifSvc.unreadMessages().length > 0">
+          <div class="notif-section-label">💬 Messages non lus</div>
+          <div class="notif-item notif-message"
+               *ngFor="let g of notifSvc.unreadMessages()"
+               (click)="notifSvc.goToGroup(g.groupId)">
+            <div class="notif-item-icon msg-icon">💬</div>
+            <div class="notif-item-body">
+              <div class="notif-item-title">{{ g.nom }}</div>
+              <div class="notif-item-sub">
+                {{ g.count }} message{{ g.count > 1 ? 's' : '' }} non lu{{ g.count > 1 ? 's' : '' }}
+              </div>
+            </div>
+            <span class="notif-badge">{{ g.count }}</span>
+          </div>
+        </div>
+
+        <!-- Séparateur -->
+        <div class="notif-divider"
+             *ngIf="notifSvc.unreadMessages().length > 0 && notifSvc.notifications().length > 0">
+        </div>
+
+        <!-- Notifications système -->
+        <div *ngIf="notifSvc.notifications().length > 0">
+          <div class="notif-section-label">🔔 Notifications</div>
+          <div class="notif-item"
+               *ngFor="let n of notifSvc.notifications()"
+               [class.unread]="!n.isLue"
+               (click)="notifSvc.handleClick(n)">
+            <div class="notif-item-icon">
+              <span *ngIf="n.type === 'invitation'">👥</span>
+              <span *ngIf="n.type === 'objectif_atteint'">🎯</span>
+              <span *ngIf="n.type === 'rappel_session'">⏰</span>
+              <span *ngIf="n.type === 'commentaire'">💬</span>
+              <span *ngIf="n.type === 'systeme'">ℹ️</span>
+            </div>
+            <div class="notif-item-body">
+              <div class="notif-item-title">{{ n.titre }}</div>
+              <div class="notif-item-sub">{{ n.contenu }}</div>
+              <div class="notif-item-time">
+                {{ n.createdAt | date:'dd/MM HH:mm' }}
+              </div>
+            </div>
+            <span class="notif-unread-dot" *ngIf="!n.isLue"></span>
+          </div>
+        </div>
+
+        <!-- Vide -->
+        <div class="notif-empty"
+             *ngIf="notifSvc.notifications().length === 0 && notifSvc.unreadMessages().length === 0">
+          <span>🎉</span>
+          <span>Tout est à jour !</span>
+        </div>
+
+      </div>
     </div>
-    <button class="logout-btn" (click)="logout()">
-      <span>⎋</span> Se déconnecter
+
+    <!-- ── Déconnexion ──────────────────────────────────────────────────── -->
+    <button class="btn-logout" (click)="logout()">
+      ⊗ Déconnexion
     </button>
-  </footer>
-</div>
+
+  </div>
+</nav>
+
+<main class="shell-main">
+  <router-outlet></router-outlet>
+</main>

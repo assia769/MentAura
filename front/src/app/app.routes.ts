@@ -33,11 +33,17 @@ export const routes: Routes = [
 
       // ✅ OMAIMA — Module 02
       { path: 'profile', loadComponent: () => import('./pages/Omaima/profile/profile-view/profile-view.component').then(m => m.ProfileViewComponent) },
+      { path: 'dashboard', redirectTo: 'profile', pathMatch: 'full' },
       { path: 'profile/edit', loadComponent: () => import('./pages/Omaima/profile/profile-edit/profile-edit.component').then(m => m.ProfileEditComponent) },
       { path: 'groups', loadComponent: () => import('./pages/Omaima/groups/groups-list/groups-list.component').then(m => m.GroupsListComponent) },
       { path: 'groups/create', loadComponent: () => import('./pages/Omaima/groups/group-create/group-create.component').then(m => m.GroupCreateComponent) },
       { path: 'groups/:id', loadComponent: () => import('./pages/Omaima/groups/group-detail/group-detail.component').then(m => m.GroupDetailComponent) },
-      { path: 'analytics', loadComponent: () => import('./pages/Omaima/analytics/analytics-dashboard/analytics-dashboard.component').then(m => m.AnalyticsDashboardComponent) },
+      { path: 'groups/:id/invite', loadComponent: () => import('./pages/Omaima/groups/group-invite/group-invite.component').then(m => m.GroupInviteComponent) },
+{ 
+  path: 'invitations', 
+  loadComponent: () => import('./pages/Omaima/invitations/invitations-list/invitations-list.component')
+    .then(m => m.InvitationsListComponent) 
+},      { path: 'analytics', loadComponent: () => import('./pages/Omaima/analytics/analytics-dashboard/analytics-dashboard.component').then(m => m.AnalyticsDashboardComponent) },
     ]
   },
 

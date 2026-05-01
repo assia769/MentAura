@@ -1,7 +1,7 @@
 <div class="invite-shell">
 
   <div class="page-header">
-    <button class="back-btn" (click)="back()">← Retour</button>
+    <button class="back-btn" (click)="back()">⇠ Retour</button>
     <div class="page-titles">
       <h1 class="page-title">Inviter un membre</h1>
       <span class="page-sub">Envoyez une invitation par email</span>
@@ -10,22 +10,49 @@
 
   <div class="invite-card">
 
-    <div class="field">
-      <label class="field-label">Adresse email</label>
-      <input
-        class="field-input"
-        type="email"
-        placeholder="etudiant@example.com"
-        [(ngModel)]="email"
-        (keyup.enter)="send()"
-      />
+    <!-- Intro décorative -->
+    <div class="invite-intro">
+      <div class="invite-icon-wrap">✉</div>
+      <span class="invite-title">Nouvelle invitation</span>
+      <span class="invite-desc">
+        L'étudiant recevra un lien pour rejoindre le groupe.<br>
+        L'invitation expire après 7 jours.
+      </span>
     </div>
 
-    <div class="success-msg" *ngIf="success">✓ {{ success }}</div>
-    <div class="error-msg"   *ngIf="error">⚠ {{ error }}</div>
+    <!-- Field -->
+    <div class="field">
+      <label class="field-label">Adresse email</label>
 
-    <button class="send-btn" (click)="send()" [disabled]="sending || !email.trim()">
-      {{ sending ? 'Envoi...' : 'Envoyer l\'invitation' }}
+      <div class="input-wrap">
+        <span class="input-icon">◎</span>
+        <input
+          class="field-input"
+          type="email"
+          placeholder="etudiant@example.com"
+          [(ngModel)]="email"
+          (keyup.enter)="send()"
+        />
+      </div>
+    </div>
+
+    <!-- Messages -->
+    <div class="success-msg" *ngIf="success">
+      ✓ {{ success }}
+    </div>
+
+    <div class="error-msg" *ngIf="error">
+      ⚠ {{ error }}
+    </div>
+
+    <!-- Button -->
+    <button
+      class="send-btn"
+      (click)="send()"
+      [disabled]="sending || !email.trim()"
+    >
+      <span class="spin-mini" *ngIf="sending"></span>
+      {{ sending ? 'Envoi en cours...' : '✉ Envoyer l\'invitation' }}
     </button>
 
   </div>

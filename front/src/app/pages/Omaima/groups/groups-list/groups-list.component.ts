@@ -34,4 +34,9 @@ export class GroupsListComponent implements OnInit {
   getInitials(nom: string): string {
     return nom.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)
   }
+
+  // Fix : userId peut être ObjectId ou string depuis MongoDB
+  getUserInitial(userId: unknown): string {
+    return String(userId).slice(0, 1).toUpperCase()
+  }
 }

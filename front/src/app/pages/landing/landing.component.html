@@ -186,7 +186,7 @@
           <div class="step-card reveal" [style.transition-delay]="(i * 0.15) + 's'">
             <div class="step-card__top">
               <div class="step-number">{{ step.number }}</div>
-              <div class="step-icon" [innerHTML]="step.icon"></div>
+             <div class="step-icon" [innerHTML]="step.icon"></div>
             </div>
             <h3 class="step-title">{{ step.title }}</h3>
             <p class="step-desc">{{ step.desc }}</p>
@@ -212,7 +212,7 @@
         <div class="feat-card reveal" *ngFor="let f of features; let i = index" [style.transition-delay]="(i * 0.1 + 0.2) + 's'">
           <div class="feat-card__header">
             <div class="feat-icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" [innerHTML]="f.svgPath"></svg>
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" [innerHTML]="f.svgPath"></svg>
             </div>
             <span class="feat-tag">{{ f.tag }}</span>
           </div>

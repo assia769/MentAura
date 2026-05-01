@@ -1,20 +1,17 @@
 <div class="profile-shell">
 
-  <!-- ── Loading ── -->
   <div class="skeleton-wrap" *ngIf="loading">
     <div class="skeleton-hero"></div>
     <div class="skeleton-grid">
-      <div class="skeleton-card" *ngFor="let i of [1,2,3]"></div>
+      <div class="skeleton-card" *ngFor="let i of [1,2]"></div>
     </div>
   </div>
 
-  <!-- ── Error ── -->
   <div class="error-state" *ngIf="error && !loading">
     <span class="error-icon">⚠</span>
     <p>{{ error }}</p>
   </div>
 
-  <!-- ── Content ── -->
   <ng-container *ngIf="!loading && profile">
 
     <!-- Hero card -->
@@ -30,42 +27,16 @@
           <div class="hero-email">{{ profile.email }}</div>
           <div class="hero-tags">
             <span class="tag tag-role">{{ profile.role }}</span>
-            <span class="tag" [class.tag-active]="profile.isActive" [class.tag-inactive]="!profile.isActive">
+            <span class="tag"
+                  [class.tag-active]="profile.isActive"
+                  [class.tag-inactive]="!profile.isActive">
               {{ profile.isActive ? '● Actif' : '○ Inactif' }}
-            </span>
-            <span class="tag tag-gold" *ngIf="totalHours > 0">
-              {{ totalHours }}h étudiées
             </span>
           </div>
         </div>
         <button class="edit-btn" (click)="goEdit()">
           <span>✎</span> Modifier le profil
         </button>
-      </div>
-    </div>
-
-    <!-- Stats row -->
-    <div class="stats-row">
-      <div class="stat-card" style="--delay:0ms">
-        <div class="stat-icon stat-icon-gold">◈</div>
-        <div class="stat-body">
-          <div class="stat-label">Matières</div>
-          <div class="stat-value">{{ subjects.length }}</div>
-        </div>
-      </div>
-      <div class="stat-card" style="--delay:80ms">
-        <div class="stat-icon stat-icon-blue">⊕</div>
-        <div class="stat-body">
-          <div class="stat-label">Heures totales</div>
-          <div class="stat-value accent-blue">{{ totalHours }}</div>
-        </div>
-      </div>
-      <div class="stat-card" style="--delay:160ms">
-        <div class="stat-icon stat-icon-green">◉</div>
-        <div class="stat-body">
-          <div class="stat-label">Disponibilités</div>
-          <div class="stat-value accent-green">{{ availability.length }}</div>
-        </div>
       </div>
     </div>
 
@@ -79,22 +50,19 @@
           <span class="section-badge">{{ subjects.length }}</span>
         </div>
         <div class="subject-list" *ngIf="subjects.length; else noSubjects">
-          <div class="subject-item" *ngFor="let s of subjects; let i = index"
+          <div class="subject-item"
+               *ngFor="let s of subjects; let i = index"
                [style.animation-delay]="(i * 60) + 'ms'">
             <div class="subject-dot" [style.background]="s.couleur"></div>
             <div class="subject-body">
               <span class="subject-name">{{ s.nom }}</span>
               <div class="subject-meta">
-                <span class="priority-tag" [style.color]="priorityColors[s.priorite]"
+                <span class="priority-tag"
+                      [style.color]="priorityColors[s.priorite]"
                       [style.border-color]="priorityColors[s.priorite] + '44'">
                   {{ s.priorite }}
                 </span>
-                <span class="subject-hours">{{ s.totalHeuresEtudiees }}h</span>
               </div>
-            </div>
-            <div class="subject-bar-wrap">
-              <div class="subject-bar" [style.background]="s.couleur"
-                   [style.width.%]="Math.min((s.totalHeuresEtudiees / 60) * 100, 100)"></div>
             </div>
           </div>
         </div>
@@ -110,7 +78,8 @@
           <span class="section-badge">{{ availability.length }}</span>
         </div>
         <div class="avail-list" *ngIf="availability.length; else noAvail">
-          <div class="avail-item" *ngFor="let a of availability; let i = index"
+          <div class="avail-item"
+               *ngFor="let a of availability; let i = index"
                [style.animation-delay]="(i * 50) + 'ms'">
             <div class="avail-day">{{ days[a.jourSemaine] }}</div>
             <div class="avail-time">{{ a.heureDebut }} → {{ a.heureFin }}</div>

@@ -1,0 +1,186 @@
+$card:   #141720;
+$border: #1e2334;
+$border2:#252c3d;
+$text:   #dde2f0;
+$muted:  #4a5270;
+$muted2: #6b7494;
+$gold:   #d4a843;
+
+.bc-wrap {
+  background: $card;
+  border: 1px solid $border;
+  border-radius: 12px;
+  padding: 24px;
+  animation: fadeUp .45s .1s both;
+  margin-bottom: 20px;
+}
+
+.bc-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+
+.bc-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: $text;
+  font-weight: 700;
+  flex: 1;
+}
+
+.bc-badge {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  color: $muted;
+  letter-spacing: .06em;
+}
+
+.bc-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 32px;
+  color: $muted;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+
+  .bc-empty-icon { font-size: 28px }
+}
+
+.bc-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.bc-row {
+  display: grid;
+  grid-template-columns: 200px 1fr 70px;
+  align-items: center;
+  gap: 16px;
+  animation: fadeUp .4s both;
+  transition: opacity .2s;
+
+  &:hover { opacity: .85 }
+}
+
+.bc-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.bc-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.bc-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.bc-name {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: $text;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 140px;
+}
+
+.bc-sessions {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  color: $muted;
+  letter-spacing: .04em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.bc-prio {
+  font-size: 8px;
+  padding: 1px 5px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+
+  &.prio-haute  { background: rgba(#e74c3c,.15); color: #e74c3c }
+  &.prio-moyenne{ background: rgba(#d4a843,.15); color: #d4a843 }
+  &.prio-faible { background: rgba(#4a5270,.2);  color: #6b7494 }
+}
+
+.bc-track-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.bc-track {
+  height: 7px;
+  background: $border;
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.bc-fill {
+  height: 100%;
+  border-radius: 99px;
+  animation: growBar .7s ease both;
+}
+
+.bc-completion-track {
+  height: 3px;
+  background: $border;
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.bc-completion-fill {
+  height: 100%;
+  border-radius: 99px;
+  animation: growBar .9s ease both;
+}
+
+.bc-vals {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.bc-hours {
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.bc-pct {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  color: $muted;
+}
+
+@keyframes growBar {
+  from { width: 0 !important }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px) }
+  to   { opacity: 1; transform: none }
+}
+
+@media (max-width: 700px) {
+  .bc-row { grid-template-columns: 130px 1fr 56px }
+  .bc-name { max-width: 100px }
+}
