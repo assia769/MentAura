@@ -664,8 +664,11 @@ select:focus-visible {
     font-size: 12px;
   }
 }
-* { cursor: none !important; }
 
+.custom-cursor,
+.custom-cursor * {
+  cursor: none !important;
+}
 
 /* ═══════════════════════════════════════════════════════════════════
    END OF STYLES

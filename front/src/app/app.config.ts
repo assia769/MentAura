@@ -4,7 +4,10 @@ import { provideHttpClient, withInterceptors, withFetch } from '@angular/common/
 import { routes } from './app.routes'
 // ✅ Utilise le nom du fichier existant dans ton projet
 import { authInterceptor } from './core/interceptors/auth.interceptor'
-
+import { registerLocaleData } from '@angular/common'
+   import localeFr from '@angular/common/locales/fr'
+   registerLocaleData(localeFr, 'fr')
+   
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),

@@ -27,15 +27,28 @@ export interface TopMatiere {
   totalHeures: number
 }
 
+// export interface AuditLog {
+//   _id: string
+//   action: string
+//   ipAddress: string
+//   userAgent: string
+//   createdAt: string
+//   user?: { nom: string; prenom: string; email: string }
+// }
 export interface AuditLog {
   _id: string
+  userId?: string
   action: string
-  ipAddress: string
-  userAgent: string
-  createdAt: string
-  user?: { nom: string; prenom: string; email: string }
+  ipAddress?: string | null      // ← add ?  (was: string)
+  userAgent?: string | null      // ← add ?  (was: string)
+  createdAt: string | Date
+  user?: {
+    _id: string
+    nom: string
+    prenom: string
+    email: string
+  } | null
 }
-
 export interface AuditResponse {
   logs: AuditLog[]
   total: number
@@ -62,7 +75,20 @@ export class AdminService {
     return this.http.get<{ users: unknown[] }>(`${this.api}/api/admin/users`)
   }
 
-  toggleUser(userId: string, isActive: boolean): Observable<unknown> {
-    return this.http.patch(`${this.api}/api/admin/users`, { userId, isActive })
-  }
+  // toggleUser(userId: string, isActive: boolean): Observable<unknown> {
+  //   return this.http.patch(`${this.api}/api/admin/users`, { userId, isActive })
+  // }
+  // // Dans AdminService, assurez-vous que ces méthodes existent :
+
+toggleUser(userId: string, isActive: boolean): Observable<unknown> {
+  return this.http.patch(`${this.api}/api/admin/users`, { userId, isActive })
+}
+
+deleteUser(userId: string): Observable<unknown> {
+  return this.http.delete(`${this.api}/api/admin/users/${userId}`)
+}
+
+updateUser(userId: string, data: Partial<any>): Observable<any> {
+  return this.http.put(`${this.api}/api/admin/users/${userId}`, data)
+}
 }

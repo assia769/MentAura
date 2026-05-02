@@ -1,14 +1,14 @@
 import { Component, OnInit, inject, ChangeDetectorRef, NgZone, PLATFORM_ID } from '@angular/core'
-import { isPlatformBrowser } from '@angular/common'
-import { CommonModule } from '@angular/common'
+import { CommonModule, DatePipe, DecimalPipe, isPlatformBrowser } from '@angular/common'
 import { Router } from '@angular/router'
 import { AdminService, AdminStats, AuditLog } from '../../../core/services/admin.service'
 import { AuthService } from '../../../core/services/auth.service'
+import { FormsModule } from '@angular/forms'
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, DatePipe, DecimalPipe, FormsModule],
   templateUrl: './admin-dashboard.component.html',
   styleUrls: ['./admin-dashboard.component.scss']
 })
@@ -33,30 +33,41 @@ export class AdminDashboardComponent implements OnInit {
   logsLoading             = false
   today                   = new Date()
 
+  private clockInterval: ReturnType<typeof setInterval> | null = null
+
   ngOnInit(): void {
     if (!isPlatformBrowser(this.platformId)) return
 
     this.loadStats()
+    this.clockInterval = setInterval(() => {
+      this.zone.run(() => { this.today = new Date() })
+    }, 60000)
+  }
+
+  ngOnDestroy(): void {
+    if (this.clockInterval) clearInterval(this.clockInterval)
   }
 
   loadStats(): void {
     this.loading = true
     this.adminSvc.getStats().subscribe({
-      next: s  => this.zone.run(() => { this.stats = s; this.loading = false }),
-      error: () => this.zone.run(() => { this.loading = false })
+      next: s  => this.zone.run(() => { this.stats = s; this.loading = false; this.cdr.detectChanges() }),
+      error: () => this.zone.run(() => { this.loading = false; this.cdr.detectChanges() })
     })
   }
 
   loadLogs(page = 1): void {
     this.logsLoading = true
+    this.cdr.detectChanges()
     this.adminSvc.getAuditLogs(this.showSuspiciousOnly, page).subscribe({
       next: res => this.zone.run(() => {
         this.auditLogs   = res.logs
         this.totalLogs   = res.total
         this.currentPage = res.page
         this.logsLoading = false
+        this.cdr.detectChanges()
       }),
-      error: () => this.zone.run(() => { this.logsLoading = false })
+      error: () => this.zone.run(() => { this.logsLoading = false; this.cdr.detectChanges() })
     })
   }
 
@@ -64,6 +75,7 @@ export class AdminDashboardComponent implements OnInit {
     this.adminSvc.getUsers().subscribe({
       next: res => this.zone.run(() => {
         this.users = res.users as any[]
+        this.cdr.detectChanges()
       })
     })
   }
@@ -83,10 +95,6 @@ export class AdminDashboardComponent implements OnInit {
     if (tab === 'overview' && !this.stats) this.loadStats()
   }
 
-  toggleUser(userId: string, isActive: boolean): void {
-    this.adminSvc.toggleUser(userId, !isActive).subscribe(() => this.loadUsers())
-  }
-
   logout(): void { this.auth.logout() }
 
   isSuspicious(action: string): boolean {
@@ -97,20 +105,20 @@ export class AdminDashboardComponent implements OnInit {
     const map: Record<string, string> = {
       LOGIN_SUCCESS:  '✓',
       LOGIN_FAILED:   '✗',
-      ACCOUNT_LOCKED: '🔒',
-      CAPTCHA_FAILED: '🤖',
-      REGISTER:       '➕',
+      ACCOUNT_LOCKED: '⊘',
+      CAPTCHA_FAILED: '⊗',
+      REGISTER:       '+',
       LOGOUT:         '→',
       TOKEN_REFRESH:  '↻'
     }
-    return map[action] ?? '•'
+    return map[action] ?? '·'
   }
 
   get completionColor(): string {
     const v = this.stats?.tauxCompletionGlobal ?? 0
-    if (v >= 80) return '#27ae60'
-    if (v >= 60) return '#e67e22'
-    return '#e74c3c'
+    if (v >= 80) return '#22c55e'
+    if (v >= 60) return '#f97316'
+    return '#ef4444'
   }
 
   get completionIconClass(): string {
@@ -132,5 +140,61 @@ export class AdminDashboardComponent implements OnInit {
     if (v >= 80) return 'kpi-glow-green'
     if (v >= 60) return 'kpi-glow-gold'
     return 'kpi-glow-red'
+  }
+
+  editingUser: any = null
+  showEditModal = false
+
+  toggleUser(userId: string, isActive: boolean): void {
+    this.adminSvc.toggleUser(userId, !isActive).subscribe({
+      next: () => {
+        const user = this.users.find(u => u._id === userId)
+        if (user) {
+          user.isActive = !isActive
+          this.cdr.detectChanges()
+        }
+      },
+      error: (err) => console.error('Erreur toggleUser:', err)
+    })
+  }
+
+  openEdit(user: any): void {
+    this.editingUser = { ...user }
+    this.showEditModal = true
+    this.cdr.detectChanges()
+  }
+
+  saveEdit(): void {
+    if (!this.editingUser) return
+    this.adminSvc.updateUser(this.editingUser._id, {
+      prenom: this.editingUser.prenom,
+      nom:    this.editingUser.nom,
+      email:  this.editingUser.email,
+      role:   this.editingUser.role
+    }).subscribe({
+      next: () => {
+        const idx = this.users.findIndex(u => u._id === this.editingUser._id)
+        if (idx !== -1) this.users[idx] = { ...this.users[idx], ...this.editingUser }
+        this.closeModal()
+      },
+      error: (err) => console.error('Erreur saveEdit:', err)
+    })
+  }
+
+  deleteUser(userId: string): void {
+    if (!confirm('Confirmer la suppression ?')) return
+    this.adminSvc.deleteUser(userId).subscribe({
+      next: () => {
+        this.users = this.users.filter(u => u._id !== userId)
+        this.cdr.detectChanges()
+      },
+      error: (err) => console.error('Erreur deleteUser:', err)
+    })
+  }
+
+  closeModal(): void {
+    this.showEditModal = false
+    this.editingUser = null
+    this.cdr.detectChanges()
   }
 }
