@@ -1,17 +1,10 @@
-// src/app/core/interceptors/auth.interceptor.ts
-// ⚠️  REMPLACER le fichier existant par celui-ci
-
 import { HttpInterceptorFn, HttpRequest, HttpHandlerFn, HttpErrorResponse } from '@angular/common/http'
 import { inject } from '@angular/core'
 import { catchError, switchMap, throwError } from 'rxjs'
 import { AuthService } from '../services/auth.service'
 
-export const authInterceptor: HttpInterceptorFn = (
-  req: HttpRequest<unknown>,
-  next: HttpHandlerFn
-) => {
-  const auth  = inject(AuthService)
-  // ✅  auth.accessToken  (pas getToken)
+export const authInterceptor: HttpInterceptorFn = (req, next) => {
+  const auth = inject(AuthService)
   const token = auth.accessToken
 
   const authReq = token
@@ -20,20 +13,30 @@ export const authInterceptor: HttpInterceptorFn = (
 
   return next(authReq).pipe(
     catchError((err: HttpErrorResponse) => {
-      if (err.status === 401 && !req.url.includes('/api/auth/')) {
+
+      const isAuthRoute = req.url.includes('/api/auth/')
+
+      if (err.status === 401 && !isAuthRoute) {
         return auth.refreshToken().pipe(
           switchMap(res => {
-            const retried = req.clone({
+            const retryReq = req.clone({
               setHeaders: { Authorization: `Bearer ${res.accessToken}` }
             })
-            return next(retried)
+
+            return next(retryReq)
           }),
-          catchError(refreshErr => {
-            auth.logout()
-            return throwError(() => refreshErr)
+          catchError(() => {
+            // ✅ VERSION SAFE
+            console.warn('[Auth] refresh failed')
+
+            // 🔥 IMPORTANT: ne PAS logout direct ici
+            // sinon boucle que tu avais avant
+
+            return throwError(() => err)
           })
         )
       }
+
       return throwError(() => err)
     })
   )

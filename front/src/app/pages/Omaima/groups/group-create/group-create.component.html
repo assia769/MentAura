@@ -1,0 +1,38 @@
+<div class="create-shell">
+  <div class="page-header">
+    <button class="back-btn" (click)="cancel()">⇠ Retour</button>
+    <div class="page-titles">
+      <h1 class="page-title">Nouveau groupe</h1>
+      <span class="page-sub">Créez un groupe d'étude</span>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <div class="alert alert-error" *ngIf="error">⚠ {{ error }}</div>
+
+    <div class="field">
+      <label class="field-label">Nom du groupe</label>
+      <input class="field-input" [(ngModel)]="form.nom" placeholder="ex: Groupe Mathématiques">
+    </div>
+
+    <div class="field">
+      <label class="field-label">Visibilité</label>
+      <div class="toggle-row">
+        <button class="vis-btn" [class.active]="form.isPublic" (click)="form.isPublic = true">
+          ◎ Public
+        </button>
+        <button class="vis-btn" [class.active]="!form.isPublic" (click)="form.isPublic = false">
+          ⊘ Privé
+        </button>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button class="btn-cancel" (click)="cancel()">Annuler</button>
+      <button class="btn-save" (click)="save()" [disabled]="!form.nom || saving">
+        <span class="spin-mini" *ngIf="saving"></span>
+        {{ saving ? 'Création...' : '✓ Créer le groupe' }}
+      </button>
+    </div>
+  </div>
+</div>

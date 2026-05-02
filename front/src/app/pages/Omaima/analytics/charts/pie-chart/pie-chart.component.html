@@ -1,0 +1,61 @@
+<div class="pc-wrap">
+  <div class="pc-header">
+    <span class="pc-title">Répartition des matières</span>
+    <span class="pc-badge">objectifs</span>
+  </div>
+
+  <div class="pc-empty" *ngIf="!slices.length">
+    <span>🎯</span><span>Aucune donnée</span>
+  </div>
+
+  <div class="pc-body" *ngIf="slices.length">
+
+    <!-- Donut SVG -->
+    <div class="pc-donut-wrap">
+      <svg class="pc-svg" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+        <!-- Background ring -->
+        <circle cx="60" cy="60" r="54" fill="none" stroke="#1e2334" stroke-width="12"/>
+
+        <!-- Slices -->
+        <circle *ngFor="let sl of slices; trackBy: trackByNom"
+          cx="60" cy="60" r="54"
+          fill="none"
+          [attr.stroke]="sl.couleur"
+          stroke-width="12"
+          stroke-linecap="round"
+          [attr.stroke-dasharray]="sl.dash + ' ' + (CIRCUM - sl.dash)"
+          [attr.stroke-dashoffset]="CIRCUM - sl.offset"
+          class="pc-slice"
+          transform="rotate(-90 60 60)">
+        </circle>
+
+        <!-- Center text -->
+        <text x="60" y="55" text-anchor="middle" class="pc-center-num">{{ globalPct }}%</text>
+        <text x="60" y="70" text-anchor="middle" class="pc-center-label">complété</text>
+      </svg>
+    </div>
+
+    <!-- Legend -->
+    <div class="pc-legend">
+      <div class="pc-stat-row">
+        <span class="pc-stat-val">{{ totalHeures }}h</span>
+        <span class="pc-stat-lbl">total étudié</span>
+      </div>
+      <div class="pc-stat-row">
+        <span class="pc-stat-val">{{ doneSession }}/{{ totalSessions }}</span>
+        <span class="pc-stat-lbl">sessions</span>
+      </div>
+
+      <div class="pc-divider"></div>
+
+      <div class="pc-legend-item"
+           *ngFor="let sl of slices; trackBy: trackByNom">
+        <span class="pc-legend-dot" [style.background]="sl.couleur"
+              [style.box-shadow]="'0 0 6px ' + sl.couleur + '80'"></span>
+        <span class="pc-legend-name">{{ sl.nom }}</span>
+        <span class="pc-legend-pct" [style.color]="sl.couleur">{{ sl.pct }}%</span>
+      </div>
+    </div>
+
+  </div>
+</div>

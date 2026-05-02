@@ -1,0 +1,157 @@
+<div class="analytics-shell">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="page-titles">
+      <h1 class="page-title">Analytics</h1>
+      <span class="page-sub">Semaine {{ weekly?.semaine ?? '—' }}</span>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div class="skeleton-wrap" *ngIf="loading">
+    <div class="skeleton-card" *ngFor="let i of [1,2,3,4]"></div>
+  </div>
+
+  <!-- Error -->
+  <div class="error-state" *ngIf="error && !loading">
+    <span>⚠</span> {{ error }}
+  </div>
+
+  <ng-container *ngIf="!loading && weekly">
+
+    <!-- KPI row -->
+    <div class="kpi-row">
+
+      <div class="kpi-card" style="--delay:0ms">
+        <div class="kpi-icon kpi-gold">⊕</div>
+        <div class="kpi-body">
+          <div class="kpi-label">Heures planifiées</div>
+          <div class="kpi-val">{{ weekly?.heuresPlanifiees }}</div>
+        </div>
+        <div class="kpi-glow glow-gold"></div>
+      </div>
+
+      <div class="kpi-card" style="--delay:60ms">
+        <div class="kpi-icon kpi-green">◈</div>
+        <div class="kpi-body">
+          <div class="kpi-label">Heures réalisées</div>
+          <div class="kpi-val accent-green">{{ weekly?.heuresRealisees }}</div>
+        </div>
+        <div class="kpi-glow glow-green"></div>
+      </div>
+
+      <div class="kpi-card" style="--delay:120ms">
+        <div class="kpi-icon kpi-blue">◉</div>
+        <div class="kpi-body">
+          <div class="kpi-label">Taux de complétion</div>
+          <div class="kpi-val" [style.color]="completionColor">
+            {{ weekly?.tauxCompletion | number:'1.0-0' }}%
+          </div>
+        </div>
+        <div class="kpi-glow glow-blue"></div>
+      </div>
+
+      <div class="kpi-card" style="--delay:180ms">
+        <div class="kpi-icon kpi-gold">🔥</div>
+        <div class="kpi-body">
+          <div class="kpi-label">Streak</div>
+          <div class="kpi-val accent-gold">{{ weekly?.streakJours }}j</div>
+        </div>
+        <div class="kpi-glow glow-gold"></div>
+      </div>
+
+    </div>
+
+    <!-- Sessions info + Pie & Line charts -->
+<div class="sessions-row" *ngIf="weekly">
+      <!-- Colonne gauche : stats rapides + pie chart -->
+      <div class="left-col">
+
+        <div class="info-cards-mini">
+          <div class="info-card" style="--delay:0.1s">
+            <div class="info-label">Sessions planifiées</div>
+            <div class="info-val">{{ weekly?.sessionsTotales }}</div>
+          </div>
+
+          <div class="info-card" style="--delay:0.15s">
+            <div class="info-label">Sessions réalisées</div>
+            <div class="info-val accent-green">{{ weekly?.sessionsRealisees }}</div>
+          </div>
+
+          <div class="info-card" style="--delay:0.2s">
+            <div class="info-label">Total matières</div>
+            <div class="info-val accent-gold">{{ overview?.totalMatieres }}</div>
+          </div>
+        </div>
+
+        <!-- Pie chart -->
+        <div class="info-card chart-wrapper" style="--delay:0.25s" *ngIf="subjects?.length">
+          <app-pie-chart [subjects]="subjects"></app-pie-chart>
+        </div>
+
+      </div>
+
+      <!-- Colonne droite : progression globale + line chart -->
+      <div class="right-col">
+
+        <div class="info-card progress-card" style="--delay:0.1s">
+          <div class="info-label">Progression globale</div>
+          <div class="progress-row">
+            <div class="progress-track">
+              <div class="progress-fill"
+                   [style.width.%]="weekly?.tauxCompletion"
+                   [style.background]="completionColor">
+              </div>
+            </div>
+            <span class="progress-pct" [style.color]="completionColor">
+              {{ weekly?.tauxCompletion | number:'1.0-0' }}%
+            </span>
+          </div>
+        </div>
+
+        <!-- Line chart -->
+        <div class="info-card chart-wrapper" style="--delay:0.2s">
+          <app-line-chart
+            [parMatiere]="weekly?.parMatiere ?? []"
+            [heuresPlanifiees]="weekly?.heuresPlanifiees ?? 0"
+            [heuresRealisees]="weekly?.heuresRealisees ?? 0">
+          </app-line-chart>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Bar chart par matière -->
+    <app-bar-chart
+      *ngIf="subjects?.length"
+      [subjects]="subjects">
+    </app-bar-chart>
+
+    <!-- Fallback si pas de subjects mais weekly.parMatiere existe -->
+    <div class="chart-card"
+         *ngIf="!subjects.length && weekly?.parMatiere?.length">
+
+      <div class="chart-header">
+        <h3 class="chart-title">Heures par matière</h3>
+        <span class="chart-sub">cette semaine</span>
+      </div>
+
+      <div class="bar-list">
+        <div class="bar-item" *ngFor="let m of weekly!.parMatiere">
+          <div class="bar-label-col">
+            <span class="bar-label">Matière</span>
+            <span class="bar-prog">{{ m.progression }}%</span>
+          </div>
+          <div class="bar-track">
+            <div class="bar-fill" [style.width.%]="m.progression"></div>
+          </div>
+          <span class="bar-val">{{ m.heures }}h</span>
+        </div>
+      </div>
+
+    </div>
+
+  </ng-container>
+</div>

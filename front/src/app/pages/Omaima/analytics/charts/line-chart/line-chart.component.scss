@@ -1,0 +1,151 @@
+$card:   #141720;
+$border: #1e2334;
+$text:   #dde2f0;
+$muted:  #4a5270;
+$muted2: #6b7494;
+$gold:   #d4a843;
+$green:  #27ae60;
+
+.lc-wrap {
+  background: $card;
+  border: 1px solid $border;
+  border-radius: 12px;
+  padding: 20px 22px;
+  animation: fadeUp .45s .15s both;
+}
+
+.lc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.lc-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: $text;
+}
+
+.lc-legend {
+  display: flex;
+  gap: 14px;
+}
+
+.lc-leg-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  color: $muted2;
+  letter-spacing: .04em;
+}
+
+.lc-leg-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+
+  &.lc-dot-plan { background: $gold;  box-shadow: 0 0 4px $gold }
+  &.lc-dot-real { background: $green; box-shadow: 0 0 4px $green }
+}
+
+.lc-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 36px;
+  color: $muted;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+
+  .lc-empty-icon { font-size: 28px }
+}
+
+.lc-svg-wrap {
+  width: 100%;
+  overflow: hidden;
+}
+
+.lc-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.lc-tick-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  fill: #4a5270;
+}
+
+.lc-area {
+  opacity: .6;
+}
+
+.lc-line {
+  stroke-width: 2;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.lc-dot {
+  transition: r .15s;
+  cursor: pointer;
+
+  &:hover { r: 5 }
+}
+
+// Summary row
+.lc-summary {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid $border;
+}
+
+.lc-sum-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.lc-sum-val {
+  font-family: 'DM Mono', monospace;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  color: $text;
+
+  &.lc-gold  { color: $gold }
+  &.lc-green { color: $green }
+}
+
+.lc-sum-lbl {
+  font-family: 'DM Mono', monospace;
+  font-size: 8.5px;
+  color: $muted;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.lc-sum-sep {
+  width: 1px;
+  height: 32px;
+  background: $border;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px) }
+  to   { opacity: 1; transform: none }
+}

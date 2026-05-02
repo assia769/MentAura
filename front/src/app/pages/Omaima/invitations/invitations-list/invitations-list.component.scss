@@ -1,0 +1,119 @@
+$card: #141720; $border: #1e2334; $text: #dde2f0;
+$muted: #4a5270; $gold: #d4a843; $green: #27ae60;
+$red: #e74c3c; $surface: #0e1118; $blue: #3b82f6;
+
+.inv-shell {
+  padding: 16px 0;
+  color: $text;
+  font-family: 'DM Mono', monospace;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+// ── Header ──────────────────────────────────────
+.page-header {
+  display: flex; align-items: center;
+  justify-content: space-between; margin-bottom: 32px;
+}
+.page-title { font-size: 15px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; }
+.page-sub   { font-size: 10px; color: $muted; letter-spacing: .04em; }
+.badge-count {
+  padding: 4px 12px;
+  background: rgba($gold,.15); border: 1px solid rgba($gold,.3);
+  border-radius: 20px; color: $gold; font-size: 11px;
+}
+
+// ── Section blocks ───────────────────────────────
+.section-block {
+  margin-bottom: 40px;
+  padding: 20px;
+  background: rgba($border, .3);
+  border: 1px solid $border;
+  border-radius: 16px;
+}
+
+.section-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px;
+}
+.section-label {
+  font-size: 12px; font-weight: 700;
+  letter-spacing: .06em; color: $text;
+}
+.section-count {
+  font-size: 11px; color: $muted;
+  background: rgba($muted,.1); border: 1px solid rgba($muted,.2);
+  border-radius: 20px; padding: 2px 10px;
+}
+.section-title {
+  font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
+  color: $muted; margin-bottom: 10px; margin-top: 16px;
+}
+
+// ── Skeleton ─────────────────────────────────────
+.skeleton-wrap { display: flex; flex-direction: column; gap: 12px; }
+.skeleton-card { height: 80px; background: $card; border-radius: 12px; animation: pulse 1.5s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{opacity:.4} 50%{opacity:.8} }
+
+// ── Empty / Error ────────────────────────────────
+.empty-state  { text-align: center; padding: 32px 0; color: $muted; }
+.empty-icon   { font-size: 36px; margin-bottom: 10px; }
+.empty-title  { font-size: 13px; font-weight: 700; margin-bottom: 4px; color: $text; }
+.empty-sub    { font-size: 11px; }
+.error-state  { color: $red; padding: 16px; background: rgba($red,.08); border-radius: 10px; border: 1px solid rgba($red,.2); }
+
+// ── Invitation card ──────────────────────────────
+.inv-card {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px; background: $card; border: 1px solid $border;
+  border-radius: 12px; margin-bottom: 8px; transition: border-color .2s;
+  &:hover { border-color: rgba($gold,.3); }
+  &.handled { opacity: .55; }
+}
+
+.inv-left   { display: flex; align-items: center; gap: 14px; }
+
+.inv-avatar {
+  width: 42px; height: 42px; border-radius: 10px;
+  background: linear-gradient(135deg, rgba($gold,.2), rgba($gold,.05));
+  border: 1px solid rgba($gold,.2);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; color: $gold; font-size: 16px;
+  text-transform: uppercase;
+
+  &.dim  { opacity: .4; }
+  &.sent {
+    background: linear-gradient(135deg, rgba($blue,.2), rgba($blue,.05));
+    border-color: rgba($blue,.25); color: $blue;
+  }
+}
+
+.inv-info   { display: flex; flex-direction: column; gap: 2px; }
+.inv-group  { font-size: 13px; font-weight: 700; color: $text; }
+.inv-from,
+.inv-to     { font-size: 10px; color: rgba($text,.6);
+  strong { color: rgba($text,.85); }
+}
+.inv-date   { font-size: 10px; color: $muted; }
+.inv-expire { font-size: 10px; color: rgba($gold,.7); }
+
+// ── Action buttons ───────────────────────────────
+.inv-actions { display: flex; gap: 8px; }
+
+.btn-accept, .btn-decline {
+  padding: 8px 14px; border-radius: 8px; font-family: inherit;
+  font-size: 11px; font-weight: 700; cursor: pointer; transition: all .2s;
+  &:disabled { opacity: .4; cursor: default; }
+}
+.btn-accept  { background: rgba($green,.15); border: 1px solid rgba($green,.3); color: $green;
+  &:hover:not(:disabled) { background: rgba($green,.25); } }
+.btn-decline { background: rgba($red,.1); border: 1px solid rgba($red,.25); color: $red;
+  &:hover:not(:disabled) { background: rgba($red,.2); } }
+
+// ── Status badges ────────────────────────────────
+.status-badge {
+  padding: 4px 12px; border-radius: 20px; font-size: 10px; font-weight: 700;
+  &.accepted { background: rgba($green,.12); border: 1px solid rgba($green,.25); color: $green; }
+  &.declined { background: rgba($red,.1);    border: 1px solid rgba($red,.2);    color: $red;   }
+  &.pending  { background: rgba($gold,.1);   border: 1px solid rgba($gold,.25);  color: $gold;  }
+}

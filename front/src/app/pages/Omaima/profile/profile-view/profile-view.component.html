@@ -1,0 +1,96 @@
+<div class="profile-shell">
+
+  <div class="skeleton-wrap" *ngIf="loading">
+    <div class="skeleton-hero"></div>
+    <div class="skeleton-grid">
+      <div class="skeleton-card" *ngFor="let i of [1,2]"></div>
+    </div>
+  </div>
+
+  <div class="error-state" *ngIf="error && !loading">
+    <span class="error-icon">⚠</span>
+    <p>{{ error }}</p>
+  </div>
+
+  <ng-container *ngIf="!loading && profile">
+
+    <!-- Hero card -->
+    <div class="hero-card">
+      <div class="hero-bg"></div>
+      <div class="hero-body">
+        <div class="avatar-ring">
+          <div class="avatar">{{ initials }}</div>
+          <div class="avatar-pulse"></div>
+        </div>
+        <div class="hero-info">
+          <div class="hero-name">{{ profile.prenom }} {{ profile.nom }}</div>
+          <div class="hero-email">{{ profile.email }}</div>
+          <div class="hero-tags">
+            <span class="tag tag-role">{{ profile.role }}</span>
+            <span class="tag"
+                  [class.tag-active]="profile.isActive"
+                  [class.tag-inactive]="!profile.isActive">
+              {{ profile.isActive ? '● Actif' : '○ Inactif' }}
+            </span>
+          </div>
+        </div>
+        <button class="edit-btn" (click)="goEdit()">
+          <span>✎</span> Modifier le profil
+        </button>
+      </div>
+    </div>
+
+    <!-- Two columns -->
+    <div class="two-col">
+
+      <!-- Matières -->
+      <div class="section-card">
+        <div class="section-header">
+          <h3 class="section-title">Matières</h3>
+          <span class="section-badge">{{ subjects.length }}</span>
+        </div>
+        <div class="subject-list" *ngIf="subjects.length; else noSubjects">
+          <div class="subject-item"
+               *ngFor="let s of subjects; let i = index"
+               [style.animation-delay]="(i * 60) + 'ms'">
+            <div class="subject-dot" [style.background]="s.couleur"></div>
+            <div class="subject-body">
+              <span class="subject-name">{{ s.nom }}</span>
+              <div class="subject-meta">
+                <span class="priority-tag"
+                      [style.color]="priorityColors[s.priorite]"
+                      [style.border-color]="priorityColors[s.priorite] + '44'">
+                  {{ s.priorite }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <ng-template #noSubjects>
+          <p class="empty-hint">Aucune matière définie.</p>
+        </ng-template>
+      </div>
+
+      <!-- Disponibilités -->
+      <div class="section-card">
+        <div class="section-header">
+          <h3 class="section-title">Disponibilités</h3>
+          <span class="section-badge">{{ availability.length }}</span>
+        </div>
+        <div class="avail-list" *ngIf="availability.length; else noAvail">
+          <div class="avail-item"
+               *ngFor="let a of availability; let i = index"
+               [style.animation-delay]="(i * 50) + 'ms'">
+            <div class="avail-day">{{ days[a.jourSemaine] }}</div>
+            <div class="avail-time">{{ a.heureDebut }} → {{ a.heureFin }}</div>
+            <span class="avail-badge" *ngIf="a.recurrente">Récurrent</span>
+          </div>
+        </div>
+        <ng-template #noAvail>
+          <p class="empty-hint">Aucune disponibilité définie.</p>
+        </ng-template>
+      </div>
+
+    </div>
+  </ng-container>
+</div>

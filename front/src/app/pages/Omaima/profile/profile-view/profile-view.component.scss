@@ -1,0 +1,264 @@
+@use 'sass:color';
+
+$bg:      #080a10;
+$surface: #0e1118;
+$card:    #141720;
+$border:  #1e2334;
+$border2: #252c3d;
+$text:    #dde2f0;
+$muted:   #4a5270;
+$muted2:  #6b7494;
+$gold:    #d4a843;
+$gold-dim:rgba(#d4a843, .15);
+$green:   #27ae60;
+$blue:    #3d6af0;
+$blue-dim:rgba(#3d6af0, .15);
+$red:     #e74c3c;
+
+* { box-sizing: border-box; margin: 0; padding: 0 }
+
+.profile-shell {
+  padding: 32px 0;
+  color: $text;
+  font-family: 'DM Mono', 'Courier New', monospace;
+}
+
+// ── Skeleton ──────────────────────────────────────────
+.skeleton-wrap { display: flex; flex-direction: column; gap: 20px }
+
+.skeleton-hero {
+  height: 140px;
+  background: linear-gradient(90deg, $card 25%, color.adjust($card, $lightness: 3%) 50%, $card 75%);
+  background-size: 200% 100%;
+  border-radius: 14px;
+  animation: shimmer 1.4s infinite;
+  border: 1px solid $border;
+}
+
+.skeleton-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.skeleton-card {
+  height: 160px;
+  background: linear-gradient(90deg, $card 25%, color.adjust($card, $lightness: 3%) 50%, $card 75%);
+  background-size: 200% 100%;
+  border-radius: 12px;
+  animation: shimmer 1.4s infinite;
+  border: 1px solid $border;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0 }
+  100% { background-position: -200% 0 }
+}
+
+// ── Error ─────────────────────────────────────────────
+.error-state {
+  display: flex; align-items: center; gap: 12px;
+  padding: 20px 24px;
+  background: rgba($red, .08);
+  border: 1px solid rgba($red, .25);
+  border-radius: 12px;
+  color: $red; font-size: 13px;
+  .error-icon { font-size: 18px }
+}
+
+// ── Hero card ─────────────────────────────────────────
+.hero-card {
+  position: relative;
+  background: $card;
+  border: 1px solid $border;
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 20px;
+  animation: fadeUp .4s both;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg,
+      transparent, rgba($gold,.4) 40%,
+      rgba($gold,.7) 50%, rgba($gold,.4) 60%, transparent);
+  }
+}
+
+.hero-bg {
+  position: absolute;
+  top: -40px; right: -40px;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, rgba($gold, .12), transparent 70%);
+  pointer-events: none;
+}
+
+.hero-body {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 28px;
+}
+
+.avatar-ring { position: relative; flex-shrink: 0 }
+
+.avatar {
+  width: 72px; height: 72px;
+  background: linear-gradient(135deg, rgba($gold,.35), rgba($blue,.2));
+  border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; font-weight: 800; color: $gold;
+  border: 1px solid rgba($gold, .3);
+  letter-spacing: .04em;
+}
+
+.avatar-pulse {
+  position: absolute; inset: -3px;
+  border-radius: 18px;
+  border: 1px solid rgba($gold, .2);
+  animation: pulseBorder 3s ease-in-out infinite;
+}
+
+@keyframes pulseBorder {
+  0%, 100% { opacity: .4; transform: scale(1) }
+  50%       { opacity: .1; transform: scale(1.03) }
+}
+
+.hero-info { flex: 1 }
+
+.hero-name {
+  font-size: 20px; font-weight: 800;
+  letter-spacing: .03em; color: $text; margin-bottom: 4px;
+}
+
+.hero-email {
+  font-size: 11px; color: $muted2;
+  letter-spacing: .04em; margin-bottom: 12px;
+}
+
+.hero-tags { display: flex; flex-wrap: wrap; gap: 7px }
+
+.tag {
+  font-size: 9px; letter-spacing: .08em;
+  text-transform: uppercase; padding: 3px 9px;
+  border-radius: 5px; border: 1px solid $border;
+  background: rgba($border2, .6); color: $muted2; font-weight: 600;
+
+  &.tag-role     { background: $blue-dim; color: $blue; border-color: rgba($blue,.2) }
+  &.tag-active   { background: rgba($green,.1); color: $green; border-color: rgba($green,.25) }
+  &.tag-inactive { background: rgba($red,.1); color: $red; border-color: rgba($red,.25) }
+}
+
+.edit-btn {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 18px;
+  background: $gold-dim;
+  border: 1px solid rgba($gold, .3);
+  color: $gold; font-family: inherit;
+  font-size: 11px; letter-spacing: .06em;
+  border-radius: 8px; cursor: pointer;
+  transition: all .2s; flex-shrink: 0;
+
+  &:hover { background: rgba($gold, .25); border-color: rgba($gold, .5) }
+}
+
+// ── Two columns ───────────────────────────────────────
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.section-card {
+  background: $card;
+  border: 1px solid $border;
+  border-radius: 12px;
+  padding: 22px;
+  animation: fadeUp .45s .1s both;
+}
+
+.section-header {
+  display: flex; align-items: center;
+  gap: 10px; margin-bottom: 18px;
+}
+
+.section-title {
+  font-size: 11px; letter-spacing: .08em;
+  text-transform: uppercase; color: $text;
+  font-weight: 700; flex: 1;
+}
+
+.section-badge {
+  font-size: 10px; background: $gold-dim;
+  color: $gold; border: 1px solid rgba($gold,.2);
+  border-radius: 99px; padding: 1px 9px; font-weight: 700;
+}
+
+// ── Subjects ──────────────────────────────────────────
+.subject-list { display: flex; flex-direction: column; gap: 12px }
+
+.subject-item {
+  display: flex; align-items: center;
+  gap: 10px; animation: fadeUp .3s both;
+}
+
+.subject-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%; flex-shrink: 0;
+  box-shadow: 0 0 6px currentColor;
+}
+
+.subject-body { display: flex; flex-direction: column; gap: 4px; flex: 1 }
+
+.subject-name { font-size: 12px; color: $text; font-weight: 600 }
+
+.subject-meta { display: flex; align-items: center; gap: 8px }
+
+.priority-tag {
+  font-size: 9px; letter-spacing: .06em;
+  text-transform: uppercase; padding: 1px 7px;
+  border-radius: 4px; border: 1px solid; font-weight: 700;
+}
+
+// ── Availability ──────────────────────────────────────
+.avail-list { display: flex; flex-direction: column; gap: 0 }
+
+.avail-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba($border, .6);
+  animation: fadeUp .3s both;
+  &:last-child { border-bottom: none }
+}
+
+.avail-day {
+  font-size: 11px; color: $gold;
+  font-weight: 700; width: 68px;
+  flex-shrink: 0; letter-spacing: .04em;
+}
+
+.avail-time { font-size: 11px; color: $muted2; flex: 1; letter-spacing: .03em }
+
+.avail-badge {
+  font-size: 8.5px; letter-spacing: .06em;
+  text-transform: uppercase; padding: 2px 7px;
+  background: rgba($green,.1); color: $green;
+  border: 1px solid rgba($green,.2); border-radius: 4px;
+}
+
+// ── Empty ─────────────────────────────────────────────
+.empty-hint {
+  font-size: 11px; color: $muted;
+  text-align: center; padding: 20px 0; letter-spacing: .04em;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px) }
+  to   { opacity: 1; transform: none }
+}
+
+@media (max-width: 768px) {
+  .two-col { grid-template-columns: 1fr }
+  .hero-body { flex-wrap: wrap }
+}

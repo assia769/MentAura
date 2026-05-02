@@ -1,10 +1,11 @@
-import { Component, AfterViewInit, OnDestroy, OnInit } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FloatingOrbComponent } from './floating-orb/floating-orb.component';
 import { AuthPanelComponent } from './auth-panel/auth-panel.component';
 import { CursorComponent } from './cursor/cursor.component';
 import { RouterModule } from '@angular/router';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-landing',
@@ -22,28 +23,51 @@ import { RouterModule } from '@angular/router';
 })
 export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
 
+  private sanitizer = inject(DomSanitizer);
+
   currentTab: 'login' | 'register' = 'login';
   private animationFrameId: number | null = null;
   private scrollListeners: (() => void)[] = [];
 
-  steps = [
+  steps: { number: string; title: string; desc: string; icon: SafeHtml }[] = [
     {
       number: '01',
       title: 'Connect Your Mind',
       desc: 'Import your notes, documents, and workflows. Mentaura maps your knowledge graph instantly.',
-      icon: `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M10 2a8 8 0 1 0 0 16A8 8 0 0 0 10 2zm0 0v8m0 0l4-4m-4 4l-4-4"/></svg>`
+      icon: ''
     },
     {
       number: '02',
       title: 'AI Learns You',
       desc: 'Over time, the engine adapts to your thinking style, priorities, and patterns.',
-      icon: `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="10" cy="10" r="3"/><path d="M10 2v2m0 12v2M2 10h2m12 0h2m-3.17-4.83-1.41 1.41M4.58 15.42l1.41-1.41m0-8.24-1.41-1.41m11.24 11.24-1.41-1.41"/></svg>`
+      icon: ''
     },
     {
       number: '03',
       title: 'Think at Scale',
       desc: 'Execute complex tasks, research and create — with AI that truly understands context.',
-      icon: `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M3 10l4 4 10-10"/><circle cx="10" cy="10" r="8"/></svg>`
+      icon: ''
+    }
+  ];
+
+  features: { title: string; desc: string; tag: string; svgPath: SafeHtml }[] = [
+    {
+      title: 'Deep Intelligence',
+      desc: 'Research that goes beyond surface level. Synthesize, analyze, and extract meaning in real-time.',
+      tag: 'Core',
+      svgPath: ''
+    },
+    {
+      title: 'Memory That Persists',
+      desc: 'Never lose context. Your memory engine learns from every interaction and adapts to your workflow.',
+      tag: 'Pro',
+      svgPath: ''
+    },
+    {
+      title: 'Code That Ships',
+      desc: 'Agentic code mode. Write, review, test, and deploy — all autonomously. Your IDE meets AI.',
+      tag: 'Enterprise',
+      svgPath: ''
     }
   ];
 
@@ -55,7 +79,7 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
       rating: 5
     },
     {
-      quote: 'The memory engine is unlike anything I\'ve used. My workflow is now truly frictionless.',
+      quote: "The memory engine is unlike anything I've used. My workflow is now truly frictionless.",
       name: 'James T.',
       role: 'Senior Engineer, Orbit Labs',
       rating: 5
@@ -68,28 +92,36 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   ];
 
-  features = [
-    {
-      title: 'Deep Intelligence',
-      desc: 'Research that goes beyond surface level. Synthesize, analyze, and extract meaning in real-time.',
-      tag: 'Core',
-      svgPath: `<circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>`
-    },
-    {
-      title: 'Memory That Persists',
-      desc: 'Never lose context. Your memory engine learns from every interaction and adapts to your workflow.',
-      tag: 'Pro',
-      svgPath: `<path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/><circle cx="18" cy="6" r="3"/>`
-    },
-    {
-      title: 'Code That Ships',
-      desc: 'Agentic code mode. Write, review, test, and deploy — all autonomously. Your IDE meets AI.',
-      tag: 'Enterprise',
-      svgPath: `<polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>`
-    }
-  ];
-
   ngOnInit(): void {
+    // Initialiser les SVG sanitizés ici
+    this.steps[0].icon = this.sanitizer.bypassSecurityTrustHtml(
+      `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.2">
+        <path d="M10 2a8 8 0 1 0 0 16A8 8 0 0 0 10 2zm0 0v8m0 0l4-4m-4 4l-4-4"/>
+      </svg>`
+    );
+    this.steps[1].icon = this.sanitizer.bypassSecurityTrustHtml(
+      `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.2">
+        <circle cx="10" cy="10" r="3"/>
+        <path d="M10 2v2m0 12v2M2 10h2m12 0h2m-3.17-4.83-1.41 1.41M4.58 15.42l1.41-1.41m0-8.24-1.41-1.41m11.24 11.24-1.41-1.41"/>
+      </svg>`
+    );
+    this.steps[2].icon = this.sanitizer.bypassSecurityTrustHtml(
+      `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.2">
+        <path d="M3 10l4 4 10-10"/><circle cx="10" cy="10" r="8"/>
+      </svg>`
+    );
+
+    this.features[0].svgPath = this.sanitizer.bypassSecurityTrustHtml(
+      `<circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>`
+    );
+    this.features[1].svgPath = this.sanitizer.bypassSecurityTrustHtml(
+      `<path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/><circle cx="18" cy="6" r="3"/>`
+    );
+    this.features[2].svgPath = this.sanitizer.bypassSecurityTrustHtml(
+      `<polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>`
+    );
+
+    if (typeof window === 'undefined') return;
     const params = new URLSearchParams(window.location.search);
     if (params.get('tab') === 'register') {
       this.currentTab = 'register';
@@ -97,6 +129,7 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
+    if (typeof window === 'undefined') return;
     setTimeout(() => {
       this.initNav();
       this.initScrollReveal();
@@ -107,10 +140,16 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.animationFrameId) {
-      cancelAnimationFrame(this.animationFrameId);
-    }
+    if (this.animationFrameId) cancelAnimationFrame(this.animationFrameId);
     this.scrollListeners.forEach(fn => fn());
+  }
+
+  switchTab(tab: 'login' | 'register'): void {
+    this.currentTab = tab;
+  }
+
+  goToRegisterTop(): void {
+    window.location.href = window.location.origin + '/?tab=register';
   }
 
   private initNav(): void {
@@ -125,10 +164,6 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
     };
     window.addEventListener('scroll', handleScroll);
     this.scrollListeners.push(() => window.removeEventListener('scroll', handleScroll));
-  }
-
-  switchTab(tab: 'login' | 'register'): void {
-    this.currentTab = tab;
   }
 
   private initScrollReveal(): void {
@@ -166,13 +201,9 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
     animate();
   }
 
-  goToRegisterTop(): void {
-    window.location.href = window.location.origin + '/?tab=register';
-  }
-
   private initCounters(): void {
-    document.querySelectorAll('.stat-n[data-target]').forEach((el: any) => {
-      const target = parseFloat(el.dataset.target);
+    document.querySelectorAll<HTMLElement>('.stat-n[data-target]').forEach((el) => {
+      const target = parseFloat(el.dataset['target'] ?? '0');
       if (isNaN(target)) return;
       let count = 0;
       const update = () => {

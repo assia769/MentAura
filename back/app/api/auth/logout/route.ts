@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
 
     let userId: string | undefined
     try {
-      const p = verifyRefreshToken(refreshToken)
+      const p = await verifyRefreshToken(refreshToken)
       userId = p.userId
     } catch { /* expired token – still delete */ }
 

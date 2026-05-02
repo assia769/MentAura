@@ -1,0 +1,186 @@
+@use 'sass:color';
+
+$bg:      #080a10;
+$surface: #0e1118;
+$card:    #141720;
+$border:  #1e2334;
+$border2: #252c3d;
+$text:    #dde2f0;
+$muted:   #4a5270;
+$muted2:  #6b7494;
+$gold:    #d4a843;
+$gold-dim:rgba(#d4a843,.15);
+$green:   #27ae60;
+$blue:    #3d6af0;
+$blue-dim:rgba(#3d6af0,.15);
+$red:     #e74c3c;
+
+* { box-sizing: border-box; margin: 0; padding: 0 }
+
+.groups-shell {
+  padding: 32px 0;
+  color: $text;
+  font-family: 'DM Mono', 'Courier New', monospace;
+}
+
+.page-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  margin-bottom: 28px;
+  animation: fadeUp .35s both;
+}
+
+.page-titles { flex: 1 }
+
+.page-title {
+  font-size: 15px; font-weight: 800;
+  letter-spacing: .05em; text-transform: uppercase;
+  color: $text; margin-bottom: 3px;
+}
+
+.page-sub { font-size: 10px; color: $muted; letter-spacing: .04em }
+
+.create-btn {
+  padding: 10px 18px;
+  background: $gold-dim;
+  border: 1px solid rgba($gold,.3);
+  color: $gold;
+  font-family: inherit; font-size: 11px; letter-spacing: .06em;
+  border-radius: 8px; cursor: pointer; transition: all .2s; flex-shrink: 0;
+  &:hover { background: rgba($gold,.25) }
+}
+
+// ── Skeleton ─────────────────────────────────────────────────────────────
+.skeleton-wrap { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px }
+
+.skeleton-group {
+  height: 180px;
+  background: linear-gradient(90deg, $card 25%, color.adjust($card,$lightness:3%) 50%, $card 75%);
+  background-size: 200% 100%;
+  border-radius: 12px;
+  animation: shimmer 1.4s infinite;
+  border: 1px solid $border;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0 }
+  100% { background-position: -200% 0 }
+}
+
+// ── Error / Empty ─────────────────────────────────────────────────────────
+.error-state {
+  display: flex; align-items: center; gap: 10px;
+  padding: 18px 22px;
+  background: rgba($red,.08); border: 1px solid rgba($red,.2);
+  border-radius: 10px; color: $red; font-size: 13px;
+}
+
+.empty-state {
+  text-align: center; padding: 60px 20px;
+  animation: fadeUp .4s both;
+}
+
+.empty-icon { font-size: 36px; color: $muted; margin-bottom: 14px }
+.empty-title { font-size: 14px; font-weight: 700; color: $text; margin-bottom: 6px }
+.empty-sub { font-size: 11px; color: $muted; margin-bottom: 20px; letter-spacing: .04em }
+
+// ── Groups grid ───────────────────────────────────────────────────────────
+.groups-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.group-card {
+  background: $card;
+  border: 1px solid $border;
+  border-radius: 14px;
+  padding: 22px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  animation: fadeUp .4s var(--delay, 0ms) both;
+  transition: border-color .2s, transform .2s;
+  display: flex; flex-direction: column; gap: 14px;
+
+  &:hover {
+    border-color: rgba($gold,.3);
+    transform: translateY(-3px);
+
+    .group-glow { opacity: .15 }
+    .arrow-btn  { transform: translateX(3px); color: $gold }
+  }
+}
+
+.group-glow {
+  position: absolute; bottom: -30px; right: -30px;
+  width: 100px; height: 100px;
+  background: $gold;
+  border-radius: 50%;
+  filter: blur(40px);
+  opacity: 0;
+  transition: opacity .3s;
+  pointer-events: none;
+}
+
+.group-top { display: flex; align-items: flex-start; justify-content: space-between }
+
+.group-avatar {
+  width: 44px; height: 44px;
+  background: linear-gradient(135deg, rgba($gold,.3), rgba($blue,.2));
+  border-radius: 11px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 800; color: $gold;
+  border: 1px solid rgba($gold,.25);
+}
+
+.vis-badge {
+  font-size: 9px; letter-spacing: .07em; text-transform: uppercase;
+  padding: 3px 9px; border-radius: 5px; font-weight: 700;
+  background: rgba($muted,.15); color: $muted; border: 1px solid $border;
+
+  &.public { background: rgba($green,.1); color: $green; border-color: rgba($green,.2) }
+}
+
+.group-body { flex: 1 }
+
+.group-name {
+  font-size: 14px; font-weight: 700; color: $text;
+  margin-bottom: 6px; line-height: 1.3;
+}
+
+.group-code { font-size: 10px; color: $muted; letter-spacing: .04em }
+
+.code-val { color: $gold; font-weight: 700 }
+
+.group-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-top: 12px; border-top: 1px solid rgba($border,.6);
+}
+
+.member-stack { display: flex; align-items: center; gap: 8px }
+
+.member-dot {
+  width: 24px; height: 24px;
+  background: linear-gradient(135deg, rgba($blue,.3), rgba($gold,.2));
+  border-radius: 6px;
+  border: 1px solid $border2;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; font-weight: 800; color: $muted2;
+  position: relative;
+}
+
+.member-count { font-size: 10px; color: $muted; letter-spacing: .04em }
+
+.arrow-btn {
+  font-size: 14px; color: $muted;
+  transition: transform .2s, color .2s;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px) }
+  to   { opacity: 1; transform: none }
+}
+
+@media (max-width: 600px) {
+  .groups-grid { grid-template-columns: 1fr }
+}

@@ -1,0 +1,288 @@
+@use 'sass:color';
+
+$bg:      #080a10;
+$surface: #0e1118;
+$card:    #141720;
+$border:  #1e2334;
+$border2: #252c3d;
+$text:    #dde2f0;
+$muted:   #4a5270;
+$muted2:  #6b7494;
+$gold:    #d4a843;
+$gold-dim:rgba(#d4a843,.15);
+$green:   #27ae60;
+$blue:    #3d6af0;
+$blue-dim:rgba(#3d6af0,.15);
+$red:     #e74c3c;
+
+* { box-sizing: border-box; margin: 0; padding: 0 }
+
+.analytics-shell {
+  padding: 16px 0;
+  color: $text;
+  font-family: 'DM Mono', 'Courier New', monospace;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+// ── Header ────────────────────────────────────────────────────────────────
+.page-header {
+  margin-bottom: 24px;
+  animation: fadeUp .35s both;
+}
+
+.page-title {
+  font-size: 15px; font-weight: 800;
+  letter-spacing: .05em; text-transform: uppercase;
+  color: $text; margin-bottom: 3px;
+}
+
+.page-sub { font-size: 10px; color: $muted; letter-spacing: .04em }
+
+// ── Skeleton ──────────────────────────────────────────────────────────────
+.skeleton-wrap {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
+  margin-bottom: 20px;
+}
+
+.skeleton-card {
+  height: 110px;
+  background: linear-gradient(90deg, $card 25%, color.adjust($card,$lightness:3%) 50%, $card 75%);
+  background-size: 200% 100%;
+  border-radius: 12px; animation: shimmer 1.4s infinite; border: 1px solid $border;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0 }
+  100% { background-position: -200% 0 }
+}
+
+// ── Error ─────────────────────────────────────────────────────────────────
+.error-state {
+  display: flex; align-items: center; gap: 10px;
+  padding: 18px 22px;
+  background: rgba($red,.08); border: 1px solid rgba($red,.2);
+  border-radius: 10px; color: $red; font-size: 13px;
+}
+
+// ── KPI row ───────────────────────────────────────────────────────────────
+.kpi-row {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 14px; margin-bottom: 16px;
+}
+
+.kpi-card {
+  background: $card; border: 1px solid $border; border-radius: 12px;
+  padding: 20px; position: relative; overflow: hidden;
+  display: flex; align-items: center; gap: 14px;
+  animation: fadeUp .4s var(--delay, 0ms) both;
+  transition: border-color .2s, transform .2s;
+
+  &:hover { border-color: $border2; transform: translateY(-2px) }
+
+  &::after {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.05), transparent);
+  }
+}
+
+.kpi-icon {
+  width: 36px; height: 36px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; flex-shrink: 0;
+
+  &.kpi-gold  { background: $gold-dim; color: $gold; border: 1px solid rgba($gold,.2) }
+  &.kpi-green { background: rgba($green,.1); color: $green; border: 1px solid rgba($green,.2) }
+  &.kpi-blue  { background: $blue-dim; color: $blue; border: 1px solid rgba($blue,.2) }
+}
+
+.kpi-body { flex: 1 }
+
+.kpi-label {
+  font-size: 9.5px; letter-spacing: .09em;
+  color: $muted; text-transform: uppercase; margin-bottom: 6px;
+}
+
+.kpi-val {
+  font-size: 28px; font-weight: 800;
+  letter-spacing: -.02em; color: $text;
+  line-height: 1;
+
+  &.accent-green { color: $green }
+  &.accent-gold  { color: $gold }
+}
+
+.kpi-glow {
+  position: absolute; right: -20px; bottom: -20px;
+  width: 70px; height: 70px; border-radius: 50%;
+  filter: blur(28px); opacity: .18; pointer-events: none;
+
+  &.glow-gold  { background: $gold }
+  &.glow-green { background: $green }
+  &.glow-blue  { background: $blue }
+}
+
+// ── Sessions row ──────────────────────────────────────────────────────────
+.sessions-row {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 14px;
+  margin-bottom: 20px;
+  align-items: start;
+}
+
+.left-col {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.right-col {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.info-cards-mini {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.chart-wrapper {
+  padding: 16px;
+}
+
+// ── Info card ─────────────────────────────────────────────────────────────
+.info-card {
+  background: $card; border: 1px solid $border; border-radius: 12px;
+  padding: 18px 20px;
+  animation: fadeUp .4s var(--delay, 0s) both;
+  transition: border-color .2s;
+
+  &:hover { border-color: $border2 }
+}
+
+.info-label {
+  font-size: 9.5px; letter-spacing: .09em;
+  color: $muted; text-transform: uppercase; margin-bottom: 8px;
+}
+
+.info-val {
+  font-size: 28px; font-weight: 800; letter-spacing: -.02em; color: $text;
+  &.accent-green { color: $green }
+  &.accent-gold  { color: $gold }
+}
+
+// ── Progress card ─────────────────────────────────────────────────────────
+.progress-card {
+  .info-label { margin-bottom: 12px }
+}
+
+.progress-row {
+  display: flex; align-items: center; gap: 12px;
+}
+
+.progress-track {
+  flex: 1; height: 6px; background: $border;
+  border-radius: 99px; overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%; border-radius: 99px;
+  animation: growBar .7s ease both;
+}
+
+.progress-pct { font-size: 14px; font-weight: 800; flex-shrink: 0 }
+
+// ── Chart card (fallback bar list) ────────────────────────────────────────
+.chart-card {
+  background: $card; border: 1px solid $border;
+  border-radius: 12px; padding: 24px;
+  animation: fadeUp .45s .15s both;
+  margin-bottom: 20px;
+}
+
+.chart-header {
+  display: flex; align-items: baseline; gap: 10px; margin-bottom: 22px;
+}
+
+.chart-title {
+  font-size: 11px; letter-spacing: .08em;
+  text-transform: uppercase; color: $text; font-weight: 700; flex: 1;
+}
+
+.chart-sub { font-size: 10px; color: $muted }
+
+.bar-list { display: flex; flex-direction: column; gap: 16px }
+
+.bar-item {
+  display: grid; grid-template-columns: 200px 1fr 40px;
+  align-items: center; gap: 14px;
+  animation: fadeUp .4s both;
+}
+
+.bar-label-col { display: flex; flex-direction: column; gap: 2px }
+
+.bar-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 0 5px currentColor;
+  margin-bottom: 2px;
+}
+
+.bar-label {
+  font-size: 11px; color: $muted2;
+  overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+}
+
+.bar-prog { font-size: 9px; color: $muted; letter-spacing: .04em }
+
+.bar-track {
+  height: 6px; background: $border;
+  border-radius: 99px; overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 99px;
+  opacity: .85;
+  animation: growBar .7s ease both;
+}
+
+@keyframes growBar {
+  from { width: 0 !important }
+}
+
+.bar-val {
+  font-size: 11px; color: $gold;
+  font-weight: 700; text-align: right;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px) }
+  to   { opacity: 1; transform: none }
+}
+
+// ── Responsive ────────────────────────────────────────────────────────────
+@media (max-width: 1100px) {
+  .kpi-row { grid-template-columns: repeat(2, 1fr) }
+}
+
+@media (max-width: 800px) {
+  .sessions-row {
+    grid-template-columns: 1fr;
+  }
+
+  .info-cards-mini {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  .kpi-row { grid-template-columns: 1fr 1fr }
+  .bar-item { grid-template-columns: 120px 1fr 36px }
+  .info-cards-mini { grid-template-columns: 1fr }
+}

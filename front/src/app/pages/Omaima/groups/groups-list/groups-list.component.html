@@ -1,0 +1,71 @@
+<div class="groups-shell">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="page-titles">
+      <h1 class="page-title">Groupes d'étude</h1>
+      <span class="page-sub">Collaborez avec d'autres étudiants</span>
+    </div>
+    <button class="create-btn" (click)="goCreate()">＋ Nouveau groupe</button>
+  </div>
+
+  <!-- Loading -->
+  <div class="skeleton-wrap" *ngIf="loading">
+    <div class="skeleton-group" *ngFor="let i of [1,2,3]"></div>
+  </div>
+
+  <!-- Error -->
+  <div class="error-state" *ngIf="error && !loading">
+    <span>⚠</span> {{ error }}
+  </div>
+
+  <!-- Empty -->
+  <div class="empty-state" *ngIf="!loading && !error && !groups.length">
+    <div class="empty-icon">◈</div>
+    <p class="empty-title">Aucun groupe</p>
+    <p class="empty-sub">Créez votre premier groupe d'étude</p>
+    <button class="create-btn" (click)="goCreate()">＋ Créer un groupe</button>
+  </div>
+
+  <!-- Groups grid -->
+  <div class="groups-grid" *ngIf="!loading && groups.length">
+    <div class="group-card"
+         *ngFor="let g of groups; let i = index"
+         [style.animation-delay]="(i * 70) + 'ms'"
+         (click)="goDetail(g._id)">
+
+      <div class="group-glow"></div>
+
+      <div class="group-top">
+        <div class="group-avatar">{{ getInitials(g.nom) }}</div>
+        <div class="group-visibility">
+          <span class="vis-badge" [class.public]="g.isPublic">
+            {{ g.isPublic ? '◎ Public' : '⊘ Privé' }}
+          </span>
+        </div>
+      </div>
+
+      <div class="group-body">
+        <h3 class="group-name">{{ g.nom }}</h3>
+        <div class="group-code" *ngIf="g.codeInvitation">
+          Code : <span class="code-val">{{ g.codeInvitation }}</span>
+        </div>
+      </div>
+
+      <div class="group-footer">
+        <div class="member-stack">
+          <!-- Fix : getUserInitial() gère ObjectId et string -->
+          <div class="member-dot"
+               *ngFor="let m of (g.membres | slice:0:4); let j = index"
+               [style.z-index]="10 - j">
+            {{ getUserInitial(m.userId) }}
+          </div>
+          <span class="member-count">{{ getMemberCount(g) }} membre(s)</span>
+        </div>
+        <span class="arrow-btn">→</span>
+      </div>
+
+    </div>
+  </div>
+
+</div>

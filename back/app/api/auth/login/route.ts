@@ -70,10 +70,16 @@ export async function POST(req: NextRequest) {
     if (!valid) {
       const attempts = (user.failedLoginAttempts ?? 0) + 1
 
-      const update: any = {
-        failedLoginAttempts: attempts,
-        updatedAt: new Date()
-      }
+      interface UserUpdate {
+  failedLoginAttempts: number
+  updatedAt: Date
+  lockedUntil?: Date
+}
+ 
+const update: UserUpdate = {
+  failedLoginAttempts: attempts,
+  updatedAt: new Date()
+}
 
       if (attempts >= MAX_ATTEMPTS) {
         update.lockedUntil = new Date(Date.now() + LOCK_MINUTES * 60 * 1000)
@@ -140,8 +146,8 @@ export async function POST(req: NextRequest) {
       role
     }
 
-    const accessToken = signAccessToken(payload)
-    const refreshToken = signRefreshToken(payload)
+    const accessToken = await signAccessToken(payload)
+    const refreshToken = await signRefreshToken(payload)
 
     await db.collection('refreshtokens').insertOne({
       userId: new ObjectId(userId),

@@ -1,0 +1,108 @@
+<div class="detail-shell">
+  <div class="center-spinner" *ngIf="loading"><div class="spin-ring"></div></div>
+  <div class="error-state" *ngIf="error && !loading"><span>⚠</span> {{ error }}</div>
+
+  <ng-container *ngIf="!loading && group">
+    <!-- Header Groupe -->
+    <div class="page-header">
+      <button class="back-btn" (click)="back()">⇠ Retour</button>
+      <div class="page-titles">
+        <h1 class="page-title">{{ group.nom }}</h1>
+        <div class="header-meta">
+          <span class="vis-badge" [class.public]="group.isPublic">
+            {{ group.isPublic ? '◎ Public' : '⊘ Privé' }}
+          </span>
+          <span class="member-count">{{ group.membres.length }} Membres</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="leave-btn" (click)="leave()">Quitter le groupe</button>
+      </div>
+    </div>
+
+    <div class="main-grid">
+      
+      <!-- Colonne Gauche : CHAT (WhatsApp Style) -->
+      <div class="chat-container">
+        <div class="chat-header">
+          <h3>Discussion d'équipe</h3>
+        </div>
+        
+        <div class="chat-body">
+          <div *ngFor="let msg of messages" class="message-row" [class.me]="msg.user === 'Moi'" [class.system]="msg.type === 'system'">
+            <div class="msg-bubble">
+              <span class="msg-user" *ngIf="msg.user !== 'Moi'">{{ msg.user }}</span>
+              <p class="msg-text">{{ msg.contenu }}</p>
+              <span class="msg-date">{{ msg.date | date:'HH:mm' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="chat-input-area">
+          <input type="text" 
+                 [(ngModel)]="newMessage" 
+                 (keyup.enter)="sendMessage()"
+                 placeholder="Écrivez un message...">
+          <button class="send-btn" (click)="sendMessage()" [disabled]="!newMessage.trim()">➤</button>
+        </div>
+      </div>
+
+      <!-- Colonne Droite : Membres & Activités -->
+      <div class="side-panel">
+        
+        <!-- Activité Groupe (Bonus Pro) -->
+        <div class="section-card">
+          <h3 class="section-title">Activité</h3>
+          <div class="activity-timeline">
+            <div class="activity-item">
+              <div class="dot"></div>
+              <div class="act-content">
+                <p>Projet <strong>{{ group.nom }}</strong> créé</p>
+                <span>{{ group.createdAt | date:'dd MMM yyyy' }}</span>
+              </div>
+            </div>
+            <div class="activity-item" *ngFor="let m of group.membres | slice:0:2">
+              <div class="dot green"></div>
+              <div class="act-content">
+                <p>Nouveau membre a rejoint</p>
+                <span>{{ m.joinedAt | date:'shortTime' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Invitation -->
+        <div class="section-card">
+          <h3 class="section-title">Inviter</h3>
+          <div class="invite-form">
+            <input class="field-input" [(ngModel)]="inviteEmail" type="email" placeholder="email@etudiant.com">
+            <button class="btn-invite" (click)="invite()" [disabled]="!inviteEmail || inviting">
+              {{ inviting ? '...' : 'Envoyer' }}
+            </button>
+          </div>
+          <div class="alert alert-success" *ngIf="inviteMsg">{{ inviteMsg }}</div>
+          
+          <div class="code-box" *ngIf="group.codeInvitation">
+            <span class="code-label">Code:</span>
+            <span class="code-val">{{ group.codeInvitation }}</span>
+          </div>
+        </div>
+
+        <!-- Membres -->
+<div class="section-card">
+  <h3 class="section-title">Membres ({{ group.membres.length }})</h3>
+  <div class="mini-member-list">
+    <div class="member-row-mini" *ngFor="let m of group.membres">
+      <div class="member-avatar">{{ getInitials(m.nom) }}</div>
+      <div class="member-info">
+        <span class="member-name">{{ m.nom || 'Utilisateur' }}</span>
+        <span class="role-tag" [class.admin]="m.role === 'admin'">{{ m.role }}</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+      </div>
+    </div>
+  </ng-container>
+</div>

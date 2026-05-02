@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { ObjectId } from 'mongodb'
 import { getDb } from '@/lib/mongodb'
 
 const SUSPICIOUS_ACTIONS = ['LOGIN_FAILED', 'ACCOUNT_LOCKED', 'CAPTCHA_FAILED']
@@ -28,7 +29,7 @@ export async function GET(req: NextRequest) {
     const userIds = [...new Set(logs.map(l => l.userId?.toString()).filter(Boolean))]
     const users   = await db
       .collection('users')
-      .find({ _id: { $in: userIds.map(id => { const { ObjectId } = require('mongodb'); return new ObjectId(id) }) } })
+      .find({ _id: { $in: userIds.map(id => new ObjectId(id)) } })
       .project({ _id: 1, nom: 1, prenom: 1, email: 1 })
       .toArray()
 

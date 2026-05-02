@@ -83,7 +83,7 @@ export async function POST(req: NextRequest) {
     }
 
     // ── TOKENS ─────────────────────────────────────
-    const accessToken = signAccessToken(payload)
+    const accessToken = await signAccessToken(payload)
     const refreshToken = signRefreshToken(payload)
 
     await db.collection('refreshtokens').insertOne({

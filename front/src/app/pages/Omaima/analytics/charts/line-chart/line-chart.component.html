@@ -1,0 +1,103 @@
+<div class="lc-wrap">
+  <div class="lc-header">
+    <span class="lc-title">Évolution hebdomadaire</span>
+    <div class="lc-legend">
+      <span class="lc-leg-item">
+        <span class="lc-leg-dot lc-dot-plan"></span> Planifiées
+      </span>
+      <span class="lc-leg-item">
+        <span class="lc-leg-dot lc-dot-real"></span> Réalisées
+      </span>
+    </div>
+  </div>
+
+  <div class="lc-empty" *ngIf="heuresPlanifiees === 0 && heuresRealisees === 0">
+    <span class="lc-empty-icon">📈</span>
+    <span>Aucune donnée hebdomadaire disponible</span>
+  </div>
+
+<div class="lc-svg-wrap">
+        <svg #svgEl
+         [attr.viewBox]="'0 0 ' + svgW + ' ' + svgH"
+         xmlns="http://www.w3.org/2000/svg"
+         class="lc-svg">
+
+      <defs>
+        <!-- Plan gradient fill -->
+        <linearGradient id="gradPlan" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#d4a843" stop-opacity="0.25"/>
+          <stop offset="100%" stop-color="#d4a843" stop-opacity="0"/>
+        </linearGradient>
+        <!-- Real gradient fill -->
+        <linearGradient id="gradReal" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#27ae60" stop-opacity="0.20"/>
+          <stop offset="100%" stop-color="#27ae60" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Grid lines -->
+      <g class="lc-grid">
+        <line *ngFor="let t of yTicks"
+              [attr.x1]="padL" [attr.y1]="t.y"
+              [attr.x2]="svgW - padR" [attr.y2]="t.y"
+              stroke="#1e2334" stroke-width="1"/>
+        <text *ngFor="let t of yTicks"
+              [attr.x]="padL - 6" [attr.y]="t.y + 4"
+              text-anchor="end" class="lc-tick-label">{{ t.val }}h</text>
+      </g>
+
+      <!-- Area fills -->
+      <path *ngIf="planPath"
+            [attr.d]="planPath + ' L ' + (svgW - padR) + ',' + (svgH - padB) + ' L ' + padL + ',' + (svgH - padB) + ' Z'"
+            fill="url(#gradPlan)" class="lc-area"/>
+
+      <path *ngIf="realPath"
+            [attr.d]="realPath + ' L ' + (svgW - padR) + ',' + (svgH - padB) + ' L ' + padL + ',' + (svgH - padB) + ' Z'"
+            fill="url(#gradReal)" class="lc-area"/>
+
+      <!-- Lines -->
+      <path *ngIf="planPath" [attr.d]="planPath"
+            fill="none" stroke="#d4a843" stroke-width="2"
+            stroke-linecap="round" class="lc-line lc-line-plan"/>
+
+      <path *ngIf="realPath" [attr.d]="realPath"
+            fill="none" stroke="#27ae60" stroke-width="2"
+            stroke-linecap="round" class="lc-line lc-line-real"/>
+
+      <!-- Dots + labels -->
+      <g *ngFor="let p of points; let i = index">
+        <!-- Plan dot -->
+        <circle [attr.cx]="xPos(i)" [attr.cy]="yPos(p.heures)"
+                r="3.5" fill="#d4a843" class="lc-dot"/>
+        <!-- Real dot -->
+        <circle [attr.cx]="xPos(i)" [attr.cy]="yPos(p.realises)"
+                r="3.5" fill="#27ae60" class="lc-dot"/>
+        <!-- X label -->
+        <text [attr.x]="xPos(i)" [attr.y]="svgH - padB + 18"
+              text-anchor="middle" class="lc-tick-label">{{ p.label }}</text>
+      </g>
+
+    </svg>
+  </div>
+
+  <!-- Summary row -->
+  <div class="lc-summary" *ngIf="heuresPlanifiees > 0 || heuresRealisees > 0">
+    <div class="lc-sum-item">
+      <span class="lc-sum-val lc-gold">{{ heuresPlanifiees }}h</span>
+      <span class="lc-sum-lbl">planifiées</span>
+    </div>
+    <div class="lc-sum-sep"></div>
+    <div class="lc-sum-item">
+      <span class="lc-sum-val lc-green">{{ heuresRealisees }}h</span>
+      <span class="lc-sum-lbl">réalisées</span>
+    </div>
+    <div class="lc-sum-sep"></div>
+    <div class="lc-sum-item">
+      <span class="lc-sum-val"
+            [style.color]="heuresPlanifiees > 0 ? (heuresRealisees/heuresPlanifiees >= 0.8 ? '#27ae60' : '#d4a843') : '#4a5270'">
+        {{ heuresPlanifiees > 0 ? ((heuresRealisees / heuresPlanifiees) * 100 | number:'1.0-0') : 0 }}%
+      </span>
+      <span class="lc-sum-lbl">taux</span>
+    </div>
+  </div>
+</div>

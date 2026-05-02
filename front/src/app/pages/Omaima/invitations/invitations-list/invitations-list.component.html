@@ -1,0 +1,146 @@
+<div class="inv-shell">
+
+  <div class="page-header">
+    <div class="page-titles">
+      <h1 class="page-title">Invitations</h1>
+      <span class="page-sub">Groupes d'étude · reçues &amp; envoyées</span>
+    </div>
+    <span class="badge-count" *ngIf="totalPending > 0">{{ totalPending }} en attente</span>
+  </div>
+
+  <!-- Loading -->
+  <div class="skeleton-wrap" *ngIf="loading">
+    <div class="skeleton-card" *ngFor="let i of [1,2,3]"></div>
+  </div>
+
+  <!-- Error -->
+  <div class="error-state" *ngIf="error && !loading">⚠ {{ error }}</div>
+
+  <ng-container *ngIf="!loading && !error">
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- 🔹 SECTION 1 — INVITATIONS REÇUES         -->
+    <!-- ══════════════════════════════════════════ -->
+    <div class="section-block">
+      <div class="section-header">
+        <span class="section-label">🔹 Invitations reçues</span>
+        <span class="section-count">{{ received.length }}</span>
+      </div>
+
+      <!-- Aucune invitation reçue -->
+      <div class="empty-state" *ngIf="received.length === 0">
+        <div class="empty-icon">✉</div>
+        <p class="empty-title">Aucune invitation reçue</p>
+        <p class="empty-sub">Personne ne vous a encore invité à un groupe.</p>
+      </div>
+
+      <!-- En attente -->
+      <div *ngIf="pendingReceived.length">
+        <h2 class="section-title">En attente</h2>
+        <div class="inv-card" *ngFor="let inv of pendingReceived">
+          <div class="inv-left">
+            <div class="inv-avatar">{{ inv.groupeNom[0] }}</div>
+            <div class="inv-info">
+              <span class="inv-group">{{ inv.groupeNom }}</span>
+              <span class="inv-from" *ngIf="inv.inviteurNom">
+                Invité par <strong>{{ inv.inviteurNom }}</strong>
+              </span>
+              <span class="inv-date">Reçue le {{ inv.createdAt | date:'dd/MM/yyyy' }}</span>
+              <span class="inv-expire">Expire le {{ inv.expiresAt | date:'dd/MM/yyyy' }}</span>
+            </div>
+          </div>
+          <div class="inv-actions">
+            <button class="btn-accept"
+              [disabled]="actionId === inv._id"
+              (click)="respond(inv, 'accept')">
+              {{ actionId === inv._id ? '...' : '✓ Accepter' }}
+            </button>
+            <button class="btn-decline"
+              [disabled]="actionId === inv._id"
+              (click)="respond(inv, 'decline')">
+              {{ actionId === inv._id ? '...' : '✕ Refuser' }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Traitées -->
+      <div *ngIf="handledReceived.length">
+        <h2 class="section-title">Historique</h2>
+        <div class="inv-card handled" *ngFor="let inv of handledReceived">
+          <div class="inv-left">
+            <div class="inv-avatar dim">{{ inv.groupeNom[0] }}</div>
+            <div class="inv-info">
+              <span class="inv-group">{{ inv.groupeNom }}</span>
+              <span class="inv-from" *ngIf="inv.inviteurNom">
+                Invité par <strong>{{ inv.inviteurNom }}</strong>
+              </span>
+              <span class="inv-date">{{ inv.createdAt | date:'dd/MM/yyyy' }}</span>
+            </div>
+          </div>
+          <span class="status-badge"
+            [class.accepted]="inv.statut === 'accepted'"
+            [class.declined]="inv.statut === 'declined'">
+            {{ inv.statut === 'accepted' ? '✓ Acceptée' : '✕ Refusée' }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- 🔸 SECTION 2 — INVITATIONS ENVOYÉES       -->
+    <!-- ══════════════════════════════════════════ -->
+    <div class="section-block">
+      <div class="section-header">
+        <span class="section-label">🔸 Invitations envoyées</span>
+        <span class="section-count">{{ sent.length }}</span>
+      </div>
+
+      <!-- Aucune invitation envoyée -->
+      <div class="empty-state" *ngIf="sent.length === 0">
+        <div class="empty-icon">📤</div>
+        <p class="empty-title">Aucune invitation envoyée</p>
+        <p class="empty-sub">Invitez des membres depuis la page d'un groupe.</p>
+      </div>
+
+      <!-- En attente -->
+      <div *ngIf="pendingSent.length">
+        <h2 class="section-title">En attente de réponse</h2>
+        <div class="inv-card" *ngFor="let inv of pendingSent">
+          <div class="inv-left">
+            <div class="inv-avatar sent">{{ inv.groupeNom[0] }}</div>
+            <div class="inv-info">
+              <span class="inv-group">{{ inv.groupeNom }}</span>
+              <span class="inv-to">Envoyée à <strong>{{ inv.inviteEmail }}</strong></span>
+              <span class="inv-date">Envoyée le {{ inv.createdAt | date:'dd/MM/yyyy' }}</span>
+              <span class="inv-expire">Expire le {{ inv.expiresAt | date:'dd/MM/yyyy' }}</span>
+            </div>
+          </div>
+          <span class="status-badge pending">⏳ En attente</span>
+        </div>
+      </div>
+
+      <!-- Traitées -->
+      <div *ngIf="handledSent.length">
+        <h2 class="section-title">Répondues</h2>
+        <div class="inv-card handled" *ngFor="let inv of handledSent">
+          <div class="inv-left">
+            <div class="inv-avatar dim">{{ inv.groupeNom[0] }}</div>
+            <div class="inv-info">
+              <span class="inv-group">{{ inv.groupeNom }}</span>
+              <span class="inv-to">Envoyée à <strong>{{ inv.inviteEmail }}</strong></span>
+              <span class="inv-date">{{ inv.createdAt | date:'dd/MM/yyyy' }}</span>
+            </div>
+          </div>
+          <span class="status-badge"
+            [class.accepted]="inv.statut === 'accepted'"
+            [class.declined]="inv.statut === 'declined'">
+            {{ inv.statut === 'accepted' ? '✓ Acceptée' : '✕ Refusée' }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </ng-container>
+
+</div>

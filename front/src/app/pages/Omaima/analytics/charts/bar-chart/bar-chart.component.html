@@ -1,0 +1,50 @@
+<div class="bc-wrap">
+  <div class="bc-header">
+    <span class="bc-title">Heures par matière</span>
+    <span class="bc-badge">total cumulé</span>
+  </div>
+
+  <div class="bc-empty" *ngIf="!sorted.length">
+    <span class="bc-empty-icon">📚</span>
+    <span>Aucune matière enregistrée</span>
+  </div>
+
+  <div class="bc-list" *ngIf="sorted.length">
+    <div class="bc-row" *ngFor="let s of sorted; let i = index; trackBy: trackById"
+         [style.animation-delay]="(i * 90) + 'ms'">
+
+      <div class="bc-meta">
+        <span class="bc-dot" [style.background]="s.couleur"
+              [style.box-shadow]="'0 0 8px ' + s.couleur + '80'"></span>
+        <div class="bc-info">
+          <span class="bc-name">{{ s.nom }}</span>
+          <span class="bc-sessions">
+            {{ s.sessionsRealisees }}/{{ s.totalSessions }} sessions
+            <span class="bc-prio" [class]="'prio-' + s.priorite">{{ s.priorite }}</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="bc-track-wrap">
+        <div class="bc-track">
+          <div class="bc-fill"
+               [style.width.%]="barPct(s.totalHeuresEtudiees)"
+               [style.background]="'linear-gradient(90deg, ' + s.couleur + '99, ' + s.couleur + ')'">
+          </div>
+        </div>
+        <div class="bc-completion-track">
+          <div class="bc-completion-fill"
+               [style.width.%]="completionPct(s)"
+               [style.background]="s.couleur + '55'">
+          </div>
+        </div>
+      </div>
+
+      <div class="bc-vals">
+        <span class="bc-hours" [style.color]="s.couleur">{{ s.totalHeuresEtudiees }}h</span>
+        <span class="bc-pct">{{ completionPct(s) }}%</span>
+      </div>
+
+    </div>
+  </div>
+</div>
