@@ -1,0 +1,145 @@
+.picker-wrap {
+  padding: 16px 0;
+}
+
+.picker-loading {
+  color: rgba(245, 240, 232, 0.5);
+  font-size: 13px;
+  padding: 24px 0;
+  text-align: center;
+}
+
+.picker-grid {
+  display: grid;
+  grid-template-columns: 80px repeat(7, 1fr);
+  gap: 4px;
+  overflow-x: auto;
+}
+
+.grid-corner {
+  /* empty top-left cell */
+}
+
+.grid-day-header {
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(245, 240, 232, 0.5);
+  padding: 6px 2px;
+  font-weight: 600;
+}
+
+.grid-block-label {
+  display: flex;
+  align-items: flex-start;
+  padding-top: 10px;
+  font-size: 11px;
+  color: rgba(245, 240, 232, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.grid-cell {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(0, 245, 255, 0.08);
+  border-radius: 6px;
+  min-height: 52px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 4px;
+  transition: background 0.15s, border-color 0.15s;
+
+  &:hover {
+    background: rgba(0, 245, 255, 0.06);
+    border-color: rgba(0, 245, 255, 0.2);
+  }
+
+  &.active {
+    background: rgba(201, 168, 76, 0.12);
+    border-color: rgba(201, 168, 76, 0.45);
+
+    .cell-check {
+      color: #C9A84C;
+      font-weight: 700;
+    }
+  }
+}
+
+.cell-check {
+  font-size: 14px;
+  color: rgba(245, 240, 232, 0.25);
+}
+
+.cell-times {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.time-input {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(201, 168, 76, 0.3);
+  border-radius: 4px;
+  color: #F5F0E8;
+  font-size: 10px;
+  padding: 2px 4px;
+  width: 58px;
+  color-scheme: dark;
+
+  &:focus {
+    outline: none;
+    border-color: #C9A84C;
+  }
+}
+
+.time-sep {
+  font-size: 10px;
+  color: rgba(245, 240, 232, 0.4);
+}
+
+.picker-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.picker-error {
+  font-size: 13px;
+  color: #ff6b6b;
+}
+
+.picker-success {
+  font-size: 13px;
+  color: #00ff88;
+}
+
+.btn-save {
+  background: linear-gradient(135deg, #C9A84C, #8B6914);
+  border: none;
+  border-radius: 8px;
+  color: #09090F;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+
+  &:hover:not(:disabled) {
+    opacity: 0.85;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}

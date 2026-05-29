@@ -44,6 +44,7 @@ export const routes: Routes = [
   loadComponent: () => import('./pages/Omaima/invitations/invitations-list/invitations-list.component')
     .then(m => m.InvitationsListComponent) 
 },      { path: 'analytics', loadComponent: () => import('./pages/Omaima/analytics/analytics-dashboard/analytics-dashboard.component').then(m => m.AnalyticsDashboardComponent) },
+      { path: 'planning', loadComponent: () => import('./pages/planning/planning.component').then(m => m.PlanningComponent) },
     ]
   },
 

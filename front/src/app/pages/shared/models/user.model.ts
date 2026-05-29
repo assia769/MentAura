@@ -7,6 +7,7 @@ export interface UserProfile {
   avatarUrl?: string
   role: 'admin' | 'student'
   isActive: boolean
+  score?: number
   createdAt: string
   updatedAt: string
 }

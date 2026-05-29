@@ -1,0 +1,49 @@
+<div class="picker-wrap">
+  <div class="picker-loading" *ngIf="loading()">Chargement…</div>
+
+  <ng-container *ngIf="!loading()">
+    <div class="picker-grid">
+      <!-- En-tête jours -->
+      <div class="grid-corner"></div>
+      <div class="grid-day-header" *ngFor="let day of DAYS">{{ day.label }}</div>
+
+      <!-- Lignes plages -->
+      <ng-container *ngFor="let block of BLOCKS">
+        <div class="grid-block-label">{{ block.label }}</div>
+
+        <div
+          *ngFor="let day of DAYS"
+          class="grid-cell"
+          [class.active]="getCell(day.key, block.key).active"
+          (click)="toggleCell(day.key, block.key)"
+        >
+          <span class="cell-check">{{ getCell(day.key, block.key).active ? '✓' : '+' }}</span>
+
+          <div class="cell-times" *ngIf="getCell(day.key, block.key).active" (click)="$event.stopPropagation()">
+            <input
+              type="time"
+              class="time-input"
+              [value]="getCell(day.key, block.key).heureDebut"
+              (change)="updateTime(day.key, block.key, 'heureDebut', $any($event.target).value)"
+            />
+            <span class="time-sep">–</span>
+            <input
+              type="time"
+              class="time-input"
+              [value]="getCell(day.key, block.key).heureFin"
+              (change)="updateTime(day.key, block.key, 'heureFin', $any($event.target).value)"
+            />
+          </div>
+        </div>
+      </ng-container>
+    </div>
+
+    <div class="picker-footer">
+      <span class="picker-error" *ngIf="error()">{{ error() }}</span>
+      <span class="picker-success" *ngIf="success()">{{ success() }}</span>
+      <button class="btn-save" (click)="save()" [disabled]="saving()">
+        {{ saving() ? 'Enregistrement…' : 'Enregistrer mes disponibilités' }}
+      </button>
+    </div>
+  </ng-container>
+</div>

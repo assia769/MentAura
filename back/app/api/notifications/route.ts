@@ -72,6 +72,38 @@ export async function GET(req: NextRequest) {
   }
 }
 
+// ── POST : créer une notification (rappel_session depuis le front) ───────────
+export async function POST(req: NextRequest) {
+  try {
+    const userId = req.headers.get('x-user-id')
+    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+    const { type, titre, contenu } = await req.json()
+    if (!type || !titre || !contenu) {
+      return NextResponse.json({ error: 'type, titre, contenu sont requis' }, { status: 400 })
+    }
+
+    const db = await getDb()
+    const userObjId = new ObjectId(userId)
+
+    await db.collection('notifications').insertOne({
+      destinataireId: userObjId,
+      type,
+      titre,
+      contenu,
+      isLue:    false,
+      refId:    null,
+      refModel: null,
+      createdAt: new Date()
+    })
+
+    return NextResponse.json({ success: true }, { status: 201 })
+  } catch (err) {
+    console.error('[notifications] POST error:', err)
+    return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 })
+  }
+}
+
 // ── PATCH : marquer une notification comme lue ───────────────────────────────
 export async function PATCH(req: NextRequest) {
   try {
