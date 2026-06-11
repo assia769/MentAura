@@ -17,6 +17,7 @@
     </a>
     <a routerLink="/user/invitations" routerLinkActive="active">✉ Invitations</a>
     <a routerLink="/user/analytics"   routerLinkActive="active">⊞ Analytique</a>
+    <a routerLink="/user/planning"   routerLinkActive="active">◷ Planning</a>
   </div>
 
   <div class="nav-actions">
@@ -24,7 +25,7 @@
     <!-- ── Cloche notifications ────────────────────────────────────────── -->
     <div class="notif-wrapper" (click)="$event.stopPropagation()">
 
-      <button class="notif-bell" (click)="notifSvc.toggle()"
+      <button class="notif-bell" (click)="notifSvc.toggle(); notifSvc.markSessionNotifsAsRead()"
               [class.has-unread]="notifSvc.totalUnread() > 0">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
              stroke="currentColor" stroke-width="2" stroke-linecap="round">

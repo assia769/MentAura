@@ -94,6 +94,8 @@ export class NotificationService {
         ? ['/user/groups', notif.groupeId]
         : ['/user/invitations']
       )
+    } else if (notif.type === 'rappel_session') {
+      this.router.navigate(['/user/planning'])
     } else if (notif.refModel === 'GroupeEtude') {
       this.router.navigate(['/user/groups'])
     } else {
@@ -140,6 +142,23 @@ export class NotificationService {
       { headers: this.headers() }         // ← headers ajoutés
     ).subscribe()
     this.notifications.update(list => list.map(n => ({ ...n, isLue: true })))
+    this.recalcTotal()
+  }
+
+  // ── Marquer uniquement les rappel_session comme lus (sans toucher aux messages) ──
+  markSessionNotifsAsRead() {
+    const unread = this.notifications().filter(n => n.type === 'rappel_session' && !n.isLue)
+    if (!unread.length) return
+    for (const n of unread) {
+      this.http.patch(
+        `${this.api}/api/notifications`,
+        { notifId: n._id },
+        { headers: this.headers() }
+      ).subscribe()
+    }
+    this.notifications.update(list =>
+      list.map(n => n.type === 'rappel_session' ? { ...n, isLue: true } : n)
+    )
     this.recalcTotal()
   }
 

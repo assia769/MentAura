@@ -1,0 +1,346 @@
+<div class="planning-page">
+
+  <!-- Toast -->
+  <div class="toast-bar" *ngIf="toast()">{{ toast() }}</div>
+
+  <!-- Timer global fixe (haut droite) -->
+  <div class="timer-fixed" *ngIf="activeTimerSession()">
+    <div class="timer-header">
+      <span class="timer-subject">{{ activeTimerSession()?.matiere?.nom || activeTimerSession()?.titre || 'Session en cours' }}</span>
+      <span class="timer-display">{{ timerDisplay }}</span>
+    </div>
+    <div class="timer-progress-bar">
+      <div class="timer-progress-fill" [style.width.%]="timerPercent"></div>
+    </div>
+    <span class="timer-hint">{{ timerPercent }}% &mdash; 50% requis pour valider</span>
+  </div>
+
+  <!-- Loading -->
+  <div class="skeleton-wrap" *ngIf="loading()">
+    <div class="skel" *ngFor="let _ of [1,2,3]"></div>
+  </div>
+
+  <ng-container *ngIf="!loading()">
+
+    <!-- VUE PAR DÉFAUT — sessions de la semaine -->
+    <ng-container *ngIf="!wizardMode()">
+
+      <div class="view-header">
+        <div class="view-header-left">
+          <h1 class="view-title">Mon Planning</h1>
+          <div class="week-nav">
+            <button class="week-btn" (click)="prevWeek()">‹</button>
+            <span class="week-lbl">{{ weekRangeLabel() }}</span>
+            <button class="week-btn" (click)="nextWeek()">›</button>
+          </div>
+        </div>
+        <div class="view-actions">
+          <button class="btn-add-sess" (click)="openSessModal()">+ Ajouter une session</button>
+          <button class="btn-create" *ngIf="sessions().length === 0" (click)="openWizard()">+ Créer mon planning</button>
+          <span class="planning-locked-msg" *ngIf="sessions().length > 0">🔒 Planning initialisé pour cette semaine</span>
+        </div>
+      </div>
+
+      <!-- Jours avec sessions uniquement -->
+      <div class="days-list" *ngIf="sessionDays().length > 0; else noSessions">
+        <div class="day-block" *ngFor="let day of sessionDays()">
+          <div class="day-label">{{ day.label }}</div>
+          <div class="sess-list">
+
+            <div class="sess-row"
+              *ngFor="let s of day.sessions"
+              [class.session-past]="isPast(s)"
+              [style.border-left-color]="s.matiere?.couleur ?? '#888'"
+              [style.background]="(s.matiere?.couleur ?? '#888') + '18'">
+
+              <div class="sr-info">
+                <span class="sr-time">{{ fmtTime(s.dateDebut) }} – {{ fmtTime(s.dateFin) }}</span>
+                <span class="sr-name">{{ s.titre }}</span>
+              </div>
+
+              <div class="sr-actions">
+                <button class="btn-start"
+                  *ngIf="canStartSession(s)"
+                  (click)="onDemarrer(s)">▶ Démarrer</button>
+
+                <span class="sr-running"
+                  *ngIf="activeTimerSession()?._id === s._id">⏱ En cours</span>
+
+                <span class="sr-badge badge-ok"   *ngIf="s.statut === 'realisee'">✓ Réalisée</span>
+                <span class="sr-badge badge-nok"  *ngIf="s.statut === 'non_realisee'">✗ Non réalisée</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <ng-template #noSessions>
+        <div class="empty-week">
+          <div class="empty-icon">📅</div>
+          <p>Aucune session planifiée cette semaine.</p>
+          <button class="btn-create-cta" (click)="openWizard()">+ Créer mon planning</button>
+        </div>
+      </ng-template>
+
+    </ng-container>
+
+    <!-- WIZARD — Créer mon planning (3 étapes) -->
+    <ng-container *ngIf="wizardMode()">
+
+      <div class="wizard-header">
+        <div class="step-indicator">
+          <!-- Étape 1 : Matières -->
+          <div class="si-step" [class.active]="step() >= 1" [class.current]="step() === 1">
+            <div class="si-dot">{{ step() > 1 ? '✓' : '1' }}</div>
+            <span class="si-lbl">Matières & Projets</span>
+          </div>
+          <div class="si-track">
+            <div class="si-fill" [style.width.%]="step() > 1 ? 100 : 0"></div>
+          </div>
+          <!-- Étape 2 : Disponibilités -->
+          <div class="si-step" [class.active]="step() >= 2" [class.current]="step() === 2">
+            <div class="si-dot">{{ step() > 2 ? '✓' : '2' }}</div>
+            <span class="si-lbl">Disponibilités</span>
+          </div>
+          <div class="si-track">
+            <div class="si-fill" [style.width.%]="step() > 2 ? 100 : 0"></div>
+          </div>
+          <!-- Étape 3 : Objectifs & Résultat -->
+          <div class="si-step" [class.active]="step() >= 3" [class.current]="step() === 3">
+            <div class="si-dot">3</div>
+            <span class="si-lbl">Objectifs & Résultat</span>
+          </div>
+        </div>
+        <button class="btn-close-wizard" (click)="closeWizard()" title="Fermer le wizard">✕</button>
+      </div>
+
+      <!-- ÉTAPE 1 — Gestion des Matières / Projets -->
+      <div class="step-panel" *ngIf="step() === 1">
+        <div class="panel-head">
+          <div>
+            <h2 class="panel-title">Tes matières et projets</h2>
+            <p class="panel-sub">Ajoute les projets ou matières que tu souhaites étudier cette semaine</p>
+          </div>
+        </div>
+
+        <div class="quick-subject-form">
+          <div class="qsf-title">➕ Ajouter un projet ou une matière</div>
+          <div class="qsf-row">
+            <input class="neon-input" type="text" [(ngModel)]="quickSubjectName" placeholder="Ex: Projet Angular, Mathématiques...">
+            <input class="neon-input color-picker" type="color" [(ngModel)]="quickSubjectColor">
+            <button class="btn-confirm" (click)="addQuickSubject()">Ajouter</button>
+          </div>
+
+          <div class="obj-list" *ngIf="subjects().length > 0" style="margin-top: 1.5rem;">
+            <div class="obj-card" *ngFor="let sub of subjects()">
+              <div class="obj-stripe" [style.background]="sub.couleur"></div>
+              <div class="obj-body" style="padding: 12px 16px;">
+                <div class="obj-row">
+                  <span class="obj-name" style="font-size: 14px; font-weight: 600;">{{ sub.nom }}</span>
+                  <span class="obj-hrs" [style.color]="sub.couleur" [style.border-color]="sub.couleur" style="background: rgba(255,255,255,0.03)">Actif</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-footer">
+          <button class="btn-next" (click)="step.set(2)" [disabled]="subjects().length === 0">
+            Suivant (Disponibilités) →
+          </button>
+        </div>
+      </div>
+
+      <!-- ÉTAPE 2 — Emploi du temps / Disponibilités -->
+      <div class="step-panel" *ngIf="step() === 2">
+        <div class="panel-head">
+          <div>
+            <button class="btn-back" (click)="step.set(1)">← Matières</button>
+            <h2 class="panel-title">Tes disponibilités</h2>
+            <p class="panel-sub">Sélectionne les créneaux horaires où tu es disponible pour étudier</p>
+          </div>
+          <div class="sel-badge" *ngIf="selCount() > 0">{{ selCount() }} créneau(x)</div>
+        </div>
+
+        <div class="avail-wrap">
+          <div class="avail-grid">
+            <div class="ag-corner"></div>
+            <div class="ag-day-hd" *ngFor="let d of DAYS">{{ d.label }}</div>
+            <ng-container *ngFor="let hour of HOURS">
+              <div class="ag-hour">{{ hour }}</div>
+              <div
+                class="ag-cell"
+                *ngFor="let d of DAYS"
+                [class.ag-sel]="isSel(d.key, hour)"
+                (click)="toggle(d.key, hour)">
+              </div>
+            </ng-container>
+          </div>
+        </div>
+
+        <div class="panel-footer">
+          <!--
+            ✅ CORRECTION : On n'appelle plus que saveAvailability() ici.
+            La navigation vers l'étape 3 se fait dans le callback next() de saveAvailability().
+            Cela évite la collision entre le step.set(3) immédiat du template
+            et le step.set(2) asynchrone qui revenait du serveur.
+          -->
+          <button class="btn-next" (click)="saveAvailability()" [disabled]="saving() || selCount() === 0">
+            {{ saving() ? 'Sauvegarde…' : 'Suivant (Objectifs) →' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- ÉTAPE 3 — Objectifs & Résultat -->
+      <div class="step-panel" *ngIf="step() === 3">
+        <div class="panel-head">
+          <div>
+            <button class="btn-back" (click)="step.set(2)">← Disponibilités</button>
+            <h2 class="panel-title">Tes objectifs & Résultat</h2>
+            <p class="panel-sub">Définis tes objectifs de temps pour chaque matière d'ici la fin de la semaine (Max: {{ maxWeekDate() | date:'dd/MM/yyyy' }})</p>
+          </div>
+          <button class="btn-add-obj" (click)="showObjForm.update(v => !v)">
+            {{ showObjForm() ? '✕ Annuler' : '+ Ajouter un objectif' }}
+          </button>
+        </div>
+
+        <div class="obj-form" *ngIf="showObjForm()">
+          <div class="form-row-2">
+            <div class="form-group">
+              <label>Matière / Projet *</label>
+              <select class="neon-select" [(ngModel)]="newObj.matiereId">
+                <option value="">— choisir —</option>
+                <option *ngFor="let s of subjects()" [value]="s._id">{{ s.nom }}</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Priorité</label>
+              <select class="neon-select" [(ngModel)]="newObjPriorite">
+                <option value="haute">Haute</option>
+                <option value="moyenne">Moyenne</option>
+                <option value="faible">Faible</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row-2">
+            <div class="form-group">
+              <label>Heures / semaine *</label>
+              <input class="neon-input" type="number" [(ngModel)]="newObj.heuresParSemaine" min="1" max="40">
+            </div>
+            <div class="form-group">
+              <label>Date limite (Cette semaine max) *</label>
+              <input class="neon-input" type="date" [(ngModel)]="newObj.deadline" [min]="tomorrowDate()" [max]="maxWeekDate()">
+            </div>
+          </div>
+          <div class="form-error" *ngIf="objFormErr()">{{ objFormErr() }}</div>
+          <button class="btn-confirm" (click)="addObjectif()">Ajouter l'objectif</button>
+        </div>
+
+        <!-- Liste des objectifs ajoutés -->
+        <div class="obj-list" *ngIf="objectifs().length > 0">
+          <div class="obj-card" *ngFor="let o of objectifs()" [class.is-done]="o.statut === 'atteint'">
+            <div class="obj-stripe" [style.background]="o.matiere?.couleur ?? '#888'"></div>
+            <div class="obj-body">
+              <div class="obj-row">
+                <span class="obj-name">{{ o.matiere?.nom ?? '…' }}</span>
+                <span class="obj-prio" [style.color]="prioColor(o.matiere?.priorite)">
+                  {{ prioLabel(o.matiere?.priorite) }}
+                </span>
+                <span class="obj-hrs">{{ o.heuresParSemaine }}h/sem</span>
+                <span class="obj-dl">→ {{ fmtDeadline(o.deadline) }}</span>
+              </div>
+              <div class="prog-track">
+                <div class="prog-fill" [style.width.%]="getProgression(o)" [style.background]="progColor(getProgression(o))"></div>
+              </div>
+              <span class="prog-pct">{{ getProgression(o) }}%</span>
+            </div>
+            <button class="btn-del" (click)="removeObjectif(o._id)" title="Supprimer">✕</button>
+          </div>
+        </div>
+
+        <!-- Section de génération -->
+        <div class="generation-result-zone" style="margin-top: 2rem; border-top: 1px dashed #444; padding-top: 1.5rem;">
+          <div class="days-list" *ngIf="sessionDays().length > 0; else noObj">
+            <h3 style="margin-bottom: 1rem; color: #fff;">✨ Aperçu du planning généré :</h3>
+            <div class="day-block" *ngFor="let day of sessionDays()">
+              <div class="day-label">{{ day.label }}</div>
+              <div class="sess-list">
+                <div class="sess-row"
+                  *ngFor="let s of day.sessions"
+                  [style.border-left-color]="s.matiere?.couleur ?? '#888'"
+                  [style.background]="(s.matiere?.couleur ?? '#888') + '18'">
+                  <div class="sr-info">
+                    <span class="sr-time">{{ fmtTime(s.dateDebut) }} – {{ fmtTime(s.dateFin) }}</span>
+                    <span class="sr-name">{{ s.titre }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <ng-template #noObj>
+            <div class="empty-state">
+              <div class="empty-icon">📚</div>
+              <p>Aucun objectif ou planning non généré — ajoute des objectifs puis clique sur Générer.</p>
+            </div>
+          </ng-template>
+        </div>
+
+        <div class="panel-footer">
+          <button class="btn-generate" *ngIf="sessionDays().length === 0" (click)="generate()" [disabled]="generating() || objectifs().length === 0">
+            <span *ngIf="!generating()">⚡ Générer mon planning</span>
+            <span *ngIf="generating()">Génération en cours…</span>
+          </button>
+
+          <button class="btn-done" *ngIf="sessionDays().length > 0" (click)="closeWizard()">
+            Voir mon planning final →
+          </button>
+        </div>
+      </div>
+
+    </ng-container>
+
+  </ng-container>
+
+  <!-- Modal — Ajouter une session manuellement -->
+  <div class="modal-bg" *ngIf="showSessModal()" (click)="showSessModal.set(false)">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <h3 class="modal-title">Ajouter une session</h3>
+
+      <div class="form-group">
+        <label>Matière *</label>
+        <select class="neon-select" [(ngModel)]="newSess.matiereId">
+          <option value="">— choisir —</option>
+          <option *ngFor="let s of subjects()" [value]="s._id">{{ s.nom }}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Date *</label>
+        <input class="neon-input" type="date" [(ngModel)]="newSess.date">
+      </div>
+
+      <div class="form-row-2">
+        <div class="form-group">
+          <label>Heure début *</label>
+          <input class="neon-input" type="time" [(ngModel)]="newSess.heureDebut">
+        </div>
+        <div class="form-group">
+          <label>Heure fin *</label>
+          <input class="neon-input" type="time" [(ngModel)]="newSess.heureFin">
+        </div>
+      </div>
+
+      <div class="form-error" *ngIf="sessErrDate()">{{ sessErrDate() }}</div>
+      <div class="form-error" *ngIf="sessErrTime()">{{ sessErrTime() }}</div>
+      <div class="form-error" *ngIf="sessErr()">{{ sessErr() }}</div>
+
+      <div class="modal-actions">
+        <button class="btn-confirm" (click)="createSession()">Créer la session</button>
+        <button class="btn-cancel" (click)="showSessModal.set(false)">Annuler</button>
+      </div>
+    </div>
+  </div>
+
+</div>
