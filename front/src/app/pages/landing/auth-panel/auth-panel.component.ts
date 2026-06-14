@@ -6,12 +6,19 @@ import { AuthService } from '../../../core/services/auth.service'
 
 declare const grecaptcha: any
 
+// @Component({
+//   selector: 'app-auth-panel',
+//   standalone: true,
+//   imports: [CommonModule, FormsModule],
+//   templateUrl: './auth-panel.component.html',
+//   styleUrls: ['./auth-panel.component.scss']
+// })
 @Component({
   selector: 'app-auth-panel',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './auth-panel.component.html',
-  styleUrls: ['./auth-panel.component.scss']
+  template: `<div><!-- auth panel --></div>`,
+  styles: []
 })
 export class AuthPanelComponent {
   @Input() currentTab: 'login' | 'register' = 'login'
